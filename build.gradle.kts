@@ -44,6 +44,12 @@ dependencies {
     implementation("org.eclipse.elk:org.eclipse.elk.alg.layered:0.8.1")
 
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
+    implementation("com.pixelduke:fxribbon:1.2.2")
+    implementation("com.miglayout:miglayout-javafx:11.3")
+    implementation("org.kordamp.ikonli:ikonli-materialdesign-pack:12.3.1")
+    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
+    implementation("org.jfxtras:jmetro:11.6.15")
+
 }
 
 tasks.withType<JavaCompile>().configureEach {

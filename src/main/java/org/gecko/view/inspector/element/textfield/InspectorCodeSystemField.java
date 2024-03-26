@@ -27,9 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InspectorCodeSystemField implements InspectorElement<CodeArea> {
-    private static final int HEIGHT_THRESHOLD = 90;
     private static final int MAX_HEIGHT = 40;
-    private static final int EXPANDED_MAX_HEIGHT = 90;
 
     private final CodeArea managedTextArea = new CodeArea();
 

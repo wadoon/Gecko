@@ -2,6 +2,8 @@ package org.gecko.application;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 import lombok.Getter;
 import org.gecko.exceptions.ModelException;
 
@@ -13,6 +15,7 @@ public class GeckoManager {
     @Getter
     private Gecko gecko;
     private final Stage stage;
+    private final JMetro metro = new JMetro(Style.LIGHT);
 
     private static final int SCENE_WIDTH = 1024;
     private static final int SCENE_HEIGHT = 768;
@@ -24,6 +27,17 @@ public class GeckoManager {
 
     public void setGecko(Gecko gecko) {
         this.gecko = gecko;
-        stage.setScene(new Scene(gecko.getView().getMainPane(), SCENE_WIDTH, SCENE_HEIGHT));
+        final var scene = new Scene(gecko.getView().getMainPane(), SCENE_WIDTH, SCENE_HEIGHT);
+        metro.setScene(scene);
+        stage.setScene(scene);
+        metro.reApplyTheme();
+
+        gecko.getView().darkModeProperty().addListener((p, o, n) ->
+                setStyle(n ? Style.DARK : Style.LIGHT));
+    }
+
+    public void setStyle(Style style) {
+        metro.setStyle(style);
+        metro.reApplyTheme();
     }
 }

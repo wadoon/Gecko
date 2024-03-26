@@ -190,7 +190,7 @@
     -fx-font: 12px "System";
 }
 
-.tab-pane {
+/*.tab-pane {
     -fx-background-color: -fx-fg0;
     -fx-background-radius: 5;
     -fx-border-radius: 5;
@@ -200,7 +200,7 @@
     -fx-font-weight: bold;
     -fx-padding: 2px;
     -fx-font: 12px "System";
-}
+}*/
 
 .inspector-list {
     -fx-background-color: -fx-fg0;
@@ -235,7 +235,7 @@
     -fx-padding: 2px;
     -fx-font: 12px "System";
 }
-
+/*
 .tab {
     -fx-background-color: -fx-fg0;
     -fx-background-radius: 3;
@@ -250,7 +250,7 @@
 
 .tab:selected {
     -fx-background-color: -fx-fg2;
-}
+}*/
 
 .tool-bar {
     -fx-background-color: -fx-fg0;
