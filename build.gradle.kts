@@ -42,6 +42,8 @@ dependencies {
     implementation("org.eclipse.elk:org.eclipse.elk.alg.common:0.8.1")
     implementation("org.eclipse.elk:org.eclipse.elk.alg.force:0.8.1")
     implementation("org.eclipse.elk:org.eclipse.elk.alg.layered:0.8.1")
+
+    implementation("org.fxmisc.richtext:richtextfx:0.11.2")
 }
 
 tasks.withType<JavaCompile>().configureEach {
