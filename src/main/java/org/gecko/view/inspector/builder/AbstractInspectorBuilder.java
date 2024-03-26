@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import org.gecko.actions.ActionManager;
+import org.gecko.model.Visibility;
 import org.gecko.view.inspector.Inspector;
 import org.gecko.view.inspector.element.InspectorElement;
 import org.gecko.view.inspector.element.InspectorSeparator;
 import org.gecko.view.inspector.element.button.InspectorDeleteButton;
+import org.gecko.view.inspector.element.container.InspectorVariableLabel;
+import org.gecko.view.inspector.element.container.LabeledInspectorElement;
+import org.gecko.view.inspector.element.label.InspectorLabel;
 import org.gecko.view.inspector.element.textfield.InspectorRenameField;
 import org.gecko.viewmodel.PositionableViewModelElement;
 import org.gecko.viewmodel.Renamable;
@@ -32,7 +36,9 @@ public abstract class AbstractInspectorBuilder<T extends PositionableViewModelEl
 
         // Name field if applicable
         try {
-            addInspectorElement(new InspectorRenameField(actionManager, (Renamable) viewModel));
+            var renameField = new InspectorRenameField(actionManager, (Renamable) viewModel);
+            var label = new InspectorLabel("Name");
+            addInspectorElement(new LabeledInspectorElement(label, renameField));
             addInspectorElement(new InspectorSeparator());
         } catch (ClassCastException e) {
             // Do nothing

@@ -20,7 +20,6 @@ public class InspectorVariableList extends AbstractInspectorList<InspectorVariab
     private final Visibility visibility;
 
     public InspectorVariableList(ActionManager actionManager, SystemViewModel viewModel, Visibility visibility) {
-        super();
         this.actionManager = actionManager;
         this.viewModel = viewModel;
         this.visibility = visibility;

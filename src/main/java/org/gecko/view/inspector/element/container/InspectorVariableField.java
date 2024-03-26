@@ -25,15 +25,23 @@ public class InspectorVariableField extends VBox implements InspectorElement<VBo
 
     public InspectorVariableField(ActionManager actionManager, PortViewModel portViewModel) {
         this.viewModel = portViewModel;
+
         HBox nameAndDeleteContainer = new HBox();
         HBox spacer = new HBox();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        InspectorElement<?> variableNameField = new InspectorRenameField(actionManager, portViewModel);
-        InspectorElement<?> deleteButton = new InspectorRemoveVariableButton(actionManager, portViewModel);
-        nameAndDeleteContainer.getChildren().addAll(variableNameField.getControl(), spacer, deleteButton.getControl());
-        InspectorElement<?> typeLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "type"));
-        InspectorElement<?> typeField = new InspectorTypeComboBox(actionManager, portViewModel);
         HBox typeContainer = new HBox();
+
+
+        var nameLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "name"));
+        var variableNameField = new InspectorRenameField(actionManager, portViewModel);
+        var deleteButton = new InspectorRemoveVariableButton(actionManager, portViewModel);
+        nameAndDeleteContainer.getChildren().addAll(
+                nameLabel.getControl(), variableNameField.getControl(),
+                spacer, deleteButton.getControl());
+
+        var typeLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "type"));
+        var typeField = new InspectorTypeComboBox(actionManager, portViewModel);
+
         typeContainer.getChildren().addAll(typeLabel.getControl(), typeField.getControl());
         getChildren().addAll(nameAndDeleteContainer, typeContainer);
     }
