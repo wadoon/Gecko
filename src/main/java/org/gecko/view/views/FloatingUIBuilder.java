@@ -17,6 +17,11 @@ import org.gecko.view.ResourceHandler;
 import org.gecko.view.views.shortcuts.Shortcuts;
 import org.gecko.viewmodel.EditorViewModel;
 import org.gecko.viewmodel.PositionableViewModelElement;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignA;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
 
 /**
  * Represents a builder for floating UI elements in the view, like different kinds of {@link Button}s and
@@ -44,6 +49,7 @@ public class FloatingUIBuilder {
         VBox zoomButtons = new VBox();
 
         Button zoomInButton = createStyledButton();
+        zoomInButton.setGraphic(FontIcon.of(MaterialDesignM.MAGNIFY_PLUS,24));
         zoomInButton.getStyleClass().add(ZOOM_IN_STYLE_CLASS);
         zoomInButton.setOnAction(event -> {
             actionManager.run(
@@ -60,6 +66,7 @@ public class FloatingUIBuilder {
         }, editorViewModel.getZoomScaleProperty()));
 
         Button zoomOutButton = createStyledButton();
+        zoomOutButton.setGraphic(FontIcon.of(MaterialDesignM.MAGNIFY_MINUS,24));
         zoomOutButton.getStyleClass().add(ZOOM_OUT_STYLE_CLASS);
         zoomOutButton.setOnAction(event -> actionManager.run(
             actionManager.getActionFactory().createZoomCenterAction(1 / EditorViewModel.getDefaultZoomStep())));
@@ -164,17 +171,23 @@ public class FloatingUIBuilder {
         final String switchToParentSystemStyleClass = "floating-parent-system-switch-button";
 
         Button switchViewButton = createStyledButton();
-        switchViewButton.getStyleClass()
-            .add(editorViewModel.isAutomatonEditor() ? switchToSystemStyleClass : switchToAutomatonStyleClass);
+        //switchViewButton.getStyleClass()
+        //    .add(editorViewModel.isAutomatonEditor() ? switchToSystemStyleClass : switchToAutomatonStyleClass);
         switchViewButton.setOnAction(event -> {
             boolean automatonEditor = editorViewModel.isAutomatonEditor();
             actionManager.run(actionManager.getActionFactory()
                 .createViewSwitchAction(editorViewModel.getCurrentSystem(), !automatonEditor));
-            switchViewButton.getStyleClass()
+            /*switchViewButton.getStyleClass()
                 .remove(automatonEditor ? switchToAutomatonStyleClass : switchToSystemStyleClass);
             switchViewButton.getStyleClass()
-                .add(automatonEditor ? switchToSystemStyleClass : switchToAutomatonStyleClass);
+                .add(automatonEditor ? switchToSystemStyleClass : switchToAutomatonStyleClass);*/
+            switchViewButton.setGraphic(FontIcon.of(
+                    automatonEditor ? MaterialDesignR.RECTANGLE_OUTLINE : MaterialDesignC.CIRCLE_OUTLINE,24));
         });
+
+        switchViewButton.setGraphic(FontIcon.of(
+                editorViewModel.isAutomatonEditor() ? MaterialDesignR.RECTANGLE_OUTLINE : MaterialDesignC.CIRCLE_OUTLINE,24));
+
         String switchViewTooltip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "switch_view"),
             Shortcuts.SWITCH_EDITOR.get().getDisplayText());
         switchViewButton.setTooltip(new Tooltip(switchViewTooltip));
@@ -183,7 +196,9 @@ public class FloatingUIBuilder {
 
         if (editorViewModel.getParentSystem() != null) {
             Button parentSystemSwitchButton = createStyledButton();
-            parentSystemSwitchButton.getStyleClass().add(switchToParentSystemStyleClass);
+            parentSystemSwitchButton.setGraphic(FontIcon.of(MaterialDesignA.ARROW_TOP_LEFT,24));
+
+            //parentSystemSwitchButton.getStyleClass().add(switchToParentSystemStyleClass);
             parentSystemSwitchButton.setOnAction(event -> actionManager.run(actionManager.getActionFactory()
                 .createViewSwitchAction(editorViewModel.getParentSystem(), editorViewModel.isAutomatonEditor())));
             String parentSystemSwitchTooltip =

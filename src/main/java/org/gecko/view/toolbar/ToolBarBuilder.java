@@ -1,15 +1,7 @@
 package org.gecko.view.toolbar;
 
-import java.util.List;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.gecko.actions.Action;
@@ -20,6 +12,12 @@ import org.gecko.view.ResourceHandler;
 import org.gecko.view.views.EditorView;
 import org.gecko.view.views.shortcuts.Shortcuts;
 import org.gecko.viewmodel.EditorViewModel;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.List;
+
+import static org.kordamp.ikonli.materialdesign2.MaterialDesignR.REDO;
+import static org.kordamp.ikonli.materialdesign2.MaterialDesignU.UNDO;
 
 /**
  * Represents a builder for the {@link ToolBar} displayed in the view, containing a {@link ToggleGroup} with
@@ -66,35 +64,35 @@ public class ToolBarBuilder {
 
         toolBar.getItems().add(spacer);
 
-        HBox undoButtonBox = new HBox();
-        Button undoButton = new Button(ResourceHandler.getString("Buttons", "undo"));
-        String toolTip =
-            "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "undo"), Shortcuts.UNDO.get().getDisplayText());
+        Button undoButton = new Button(ResourceHandler.getString("Buttons", "undo"),
+                FontIcon.of(UNDO, 24));
+
+        String toolTip = "%s (%s)".formatted(
+                ResourceHandler.getString("Tooltips", "undo"),
+                Shortcuts.UNDO.get().getDisplayText());
+
         undoButton.setTooltip(new Tooltip(toolTip));
         undoButton.setOnAction(event -> actionManager.undo());
-        undoButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
-        undoButton.getStyleClass().add(UNDO_ICON_STYLE_NAME);
-        undoButtonBox.setAlignment(Pos.CENTER);
-        undoButtonBox.getChildren().add(undoButton);
-        toolBar.getItems().add(undoButtonBox);
+        //undoButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
+        //undoButton.getStyleClass().add(UNDO_ICON_STYLE_NAME);
 
-        HBox redoButtonBox = new HBox();
-        Button redoButton = new Button(ResourceHandler.getString("Buttons", "redo"));
+        Button redoButton = new Button(ResourceHandler.getString("Buttons", "redo"),
+                FontIcon.of(REDO, 24));
         toolTip =
-            "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "redo"), Shortcuts.REDO.get().getDisplayText());
+                "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "redo"), Shortcuts.REDO.get().getDisplayText());
         redoButton.setTooltip(new Tooltip(toolTip));
         redoButton.setOnAction(event -> actionManager.redo());
-        redoButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
-        redoButton.getStyleClass().add(REDO_ICON_STYLE_NAME);
-        redoButtonBox.setAlignment(Pos.CENTER);
-        redoButtonBox.getChildren().add(redoButton);
-        toolBar.getItems().add(redoButtonBox);
+        redoButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        undoButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        toolBar.getItems().addAll(undoButton, redoButton);
+
     }
 
     private void addTools(ActionManager actionManager, ToggleGroup toggleGroup, List<Tool> toolList) {
         for (Tool tool : toolList) {
             ToolType toolType = tool.getToolType();
-            ToggleButton toolButton = new ToggleButton(toolType.getLabel());
+            ToggleButton toolButton = new ToggleButton(toolType.getLabel(), FontIcon.of(toolType.getIcon(),24));
+            toolButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 
             //PrefSize is important
             toolButton.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
@@ -102,9 +100,8 @@ public class ToolBarBuilder {
             toolButton.setMinSize(BUTTON_SIZE, BUTTON_SIZE);
 
             //Would like to bind the selectedproperty of the button here but cannot because of a javafx bug
-            editorView.getViewModel().getCurrentToolProperty().addListener((observable, oldValue, newValue) -> {
-                toolButton.setSelected(newValue == tool);
-            });
+            editorView.getViewModel().getCurrentToolProperty().addListener((observable, oldValue, newValue) ->
+                    toolButton.setSelected(newValue == tool));
             toolButton.setSelected(editorView.getViewModel().getCurrentToolType() == toolType);
 
             toolButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -115,9 +112,9 @@ public class ToolBarBuilder {
             });
 
             toolButton.getStyleClass().set(0, DEFAULT_TOOLBAR_ICON_STYLE_NAME);
-            toolButton.getStyleClass().add(toolType.getIcon());
+            //toolButton.getStyleClass().add(toolType.getIcon());
             Tooltip tooltip =
-                new Tooltip(toolType.getLabel() + " (" + toolType.getKeyCodeCombination().getDisplayText() + ")");
+                    new Tooltip(toolType.getLabel() + " (" + toolType.getKeyCodeCombination().getDisplayText() + ")");
             toolButton.setTooltip(tooltip);
             toolBar.getItems().add(toolButton);
             toggleGroup.getToggles().add(toolButton);

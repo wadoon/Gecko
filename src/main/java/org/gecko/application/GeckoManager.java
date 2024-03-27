@@ -28,6 +28,7 @@ public class GeckoManager {
     public void setGecko(Gecko gecko) {
         this.gecko = gecko;
         final var scene = new Scene(gecko.getView().getMainPane(), SCENE_WIDTH, SCENE_HEIGHT);
+        gecko.getView().mnemonicsProperty().forEach(scene::addMnemonic);
         metro.setScene(scene);
         stage.setScene(scene);
         metro.reApplyTheme();

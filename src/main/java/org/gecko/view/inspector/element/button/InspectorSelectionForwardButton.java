@@ -4,6 +4,10 @@ import javafx.scene.control.Tooltip;
 import org.gecko.actions.ActionManager;
 import org.gecko.view.ResourceHandler;
 import org.gecko.view.views.shortcuts.Shortcuts;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
+
+import static org.kordamp.ikonli.materialdesign2.MaterialDesignA.ARROW_RIGHT_BOLD_BOX_OUTLINE;
 
 /**
  * Represents a type of {@link AbstractInspectorButton} used for navigating forward in the selection history of the
@@ -20,5 +24,6 @@ public class InspectorSelectionForwardButton extends AbstractInspectorButton {
         setOnAction(event -> {
             actionManager.run(actionManager.getActionFactory().createSelectionHistoryForwardAction());
         });
+        setGraphic(FontIcon.of(ARROW_RIGHT_BOLD_BOX_OUTLINE,24));
     }
 }

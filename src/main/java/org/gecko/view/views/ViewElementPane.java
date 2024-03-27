@@ -15,7 +15,9 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Scale;
 import lombok.Getter;
 import org.gecko.view.views.viewelement.ViewElement;
@@ -60,6 +62,8 @@ public class ViewElementPane {
             Bindings.createDoubleBinding(() -> pane.getViewportBounds().getHeight(), pane.viewportBoundsProperty()));
 
         pane.setContent(world);
+
+        world.setStyle("-fx-background-color: white");
     }
 
     public ScrollPane draw() {

@@ -2,16 +2,17 @@ package org.gecko.view;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.Mnemonic;
 import javafx.scene.layout.BorderPane;
 import lombok.Getter;
 import org.gecko.actions.Action;
@@ -49,9 +50,10 @@ public class GeckoView {
 
     private final List<EditorView> openedViews;
 
-    private SimpleBooleanProperty darkModeProperty = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty darkModeProperty = new SimpleBooleanProperty(false);
 
     private boolean hasBeenFocused = false;
+    private final SimpleListProperty<Mnemonic> mnemonicsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
 
     public GeckoView(GeckoViewModel viewModel) {
         this.viewModel = viewModel;
@@ -260,5 +262,15 @@ public class GeckoView {
 
     public EditorView getCurrentView() {
         return currentViewProperty.getValue();
+    }
+
+    public Mnemonic addMnemonic(Node node, KeyCombination kc) {
+        var mn = new Mnemonic(node, kc);
+        mnemonicsProperty.add(mn);
+        return mn;
+    }
+
+    public ListProperty<Mnemonic> mnemonicsProperty() {
+        return mnemonicsProperty;
     }
 }
