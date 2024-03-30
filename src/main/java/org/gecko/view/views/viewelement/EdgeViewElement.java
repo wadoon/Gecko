@@ -5,7 +5,6 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -18,6 +17,8 @@ import lombok.Getter;
 import org.gecko.model.Kind;
 import org.gecko.viewmodel.ContractViewModel;
 import org.gecko.viewmodel.EdgeViewModel;
+
+import java.util.List;
 
 /**
  * Represents a type of {@link ConnectionViewElement} implementing the {@link ViewElement} interface, which encapsulates
@@ -38,8 +39,17 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
     private final Label label;
 
     public EdgeViewElement(EdgeViewModel edgeViewModel) {
-        super(FXCollections.observableArrayList(edgeViewModel.getStartPointProperty(),
-            edgeViewModel.getEndPointProperty()));
+        super(List.of(edgeViewModel.getStartPoint(), edgeViewModel.getEndPoint()));
+
+        edgeViewModel.getStartPointProperty().addListener((obs, o, n) ->
+                getPathSource().set(0, n)
+        );
+
+        edgeViewModel.getEndPointProperty().addListener((obs, o, n) ->
+                getPathSource().set(1, n)
+        );
+
+
         this.contractProperty = new SimpleObjectProperty<>();
         this.priorityProperty = new SimpleIntegerProperty();
         this.kindProperty = new SimpleObjectProperty<>();
@@ -48,7 +58,7 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
         this.kindProperty.bind(edgeViewModel.getKindProperty());
         this.edgeViewModel = edgeViewModel;
         this.pane = new Group();
-        pane.getChildren().add(this);
+        pane.getChildren().add(super.getPath());
         pane.setManaged(false);
 
         this.label = new Label();
@@ -61,7 +71,7 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
         edgeViewModel.getEndPointProperty().addListener(updateLabelPosition);
 
         ChangeListener<Object> updateLabel =
-            (observable, oldValue, newValue) -> label.setText(edgeViewModel.getRepresentation());
+                (observable, oldValue, newValue) -> label.setText(edgeViewModel.getRepresentation());
 
         ContractViewModel contract = edgeViewModel.getContract();
         if (contract != null) {
@@ -132,9 +142,9 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
         return switch (orientationProperty.get()) {
             case 0 -> new Pair<>(new Point2D(minX, minY - offsetY), new Point2D(maxX + offsetX, minY - offsetY));
             case 1 -> new Pair<>(new Point2D(minX, maxY + offsetY + LABEL_OFFSET),
-                new Point2D(maxX + offsetX, maxY + offsetY + LABEL_OFFSET));
+                    new Point2D(maxX + offsetX, maxY + offsetY + LABEL_OFFSET));
             case 2 -> new Pair<>(new Point2D(minX - offsetX, maxY + offsetY + LABEL_OFFSET),
-                new Point2D(maxX, maxY + offsetY + LABEL_OFFSET));
+                    new Point2D(maxX, maxY + offsetY + LABEL_OFFSET));
             case 3 -> new Pair<>(new Point2D(minX - offsetX, minY - offsetY), new Point2D(maxX, minY - offsetY));
             default -> new Pair<>(Point2D.ZERO, Point2D.ZERO);
         };
@@ -166,14 +176,13 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
     }
 
     private void constructVisualization() {
-        setStroke(Color.BLACK);
-        setSmooth(true);
+        getPath().setStroke(Color.BLACK);
+        getPath().setSmooth(true);
     }
 
     @Override
-    public ObservableList<Property<Point2D>> getEdgePoints() {
-        return FXCollections.observableArrayList(edgeViewModel.getStartPointProperty(),
-            edgeViewModel.getEndPointProperty());
+    public ObservableList<Point2D> getEdgePoints() {
+        return super.getPathSource();
     }
 
     @Override

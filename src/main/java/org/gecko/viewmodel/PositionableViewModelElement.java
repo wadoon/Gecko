@@ -15,7 +15,7 @@ import org.gecko.model.Element;
 /**
  * Represents an abstraction of a view model element that is graphically represented in a Gecko project. A
  * {@link PositionableViewModelElement} is described by a position- and a size-{@link Point2D}. Contains methods for
- * managing the afferent data.
+ * managing the different data.
  */
 @Getter
 @Setter

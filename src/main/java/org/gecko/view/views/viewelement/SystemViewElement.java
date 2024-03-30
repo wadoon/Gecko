@@ -1,10 +1,7 @@
 package org.gecko.view.views.viewelement;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.Property;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -26,6 +23,9 @@ import org.gecko.model.Visibility;
 import org.gecko.viewmodel.PortViewModel;
 import org.gecko.viewmodel.SystemConnectionViewModel;
 import org.gecko.viewmodel.SystemViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a type of {@link BlockViewElement} implementing the {@link ViewElement} interface, which encapsulates an
@@ -94,9 +94,9 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
         nameProperty.bind(systemViewModel.getNameProperty());
         codeProperty.bind(systemViewModel.getCodeProperty());
         prefWidthProperty().bind(
-            Bindings.createDoubleBinding(() -> systemViewModel.getSize().getX(), systemViewModel.getSizeProperty()));
+                Bindings.createDoubleBinding(() -> systemViewModel.getSize().getX(), systemViewModel.getSizeProperty()));
         prefHeightProperty().bind(
-            Bindings.createDoubleBinding(() -> systemViewModel.getSize().getY(), systemViewModel.getSizeProperty()));
+                Bindings.createDoubleBinding(() -> systemViewModel.getSize().getY(), systemViewModel.getSizeProperty()));
         portsProperty.bind(systemViewModel.getPortsProperty());
 
         systemViewModel.getPositionProperty().addListener((observable, oldValue, newValue) -> updatePortViewModels());
@@ -131,7 +131,7 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
 
             // translate the port position to the world coordinate system
             Point2D calculatedWorldPosition = sceneToLocal(portViewElementPositionInScene).add(getPosition())
-                .subtract(portViewElement.getViewPosition());
+                    .subtract(portViewElement.getViewPosition());
             portViewElement.getViewModel().setSystemPortPosition(calculatedWorldPosition);
         }
     }
@@ -154,7 +154,7 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
     private void removePort(PortViewModel portViewModel) {
         // This is safe, since the portViewElement should be present in the list
         PortViewElement portViewElement =
-            portViewElements.stream().filter(pve -> pve.getViewModel().equals(portViewModel)).findFirst().orElseThrow();
+                portViewElements.stream().filter(pve -> pve.getViewModel().equals(portViewModel)).findFirst().orElseThrow();
         portViewElements.remove(portViewElement);
         if (portViewModel.getVisibility() == Visibility.INPUT) {
             inputPortsAligner.getChildren().remove(portViewElement);
@@ -170,14 +170,14 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
     }
 
     private void onVisibilityChanged(
-        ObservableValue<? extends Visibility> observable, Visibility oldValue, Visibility newValue) {
+            ObservableValue<? extends Visibility> observable, Visibility oldValue, Visibility newValue) {
         if (oldValue == newValue) {
             return;
         }
         PortViewModel portViewModel =
-            portsProperty.stream().filter(pvm -> pvm.getVisibilityProperty() == observable).findFirst().orElseThrow();
+                portsProperty.stream().filter(pvm -> pvm.getVisibilityProperty() == observable).findFirst().orElseThrow();
         PortViewElement portViewElement =
-            portViewElements.stream().filter(pve -> pve.getViewModel().equals(portViewModel)).findFirst().orElseThrow();
+                portViewElements.stream().filter(pve -> pve.getViewModel().equals(portViewModel)).findFirst().orElseThrow();
         if (newValue == Visibility.INPUT) {
             outputPortsAligner.getChildren().remove(portViewElement);
             inputPortsAligner.getChildren().add(portViewElement);
@@ -239,9 +239,9 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
 
     private void reorderPorts() {
         List<PortViewElement> inputs =
-            new ArrayList<>(inputPortsAligner.getChildren().stream().map(PortViewElement.class::cast).toList());
+                new ArrayList<>(inputPortsAligner.getChildren().stream().map(PortViewElement.class::cast).toList());
         List<PortViewElement> outputs =
-            new ArrayList<>(outputPortsAligner.getChildren().stream().map(PortViewElement.class::cast).toList());
+                new ArrayList<>(outputPortsAligner.getChildren().stream().map(PortViewElement.class::cast).toList());
         inputs.sort(this::compare);
         outputs.sort(this::compare);
         inputPortsAligner.getChildren().setAll(inputs);
@@ -261,14 +261,14 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
             return portViewModel.getCenter();
         }
         return portViewModel.getSystemPositionProperty()
-            .getValue()
-            .add(portViewModel.getSystemPortOffsetProperty().getValue());
+                .getValue()
+                .add(portViewModel.getSystemPortOffsetProperty().getValue());
     }
 
     private double getOtherPortY(PortViewModel portViewModel) {
         List<SystemConnectionViewModel> connections =
-            portViewModel.getVisibility() == Visibility.INPUT ? portViewModel.getIncomingConnections()
-                : portViewModel.getOutgoingConnections();
+                portViewModel.getVisibility() == Visibility.INPUT ? portViewModel.getIncomingConnections()
+                        : portViewModel.getOutgoingConnections();
         double minY = Double.MAX_VALUE;
         for (SystemConnectionViewModel connection : connections) {
             if (connection.getSource().equals(portViewModel)) {
@@ -288,21 +288,22 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
         while (change.next()) {
             if (change.wasAdded()) {
                 change.getAddedSubList()
-                    .forEach(connection -> connection.getEdgePoints().addListener(this::onEdgePointsChanged));
+                        .forEach(connection -> connection.getEdgePoints().addListener(this::onEdgePointsChanged));
             } else if (change.wasRemoved()) {
                 change.getRemoved()
-                    .forEach(connection -> connection.getEdgePoints().removeListener(this::onEdgePointsChanged));
+                        .forEach(connection -> connection.getEdgePoints().removeListener(this::onEdgePointsChanged));
             }
         }
         reorderPorts();
     }
 
-    private void onEdgePointsChanged(ListChangeListener.Change<? extends Property<Point2D>> change) {
+    private void onEdgePointsChanged(ListChangeListener.Change<? extends Point2D> change) {
+        reorderPorts();
         while (change.next()) {
             if (change.wasAdded()) {
-                change.getAddedSubList().forEach(point -> point.addListener(positionListener));
+                //change.getAddedSubList().forEach(point -> point.addListener(positionListener));
             } else if (change.wasRemoved()) {
-                change.getRemoved().forEach(point -> point.removeListener(positionListener));
+                //change.getRemoved().forEach(point -> point.removeListener(positionListener));
             }
         }
     }
@@ -313,7 +314,7 @@ public class SystemViewElement extends BlockViewElement implements ViewElement<S
             connections.addAll(portViewModel.getOutgoingConnections());
             for (SystemConnectionViewModel connection : connections) {
                 connection.getEdgePoints().addListener(this::onEdgePointsChanged);
-                connection.getEdgePoints().forEach(point -> point.addListener(positionListener));
+                // connection.getEdgePoints().forEach(point -> point.addListener(positionListener));
             }
         }
     }

@@ -36,12 +36,11 @@ public class ConnectionElementScalerViewElementDecorator extends ElementScalerVi
         return getDecoratorTarget().getZPriority() + (isSelected() ? IGNORE_Z_PRIORITY : 0);
     }
 
-    private void updateEdgePoints(Change<? extends Property<Point2D>> change) {
+    private void updateEdgePoints(Change<? extends Point2D> change) {
         if (change.getList().size() == lastEdgePointCnt) {
             for (ElementScalerBlock scaler : getScalers()) {
                 scaler.refreshListeners();
             }
-
             return;
         }
 

@@ -31,7 +31,7 @@ public interface ViewElement<T extends PositionableViewModelElement<?>> {
      *
      * @return the edge points
      */
-    ObservableList<Property<Point2D>> getEdgePoints();
+    ObservableList<Point2D> getEdgePoints();
 
     /**
      * Set the edge point at the given index.

@@ -71,7 +71,7 @@ public class CursorTool extends Tool {
     @Override
     public void visit(EdgeViewElement edgeViewElement) {
         super.visit(edgeViewElement);
-        edgeViewElement.setOnMouseClicked(event -> {
+        edgeViewElement.drawElement().setOnMouseClicked(event -> {
             if (event.getButton() != MouseButton.PRIMARY) {
                 return;
             }
@@ -96,7 +96,7 @@ public class CursorTool extends Tool {
     @Override
     public void visit(SystemConnectionViewElement systemConnectionViewElement) {
         super.visit(systemConnectionViewElement);
-        systemConnectionViewElement.setOnMouseClicked(event -> {
+        systemConnectionViewElement.getPath().setOnMouseClicked(event -> {
             if (event.getButton() != MouseButton.PRIMARY) {
                 return;
             }

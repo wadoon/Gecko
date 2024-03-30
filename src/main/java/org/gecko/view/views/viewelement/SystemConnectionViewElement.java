@@ -39,11 +39,11 @@ public class SystemConnectionViewElement extends ConnectionViewElement
 
     @Override
     public Node drawElement() {
-        return this;
+        return getPath();
     }
 
     @Override
-    public ObservableList<Property<Point2D>> getEdgePoints() {
+    public ObservableList<Point2D> getEdgePoints() {
         return systemConnectionViewModel.getEdgePoints();
     }
 
@@ -74,7 +74,7 @@ public class SystemConnectionViewElement extends ConnectionViewElement
     }
 
     private void constructVisualization() {
-        setStroke(Color.BLACK);
-        setSmooth(true);
+        getPath().setStroke(Color.BLACK);
+        getPath().setSmooth(true);
     }
 }

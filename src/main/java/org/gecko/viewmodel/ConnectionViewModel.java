@@ -17,5 +17,5 @@ public interface ConnectionViewModel {
      */
     void setEdgePoint(int index, Point2D newPosition);
 
-    ObservableList<Property<Point2D>> getEdgePoints();
+    ObservableList<Point2D> getEdgePoints();
 }

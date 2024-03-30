@@ -1,4 +1,4 @@
-import net.ltgt.gradle.errorprone.errorprone
+//import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     jacoco
@@ -8,7 +8,7 @@ plugins {
     id("application")
     id("antlr")
     id("org.openjfx.javafxplugin") version "0.1.0"
-    id("net.ltgt.errorprone") version "3.1.0"
+    //id("net.ltgt.errorprone") version "3.1.0"
     id("io.freefair.lombok") version "8.4"
     id("pmd")
 }
@@ -25,6 +25,8 @@ repositories {
     mavenCentral()
 }
 
+
+
 dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.1")
 
@@ -33,7 +35,7 @@ dependencies {
     testImplementation("org.testfx:testfx-junit5:4.0.18")
     testImplementation("org.hamcrest:hamcrest:2.2")
 
-    errorprone("com.google.errorprone:error_prone_core:2.23.0")
+    //errorprone("com.google.errorprone:error_prone_core:2.23.0")
 
     implementation("org.antlr:antlr4-runtime:4.13.1")
     antlr("org.antlr:antlr4:4.13.1")
@@ -46,17 +48,16 @@ dependencies {
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
     implementation("com.pixelduke:fxribbon:1.2.2")
     implementation("com.miglayout:miglayout-javafx:11.3")
-    //implementation("org.kordamp.ikonli:ikonli-materialdesign-pack:12.3.1")
+//implementation("org.kordamp.ikonli:ikonli-materialdesign-pack:12.3.1")
     implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
 
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
     implementation("org.jfxtras:jmetro:11.6.15")
-
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.errorprone.disable("SameNameButDifferent")
-    options.errorprone.disableWarningsInGeneratedCode.set(true)
+    //options.errorprone.disable("SameNameButDifferent")
+    //options.errorprone.disableWarningsInGeneratedCode.set(true)
 }
 
 checkstyle {
@@ -79,7 +80,7 @@ tasks.test {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
 
-    // Exclude the package from the coverage report
+// Exclude the package from the coverage report
     val excludes = listOf("gecko/parser/*") // Add other packages if needed
     classDirectories.setFrom(files(classDirectories.files.map {
         fileTree(it).apply {
@@ -91,7 +92,7 @@ tasks.jacocoTestReport {
 }
 
 pmd {
-    // Disabling build failure on rule violations
+// Disabling build failure on rule violations
     isIgnoreFailures = true
 }
 

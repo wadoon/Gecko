@@ -1,9 +1,8 @@
 package org.gecko.viewmodel;
 
-import javafx.beans.property.Property;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import lombok.Getter;
 import lombok.NonNull;
@@ -17,20 +16,18 @@ import org.gecko.model.Visibility;
  * described by a source- and a destination-{@link PortViewModel}. Contains methods for managing the afferent data and
  * updating the target-{@link SystemConnection}.
  */
-@Getter
-@Setter
+@Setter@Getter
 public class SystemConnectionViewModel extends PositionableViewModelElement<SystemConnection>
-    implements ConnectionViewModel {
-    private final Property<PortViewModel> sourceProperty;
-    private final Property<PortViewModel> destinationProperty;
-    private final ObservableList<Property<Point2D>> edgePoints;
+        implements ConnectionViewModel {
+    private final SimpleObjectProperty<PortViewModel> sourceProperty = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<PortViewModel> destinationProperty = new SimpleObjectProperty<>();
+    private final SimpleListProperty<Point2D> edgePoints = new SimpleListProperty<>(FXCollections.observableArrayList());
 
     SystemConnectionViewModel(
-        int id, SystemConnection target, @NonNull PortViewModel source, @NonNull PortViewModel destination) {
+            int id, SystemConnection target, @NonNull PortViewModel source, @NonNull PortViewModel destination) {
         super(id, target);
-        this.sourceProperty = new SimpleObjectProperty<>(source);
-        this.destinationProperty = new SimpleObjectProperty<>(destination);
-        this.edgePoints = FXCollections.observableArrayList();
+        this.sourceProperty.set(source);
+        this.destinationProperty.set(destination);
         sizeProperty.setValue(Point2D.ZERO);
         source.addOutgoingConnection(this);
         destination.addIncomingConnection(this);
@@ -69,7 +66,7 @@ public class SystemConnectionViewModel extends PositionableViewModelElement<Syst
 
     @Override
     public void setEdgePoint(int index, Point2D newPosition) {
-        edgePoints.get(index).setValue(newPosition);
+        edgePoints.set(index, newPosition);
     }
 
     /**
@@ -84,14 +81,14 @@ public class SystemConnectionViewModel extends PositionableViewModelElement<Syst
      * @return true if the connection is allowed, false otherwise
      */
     public static boolean isConnectingAllowed(
-        @NonNull PortViewModel source, @NonNull PortViewModel destination, SystemViewModel sourceSystem,
-        SystemViewModel destinationSystem, SystemViewModel parentSystem,
-        SystemConnectionViewModel systemConnection) {
+            @NonNull PortViewModel source, @NonNull PortViewModel destination, SystemViewModel sourceSystem,
+            SystemViewModel destinationSystem, SystemViewModel parentSystem,
+            SystemConnectionViewModel systemConnection) {
         if (sourceSystem == null || destinationSystem == null || parentSystem == null) {
             return false;
         }
         if (destination.getTarget().isHasIncomingConnection() && !(systemConnection != null
-            && systemConnection.getDestination().equals(destination))) {
+                && systemConnection.getDestination().equals(destination))) {
             return false;
         }
         if (sourceSystem.equals(destinationSystem)) {

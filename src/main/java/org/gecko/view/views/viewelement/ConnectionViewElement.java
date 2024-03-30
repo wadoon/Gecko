@@ -1,41 +1,38 @@
 package org.gecko.view.views.viewelement;
 
-import java.util.ArrayList;
-import java.util.List;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.util.Pair;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract representation of a {@link Path} type view element, that is a connection in a Gecko project. Contains a
  * list of {@link Point2D path point}s.
  */
-@Getter
-public abstract class ConnectionViewElement extends Path {
+@Data
+public abstract class ConnectionViewElement {
+    private static final int STROKE_WIDTH = 2;
+    private static final String STYLE_CLASS = "path";
+    private static final double ARROW_HEAD_LENGTH = 25;
+    private static final double ARROW_HEAD_ANGLE = 10;
+    private static final Point2D ANGLE_OFFSET_HELPER = new Point2D(50, 10);
+    private static final int MIN_REQUIRED_PATH_POINTS = 2;
 
-    private final ObservableList<Property<Point2D>> pathSource;
-    private MoveTo startElement;
-    protected BooleanProperty isLoopProperty;
-    protected IntegerProperty orientationProperty;
+    private final SimpleListProperty<Point2D> pathSource = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final Path path = new Path();
 
+    //private MoveTo startElement;
+    final BooleanProperty isLoopProperty = new SimpleBooleanProperty(false);
+    protected final IntegerProperty orientationProperty = new SimpleIntegerProperty(0);
 
-    @Getter
-    @Setter
     private boolean selected;
 
     /**
@@ -43,29 +40,26 @@ public abstract class ConnectionViewElement extends Path {
      * point. This list represents the actual points that are drawn on the screen. pathSource is a subset of
      * renderPathSource. In order to draw a loop, extra points are added to renderPathSource.
      */
-    protected List<Pair<DoubleProperty, DoubleProperty>> renderPathSource;
+    protected final List<P2> renderPathSource = new ArrayList<>();
 
-    private static final int STROKE_WIDTH = 5;
-    private static final String STYLE_CLASS = "path";
-    private static final double ARROW_HEAD_LENGTH = 25;
-    private static final double ARROW_HEAD_ANGLE = 10;
-    private static final Point2D ANGLE_OFFSET_HELPER = new Point2D(50, 10);
-    private static final int MIN_REQUIRED_PATH_POINTS = 2;
+    record P2(double x, double y) {
+    }
 
-    protected ConnectionViewElement(ObservableList<Property<Point2D>> path) {
-        this.pathSource = path;
-        this.isLoopProperty = new SimpleBooleanProperty(false);
-        this.orientationProperty = new SimpleIntegerProperty();
+    protected ConnectionViewElement(List<Point2D> path) {
+        this.pathSource.setAll(path);
 
         updatePathVisualization();
 
-        ListChangeListener<Property<Point2D>> pathChangedListener = change -> updatePathVisualization();
+        ListChangeListener<Point2D> pathChangedListener = change -> updatePathVisualization();
+
         pathSource.addListener(pathChangedListener);
         isLoopProperty.addListener((observable, oldValue, newValue) -> updatePathVisualization());
         orientationProperty.addListener((observable, oldValue, newValue) -> updatePathVisualization());
 
-        setStrokeWidth(STROKE_WIDTH);
-        getStyleClass().add(STYLE_CLASS);
+        this.path.setStrokeWidth(STROKE_WIDTH);
+
+        this.path.getStyleClass().setAll(STYLE_CLASS);
+
     }
 
 
@@ -75,9 +69,8 @@ public abstract class ConnectionViewElement extends Path {
      * as a loop by adding extra points to render path source.
      */
     protected void updatePathVisualization() {
-        getElements().clear();
-
-        renderPathSource = new ArrayList<>();
+        path.getElements().clear();
+        renderPathSource.clear();
 
         // If there are less than two points, there is no path to draw
         if (pathSource.size() < MIN_REQUIRED_PATH_POINTS) {
@@ -85,55 +78,42 @@ public abstract class ConnectionViewElement extends Path {
         }
 
         // Start element
-        startElement = new MoveTo(pathSource.getFirst().getValue().getX(), pathSource.getFirst().getValue().getY());
-        startElement.xProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getFirst().getValue().getX(), pathSource.getFirst()));
-        startElement.yProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getFirst().getValue().getY(), pathSource.getFirst()));
-        getElements().add(startElement);
-        renderPathSource.add(new Pair<>(startElement.xProperty(), startElement.yProperty()));
+        final var first = pathSource.getFirst();
+        final var last = pathSource.getLast();
+
+        var startElement = new MoveTo(first.getX(), first.getY());
+        path.getElements().add(startElement);
+        renderPathSource.add(new P2(startElement.getX(), startElement.getY()));
 
         if (isLoopProperty.get()) {
             // If source and destination are the same, draw a loop
             ArcTo arcTo = new ArcTo();
-            arcTo.radiusXProperty()
-                .bind(Bindings.createDoubleBinding(
-                    () -> Math.abs(pathSource.getFirst().getValue().getX() - pathSource.getLast().getValue().getX()),
-                    pathSource.getFirst(), pathSource.getLast()));
-            arcTo.radiusYProperty()
-                .bind(Bindings.createDoubleBinding(
-                    () -> Math.abs(pathSource.getFirst().getValue().getY() - pathSource.getLast().getValue().getY()),
-                    pathSource.getFirst(), pathSource.getLast()));
-            arcTo.xProperty()
-                .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getX(), pathSource.getLast()));
-            arcTo.yProperty()
-                .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getY(), pathSource.getLast()));
-            arcTo.largeArcFlagProperty().setValue(true);
-            arcTo.sweepFlagProperty().setValue(true);
-            getElements().add(arcTo);
-            renderPathSource.add(new Pair<>(arcTo.xProperty(), arcTo.yProperty()));
+            // ArcTo(double radiusX, double radiusY, double xAxisRotation, double x, double y, boolean largeArcFlag, boolean sweepFlag) 
+
+            arcTo.setRadiusX(Math.abs(first.getX() - last.getX()));
+            arcTo.setRadiusY(Math.abs(first.getY() - last.getY()));
+            arcTo.setX(last.getX());
+            arcTo.setY(last.getY());
+
+            arcTo.setLargeArcFlag(true);
+            arcTo.setSweepFlag(true);
+
+            path.getElements().add(arcTo);
+            renderPathSource.add(new P2(arcTo.getX(), arcTo.getY()));
         } else {
             // Elements in the middle
-            for (Property<Point2D> point : pathSource) {
-                LineTo lineTo = new LineTo(point.getValue().getX(), point.getValue().getY());
-                lineTo.xProperty().bind(Bindings.createDoubleBinding(() -> point.getValue().getX(), point));
-                lineTo.yProperty().bind(Bindings.createDoubleBinding(() -> point.getValue().getY(), point));
-                getElements().add(lineTo);
-                renderPathSource.add(new Pair<>(lineTo.xProperty(), lineTo.yProperty()));
+            for (var point : pathSource) {
+                LineTo lineTo = new LineTo(point.getX(), point.getY());
+                path.getElements().add(lineTo);
+                renderPathSource.add(new P2(lineTo.getX(), lineTo.getY()));
             }
         }
 
-        DoubleProperty lastX = renderPathSource.getLast().getKey();
-        DoubleProperty lastY = renderPathSource.getLast().getValue();
-
-        final DoubleProperty secondLastX = new SimpleDoubleProperty();
-        secondLastX.bind(renderPathSource.get(renderPathSource.size() - 2).getKey());
-        final DoubleProperty secondLastY = new SimpleDoubleProperty();
-        secondLastY.bind(renderPathSource.get(renderPathSource.size() - 2).getValue());
+        /*
+        var lastX = renderPathSource.getLast().x;
+        var lastY = renderPathSource.getLast().y;
 
         if (isLoopProperty.get()) {
-            secondLastY.unbind();
-            secondLastX.unbind();
             switch (orientationProperty.get()) {
                 case 0:
                     secondLastX.bind(lastX.add(ANGLE_OFFSET_HELPER.getX()));
@@ -157,56 +137,34 @@ public abstract class ConnectionViewElement extends Path {
         }
 
         // Arrow head
-        MoveTo arrowHeadUp = new MoveTo(pathSource.getLast().getValue().getX(), pathSource.getLast().getValue().getY());
-        arrowHeadUp.xProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getX(), pathSource.getLast(),
-                pathSource.getFirst()));
-        arrowHeadUp.yProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getY(), pathSource.getLast(),
-                pathSource.getFirst()));
-        getElements().add(arrowHeadUp);
+        MoveTo arrowHeadUp = new MoveTo(last.getX(), last.getY());
+        path.getElements().add(arrowHeadUp);
 
-        Point2D arrowHeadUpPoint =
-            calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                new Point2D(lastX.getValue(), lastY.getValue()), ARROW_HEAD_ANGLE);
+        Point2D arrowHeadUpPoint = calculateArrowHeadPosition(secondLastX.getValue(), secondLastY.getValue(), lastX.getValue(), lastY.getValue(), ARROW_HEAD_ANGLE);
         LineTo arrowHeadUpLine = new LineTo(arrowHeadUpPoint.getX(), arrowHeadUpPoint.getY());
         arrowHeadUpLine.xProperty()
-            .bind(Bindings.createDoubleBinding(
-                () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                    new Point2D(lastX.getValue(), lastY.getValue()), ARROW_HEAD_ANGLE).getX(), pathSource.getLast(),
-                pathSource.getFirst()));
+                .bind(Bindings.createDoubleBinding(
+                        () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
+                                new Point2D(lastX.getValue(), lastY.getValue()), ARROW_HEAD_ANGLE).getX(), last,
+                        first));
         arrowHeadUpLine.yProperty()
-            .bind(Bindings.createDoubleBinding(
-                () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                    new Point2D(lastX.getValue(), lastY.getValue()), ARROW_HEAD_ANGLE).getY(), pathSource.getLast(),
-                pathSource.getFirst()));
+                .bind(Bindings.createDoubleBinding(
+                        () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
+                                new Point2D(lastX.getValue(), lastY.getValue()), ARROW_HEAD_ANGLE).getY(), last,
+                        first));
         getElements().add(arrowHeadUpLine);
 
-        MoveTo arrowHeadDown =
-            new MoveTo(pathSource.getLast().getValue().getX(), pathSource.getLast().getValue().getY());
-        arrowHeadDown.xProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getX(), pathSource.getLast(),
-                pathSource.getFirst()));
-        arrowHeadDown.yProperty()
-            .bind(Bindings.createDoubleBinding(() -> pathSource.getLast().getValue().getY(), pathSource.getLast(),
-                pathSource.getFirst()));
-        getElements().add(arrowHeadDown);
-
+        MoveTo arrowHeadDown = new MoveTo(last.getX(), last.getY());
+        path.getElements().add(arrowHeadDown);
         Point2D arrowHeadDownPoint =
-            calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                new Point2D(lastX.getValue(), lastY.getValue()), -ARROW_HEAD_ANGLE);
+                calculateArrowHeadPosition(
+                        new Point2D(secondLastX.getValue(), secondLastY.getValue()),
+                        new Point2D(lastX.getValue(), lastY.getValue()), -ARROW_HEAD_ANGLE);
+
         LineTo arrowHeadDownLine = new LineTo(arrowHeadDownPoint.getX(), arrowHeadDownPoint.getY());
-        arrowHeadDownLine.xProperty()
-            .bind(Bindings.createDoubleBinding(
-                () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                    new Point2D(lastX.getValue(), lastY.getValue()), -ARROW_HEAD_ANGLE).getX(), pathSource.getLast(),
-                pathSource.getFirst()));
         arrowHeadDownLine.yProperty()
-            .bind(Bindings.createDoubleBinding(
-                () -> calculateArrowHeadPosition(new Point2D(secondLastX.getValue(), secondLastY.getValue()),
-                    new Point2D(lastX.getValue(), lastY.getValue()), -ARROW_HEAD_ANGLE).getY(), pathSource.getLast(),
-                pathSource.getFirst()));
-        getElements().add(arrowHeadDownLine);
+        path.getElements().add(arrowHeadDownLine);
+        */
     }
 
     private Point2D calculateArrowHeadPosition(Point2D start, Point2D end, double offset) {

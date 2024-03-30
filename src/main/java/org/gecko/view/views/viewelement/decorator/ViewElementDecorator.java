@@ -38,7 +38,7 @@ public abstract class ViewElementDecorator implements ViewElement<PositionableVi
     }
 
     @Override
-    public ObservableList<Property<Point2D>> getEdgePoints() {
+    public ObservableList<Point2D> getEdgePoints() {
         return getDecoratorTarget().getEdgePoints();
     }
 

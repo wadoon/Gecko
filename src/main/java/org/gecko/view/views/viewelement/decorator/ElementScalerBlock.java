@@ -33,9 +33,9 @@ public class ElementScalerBlock extends Rectangle {
      * Refreshes scaler block listeners and updates its position.
      */
     protected void refreshListeners() {
-        if (listener != null) {
+        /*if (listener != null) {
             decoratorTarget.getEdgePoints().get(index).removeListener(listener);
-        }
+        }*/
         updatePosition();
 
         ChangeListener<Point2D> newListener = (observable, oldValue, newValue) -> {
@@ -43,8 +43,8 @@ public class ElementScalerBlock extends Rectangle {
                 updatePosition();
             }
         };
-        decoratorTarget.getEdgePoints().get(index).addListener(newListener);
-        listener = newListener;
+        //decoratorTarget.getEdgePoints().get(index).addListener(newListener);
+        //listener = newListener;
     }
 
     /**
@@ -52,10 +52,10 @@ public class ElementScalerBlock extends Rectangle {
      */
     public void updatePosition() {
         setLayoutX(
-            decoratorTarget.getEdgePoints().get(index).getValue().getX() - getDecoratorTarget().getPosition().getX() - (
+            decoratorTarget.getEdgePoints().get(index).getX() - getDecoratorTarget().getPosition().getX() - (
                 getWidth() / 2));
         setLayoutY(
-            decoratorTarget.getEdgePoints().get(index).getValue().getY() - getDecoratorTarget().getPosition().getY() - (
+            decoratorTarget.getEdgePoints().get(index).getY() - getDecoratorTarget().getPosition().getY() - (
                 getHeight() / 2));
     }
 

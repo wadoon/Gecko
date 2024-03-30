@@ -1,12 +1,7 @@
 package org.gecko.viewmodel;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import lombok.Getter;
 import lombok.NonNull;
@@ -26,39 +21,31 @@ import org.gecko.model.Kind;
 @Setter
 public class EdgeViewModel extends PositionableViewModelElement<Edge> {
 
-    private final Property<Kind> kindProperty;
-    private final IntegerProperty priorityProperty;
-    private final Property<ContractViewModel> contractProperty;
-    private final Property<StateViewModel> sourceProperty;
-    private final Property<StateViewModel> destinationProperty;
-    private final BooleanProperty isLoopProperty;
-    private final IntegerProperty orientationProperty;
+    private final ObjectProperty<Kind> kindProperty = new SimpleObjectProperty<>();
+    private final IntegerProperty priorityProperty = new SimpleIntegerProperty();
+    private final ObjectProperty<ContractViewModel> contractProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<StateViewModel> sourceProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<StateViewModel> destinationProperty = new SimpleObjectProperty<>();
+    private final BooleanProperty isLoopProperty = new SimpleBooleanProperty();
+    private final IntegerProperty orientationProperty = new SimpleIntegerProperty();
     /**
      * The list of edge points that define the path of the edge.
      */
 
-    private final Property<Point2D> startPointProperty;
-    private final Property<Point2D> endPointProperty;
-    private final Property<Point2D> startOffsetProperty;
-    private final Property<Point2D> endOffsetProperty;
+    private final ObjectProperty<Point2D> startPointProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Point2D> endPointProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Point2D> startOffsetProperty = new SimpleObjectProperty<>(Point2D.ZERO);
+    private final ObjectProperty<Point2D> endOffsetProperty = new SimpleObjectProperty<>(Point2D.ZERO);
 
-    public EdgeViewModel(
-        int id, @NonNull Edge target, @NonNull StateViewModel source, @NonNull StateViewModel destination) {
+    public EdgeViewModel(int id, @NonNull Edge target, @NonNull StateViewModel source, @NonNull StateViewModel destination) {
         super(id, target);
-        this.kindProperty = new SimpleObjectProperty<>(target.getKind());
-        this.priorityProperty = new SimpleIntegerProperty(target.getPriority());
-        this.contractProperty = new SimpleObjectProperty<>();
-        this.sourceProperty = new SimpleObjectProperty<>(source);
-        this.destinationProperty = new SimpleObjectProperty<>(destination);
-        this.isLoopProperty = new SimpleBooleanProperty();
+        setKind(target.getKind());
+        setPriority(target.getPriority());
+        setSource(source);
+        setDestination(destination);
         isLoopProperty.bind(Bindings.createBooleanBinding(() -> getSource().equals(getDestination()), sourceProperty,
-            destinationProperty));
-        this.orientationProperty = new SimpleIntegerProperty();
+                destinationProperty));
 
-        this.startOffsetProperty = new SimpleObjectProperty<>(Point2D.ZERO);
-        this.endOffsetProperty = new SimpleObjectProperty<>(Point2D.ZERO);
-        this.startPointProperty = new SimpleObjectProperty<>();
-        this.endPointProperty = new SimpleObjectProperty<>();
         sizeProperty.setValue(Point2D.ZERO);
         setBindings();
 
@@ -67,12 +54,10 @@ public class EdgeViewModel extends PositionableViewModelElement<Edge> {
     }
 
     public void setBindings() {
-        startPointProperty.bind(Bindings.createObjectBinding(() -> {
-            return getSource().getCenter().add(startOffsetProperty.getValue());
-        }, startOffsetProperty, getSource().getPositionProperty()));
-        endPointProperty.bind(Bindings.createObjectBinding(() -> {
-            return getDestination().getCenter().add(endOffsetProperty.getValue());
-        }, endOffsetProperty, getDestination().getPositionProperty()));
+        startPointProperty.bind(Bindings.createObjectBinding(
+                () -> getSource().getCenter().add(startOffsetProperty.getValue()), startOffsetProperty, getSource().getPositionProperty()));
+        endPointProperty.bind(Bindings.createObjectBinding(
+                () -> getDestination().getCenter().add(endOffsetProperty.getValue()), endOffsetProperty, getDestination().getPositionProperty()));
     }
 
     private void removeBindings() {

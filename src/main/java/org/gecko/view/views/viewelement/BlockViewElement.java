@@ -1,9 +1,7 @@
 package org.gecko.view.views.viewelement;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import lombok.Getter;
@@ -15,31 +13,25 @@ import org.gecko.viewmodel.PositionableViewModelElement;
  * An abstract representation of a {@link Pane} view element, that is an element with a rectangular shape in a Gecko
  * project. Contains a list of {@link Point2D edge point}s.
  */
+@Getter
 public abstract class BlockViewElement extends Pane {
+    protected static final int BACKGROUND_ROUNDING = 15;
 
-    @Getter
-    private final ObservableList<Property<Point2D>> edgePoints;
+    private final SimpleListProperty<Point2D> edgePoints = new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    @Getter
     @Setter
     private boolean selected;
 
-    protected static final int BACKGROUND_ROUNDING = 15;
 
     protected BlockViewElement(PositionableViewModelElement<? extends Element> positionableViewModelElement) {
         // Initialize edge points for a rectangular shaped block
-        this.edgePoints = FXCollections.observableArrayList();
         for (int i = 0; i < 4; i++) {
-            edgePoints.add(new SimpleObjectProperty<>(Point2D.ZERO));
+            edgePoints.add(Point2D.ZERO);
         }
 
         // Auto calculate new edge points on size and position changes
-        positionableViewModelElement.getSizeProperty().addListener((observable, oldValue, newValue) -> {
-            calculateEdgePoints(positionableViewModelElement);
-        });
-        positionableViewModelElement.getPositionProperty().addListener((observable, oldValue, newValue) -> {
-            calculateEdgePoints(positionableViewModelElement);
-        });
+        positionableViewModelElement.getSizeProperty().addListener((observable, oldValue, newValue) -> calculateEdgePoints(positionableViewModelElement));
+        positionableViewModelElement.getPositionProperty().addListener((observable, oldValue, newValue) -> calculateEdgePoints(positionableViewModelElement));
 
         calculateEdgePoints(positionableViewModelElement);
     }
@@ -48,9 +40,10 @@ public abstract class BlockViewElement extends Pane {
         Point2D position = target.getPosition();
         double width = target.getSize().getX();
         double height = target.getSize().getY();
-        edgePoints.get(0).setValue(position.add(Point2D.ZERO));
-        edgePoints.get(1).setValue(position.add(new Point2D(width, 0)));
-        edgePoints.get(2).setValue(position.add(new Point2D(width, height)));
-        edgePoints.get(3).setValue(position.add(new Point2D(0, height)));
+        edgePoints.setAll(
+                position.add(Point2D.ZERO),
+                position.add(new Point2D(width, 0)),
+                position.add(new Point2D(width, height)),
+                position.add(new Point2D(0, height)));
     }
 }

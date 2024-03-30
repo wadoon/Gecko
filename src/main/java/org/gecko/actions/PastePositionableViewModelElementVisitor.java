@@ -2,34 +2,18 @@ package org.gecko.actions;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import javafx.geometry.Point2D;
 import javafx.util.Pair;
-import javax.sound.sampled.Port;
 import lombok.Getter;
 import org.gecko.exceptions.MissingViewModelElementException;
 import org.gecko.exceptions.ModelException;
-import org.gecko.model.Automaton;
-import org.gecko.model.Contract;
-import org.gecko.model.Edge;
-import org.gecko.model.Element;
-import org.gecko.model.ElementVisitor;
-import org.gecko.model.Region;
-import org.gecko.model.State;
 import org.gecko.model.System;
-import org.gecko.model.SystemConnection;
-import org.gecko.model.Variable;
-import org.gecko.view.views.viewelement.VariableBlockViewElement;
-import org.gecko.viewmodel.EdgeViewModel;
-import org.gecko.viewmodel.GeckoViewModel;
-import org.gecko.viewmodel.PortViewModel;
-import org.gecko.viewmodel.PositionableViewModelElement;
-import org.gecko.viewmodel.RegionViewModel;
-import org.gecko.viewmodel.StateViewModel;
-import org.gecko.viewmodel.SystemConnectionViewModel;
-import org.gecko.viewmodel.SystemViewModel;
+import org.gecko.model.*;
+import org.gecko.viewmodel.*;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class PastePositionableViewModelElementVisitor implements ElementVisitor {
     private final GeckoViewModel geckoViewModel;

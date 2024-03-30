@@ -2,7 +2,6 @@ package org.gecko.view.menubar;
 
 import com.pixelduke.control.Ribbon;
 import com.pixelduke.control.ribbon.Column;
-import com.pixelduke.control.ribbon.QuickAccessBar;
 import com.pixelduke.control.ribbon.RibbonGroup;
 import com.pixelduke.control.ribbon.RibbonTab;
 import javafx.beans.binding.Bindings;

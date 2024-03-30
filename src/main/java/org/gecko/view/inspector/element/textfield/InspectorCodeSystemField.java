@@ -14,7 +14,6 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.gecko.actions.ActionManager;
 import org.gecko.view.inspector.element.InspectorElement;
 import org.gecko.viewmodel.SystemViewModel;
-import org.reactfx.Subscription;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -70,7 +69,7 @@ public class InspectorCodeSystemField implements InspectorElement<CodeArea> {
         managedTextArea.setContextMenu(new DefaultContextMenu());
 
         executor = Executors.newSingleThreadExecutor();
-        Subscription cleanupWhenDone = managedTextArea.multiPlainChanges()
+        var cleanupWhenDone = managedTextArea.multiPlainChanges()
                 .successionEnds(Duration.ofMillis(500))
                 .retainLatestUntilLater(executor)
                 .supplyTask(this::computeHighlighting)

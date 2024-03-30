@@ -29,18 +29,14 @@ import org.gecko.model.State;
 public class StateViewModel extends BlockViewModelElement<State> {
     private static final int LOOPS = 4;
     private static final int ORIENTATIONS = 4;
-    private final BooleanProperty isStartStateProperty;
-    private final ListProperty<ContractViewModel> contractsProperty;
+    private final BooleanProperty isStartStateProperty = new SimpleBooleanProperty();
+    private final ListProperty<ContractViewModel> contractsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    private final ObservableList<EdgeViewModel> incomingEdges;
-    private final ObservableList<EdgeViewModel> outgoingEdges;
+    private final ObservableList<EdgeViewModel> incomingEdges = FXCollections.observableArrayList();
+    private final ObservableList<EdgeViewModel> outgoingEdges = FXCollections.observableArrayList();
 
     public StateViewModel(int id, @NonNull State target) {
         super(id, target);
-        this.isStartStateProperty = new SimpleBooleanProperty();
-        this.contractsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-        this.incomingEdges = FXCollections.observableArrayList();
-        this.outgoingEdges = FXCollections.observableArrayList();
         addEdgeListeners();
     }
 

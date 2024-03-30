@@ -349,7 +349,7 @@ public class ViewModelFactory {
             });
         }
 
-        result.getEdgePoints().add(sourcePosition);
-        result.getEdgePoints().add(destinationPosition);
+        result.getEdgePoints().add(sourcePosition.getValue());
+        result.getEdgePoints().add(destinationPosition.getValue());
     }
 }

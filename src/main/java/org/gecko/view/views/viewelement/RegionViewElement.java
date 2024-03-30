@@ -58,7 +58,7 @@ public class RegionViewElement extends BlockViewElement implements ViewElement<R
     @Override
     public boolean setEdgePoint(int index, Point2D point) {
         return regionViewModel.manipulate(
-            getEdgePoints().get((index + getEdgePoints().size() / 2) % getEdgePoints().size()).getValue(), point);
+            getEdgePoints().get((index + getEdgePoints().size() / 2) % getEdgePoints().size()), point);
     }
 
     @Override
