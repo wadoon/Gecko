@@ -80,7 +80,7 @@ public abstract class Tool implements ViewElementVisitor {
      */
     @Override
     public void visit(EdgeViewElement edgeViewElement) {
-        setAllHandlers(edgeViewElement.getPath(), transparentElements ? null : Event::consume);
+        setAllHandlers(edgeViewElement.getPane(), transparentElements ? null : Event::consume);
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class Tool implements ViewElementVisitor {
      */
     @Override
     public void visit(SystemConnectionViewElement systemConnectionViewElement) {
-        setAllHandlers(systemConnectionViewElement.getPath(), transparentElements ? null : Event::consume);
+        setAllHandlers(systemConnectionViewElement.getPane(), transparentElements ? null : Event::consume);
     }
 
     /**

@@ -41,8 +41,8 @@ public class EdgeViewModel extends PositionableViewModelElement<Edge> {
         super(id, target);
         setKind(target.getKind());
         setPriority(target.getPriority());
-        setSource(source);
-        setDestination(destination);
+        sourceProperty.set(source);
+        destinationProperty.set(destination);
         isLoopProperty.bind(Bindings.createBooleanBinding(() -> getSource().equals(getDestination()), sourceProperty,
                 destinationProperty));
 

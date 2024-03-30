@@ -25,10 +25,10 @@ public class ElementScalerViewElementDecorator extends ViewElementDecorator {
 
         for (int i = 0; i < decoratorTarget.getEdgePoints().size(); i++) {
             ElementScalerBlock scalerBlock = new ElementScalerBlock(i, this, SCALER_SIZE, SCALER_SIZE);
-            scalerBlock.setFill(Color.RED);
-
+            //TODO disabled scalerBlock.setFill(Color.RED);
+            scalerBlock.setFill(null);
             scalers.add(scalerBlock);
-            decoratedNode.getChildren().add(scalerBlock);
+            //decoratedNode.getChildren().add(scalerBlock);
         }
         setSelected(false);
     }

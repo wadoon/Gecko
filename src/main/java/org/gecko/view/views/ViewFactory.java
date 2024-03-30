@@ -81,7 +81,7 @@ public class ViewFactory {
 
         ViewContextMenuBuilder contextMenuBuilder =
             new EdgeViewElementContextMenuBuilder(actionManager, edgeViewModel, geckoView);
-        setContextMenu(newEdgeViewElement.getPath(), contextMenuBuilder);
+        setContextMenu(newEdgeViewElement.getPane(), contextMenuBuilder);
 
         return new ConnectionElementScalerViewElementDecorator(newEdgeViewElement);
     }
@@ -92,7 +92,7 @@ public class ViewFactory {
 
         ViewContextMenuBuilder contextMenuBuilder =
             new SystemConnectionViewElementContextMenuBuilder(actionManager, systemConnectionViewModel, geckoView);
-        setContextMenu(newSystemConnectionViewElement.getPath(), contextMenuBuilder);
+        setContextMenu(newSystemConnectionViewElement.getPane(), contextMenuBuilder);
 
         return new ConnectionElementScalerViewElementDecorator(newSystemConnectionViewElement);
     }

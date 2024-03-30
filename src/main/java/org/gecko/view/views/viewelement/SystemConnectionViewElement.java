@@ -39,7 +39,7 @@ public class SystemConnectionViewElement extends ConnectionViewElement
 
     @Override
     public Node drawElement() {
-        return getPath();
+        return getLine();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SystemConnectionViewElement extends ConnectionViewElement
     }
 
     private void constructVisualization() {
-        getPath().setStroke(Color.BLACK);
-        getPath().setSmooth(true);
+        getLine().setStroke(Color.BLACK);
+        getLine().setSmooth(true);
     }
 }

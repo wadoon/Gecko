@@ -4,11 +4,15 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
-import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +31,11 @@ public abstract class ConnectionViewElement {
     private static final int MIN_REQUIRED_PATH_POINTS = 2;
 
     private final SimpleListProperty<Point2D> pathSource = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final Path path = new Path();
+
+    @Getter(AccessLevel.PROTECTED)
+    private final Path line = new Path();
+    private final Path arrowHead = createDefaultHead();
+    private final Group pane = new Group(line, arrowHead);
 
     //private MoveTo startElement;
     final BooleanProperty isLoopProperty = new SimpleBooleanProperty(false);
@@ -45,8 +53,9 @@ public abstract class ConnectionViewElement {
     record P2(double x, double y) {
     }
 
-    protected ConnectionViewElement(List<Point2D> path) {
-        this.pathSource.setAll(path);
+    protected ConnectionViewElement(List<Point2D> line) {
+        this.pathSource.setAll(line);
+        pane.setManaged(false);
 
         updatePathVisualization();
 
@@ -56,12 +65,10 @@ public abstract class ConnectionViewElement {
         isLoopProperty.addListener((observable, oldValue, newValue) -> updatePathVisualization());
         orientationProperty.addListener((observable, oldValue, newValue) -> updatePathVisualization());
 
-        this.path.setStrokeWidth(STROKE_WIDTH);
-
-        this.path.getStyleClass().setAll(STYLE_CLASS);
+        this.line.setStrokeWidth(STROKE_WIDTH);
+        this.line.getStyleClass().setAll(STYLE_CLASS);
 
     }
-
 
     /**
      * Update the visualization of the path. Path is drawn using the path source points. Path is automatically updated
@@ -69,7 +76,7 @@ public abstract class ConnectionViewElement {
      * as a loop by adding extra points to render path source.
      */
     protected void updatePathVisualization() {
-        path.getElements().clear();
+        line.getElements().clear();
         renderPathSource.clear();
 
         // If there are less than two points, there is no path to draw
@@ -82,7 +89,7 @@ public abstract class ConnectionViewElement {
         final var last = pathSource.getLast();
 
         var startElement = new MoveTo(first.getX(), first.getY());
-        path.getElements().add(startElement);
+        line.getElements().add(startElement);
         renderPathSource.add(new P2(startElement.getX(), startElement.getY()));
 
         if (isLoopProperty.get()) {
@@ -98,17 +105,18 @@ public abstract class ConnectionViewElement {
             arcTo.setLargeArcFlag(true);
             arcTo.setSweepFlag(true);
 
-            path.getElements().add(arcTo);
+            line.getElements().add(arcTo);
             renderPathSource.add(new P2(arcTo.getX(), arcTo.getY()));
         } else {
             // Elements in the middle
             for (var point : pathSource) {
                 LineTo lineTo = new LineTo(point.getX(), point.getY());
-                path.getElements().add(lineTo);
+                line.getElements().add(lineTo);
                 renderPathSource.add(new P2(lineTo.getX(), lineTo.getY()));
             }
         }
 
+        transformArrowHead(first, last);
         /*
         var lastX = renderPathSource.getLast().x;
         var lastY = renderPathSource.getLast().y;
@@ -166,6 +174,45 @@ public abstract class ConnectionViewElement {
         path.getElements().add(arrowHeadDownLine);
         */
     }
+
+    private static Path createDefaultHead() {
+        var arrowHead = new Path();
+        var begin = new MoveTo(0, 0);
+        final var x = -50;
+        final var y = 25;
+        var toP1 = new LineTo(x, y);
+        var toP2 = new QuadCurveTo();
+        toP2.setX(x);
+        toP2.setY(-y);
+        toP2.setControlX(x / 2.0);
+        toP2.setControlY(0);
+        var toStart = new LineTo(0, 0);
+        arrowHead.getElements().setAll(
+                begin,
+                toP1,
+                toP2,
+                toStart
+        );
+        return arrowHead;
+    }
+
+    private void transformArrowHead(Point2D start, Point2D end) {
+        var direction = end.subtract(start).normalize();
+        var angle = new Point2D(1, 0).angle(direction);
+        if (direction.getY() < 0 || direction.getX() < 0) {
+            angle *= -1;
+        }
+
+
+        //System.out.println("ANGLE: " + angle + "  " + direction);
+        arrowHead.setFill(Color.BLACK);
+        arrowHead.getTransforms().setAll(
+                new Translate(end.getX(), end.getY()),
+                new Rotate(angle, 0.0, 0.0),
+                new Scale(0.5, 0.5)
+        );
+    }
+
 
     private Point2D calculateArrowHeadPosition(Point2D start, Point2D end, double offset) {
         Point2D vector = end.subtract(start).normalize();

@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -35,7 +34,6 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
     private final Property<ContractViewModel> contractProperty;
     private final IntegerProperty priorityProperty;
     private final Property<Kind> kindProperty;
-    private final Group pane;
     private final Label label;
 
     public EdgeViewElement(EdgeViewModel edgeViewModel) {
@@ -49,7 +47,6 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
                 getPathSource().set(1, n)
         );
 
-
         this.contractProperty = new SimpleObjectProperty<>();
         this.priorityProperty = new SimpleIntegerProperty();
         this.kindProperty = new SimpleObjectProperty<>();
@@ -57,9 +54,6 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
         this.priorityProperty.bind(edgeViewModel.getPriorityProperty());
         this.kindProperty.bind(edgeViewModel.getKindProperty());
         this.edgeViewModel = edgeViewModel;
-        this.pane = new Group();
-        pane.getChildren().add(super.getPath());
-        pane.setManaged(false);
 
         this.label = new Label();
         label.setText(edgeViewModel.getRepresentation());
@@ -86,7 +80,7 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
         priorityProperty.addListener(updateLabel);
         kindProperty.addListener(updateLabel);
 
-        pane.getChildren().add(label);
+        getPane().getChildren().add(label);
 
         isLoopProperty.bind(edgeViewModel.getIsLoopProperty().and(edgeViewModel.getIsCurrentlyModified().not()));
         orientationProperty.bind(edgeViewModel.getOrientationProperty());
@@ -152,7 +146,7 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
 
     @Override
     public Node drawElement() {
-        return pane;
+        return getPane();
     }
 
     @Override
@@ -176,8 +170,8 @@ public class EdgeViewElement extends ConnectionViewElement implements ViewElemen
     }
 
     private void constructVisualization() {
-        getPath().setStroke(Color.BLACK);
-        getPath().setSmooth(true);
+        getLine().setStroke(Color.BLACK);
+        getLine().setSmooth(true);
     }
 
     @Override

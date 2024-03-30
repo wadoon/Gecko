@@ -96,7 +96,7 @@ public class CursorTool extends Tool {
     @Override
     public void visit(SystemConnectionViewElement systemConnectionViewElement) {
         super.visit(systemConnectionViewElement);
-        systemConnectionViewElement.getPath().setOnMouseClicked(event -> {
+        systemConnectionViewElement.getPane().setOnMouseClicked(event -> {
             if (event.getButton() != MouseButton.PRIMARY) {
                 return;
             }
