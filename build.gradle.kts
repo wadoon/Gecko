@@ -28,6 +28,9 @@ repositories {
 
 
 dependencies {
+    // css watcher
+    implementation("fr.brouillard.oss:cssfx:11.4.0")
+
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.1")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))

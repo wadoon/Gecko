@@ -1,9 +1,15 @@
 package org.gecko.view.inspector.element.list;
 
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import org.gecko.actions.ActionManager;
 import org.gecko.model.Visibility;
+import org.gecko.view.inspector.element.InspectorElement;
 import org.gecko.view.inspector.element.container.InspectorVariableField;
 import org.gecko.viewmodel.PortViewModel;
 import org.gecko.viewmodel.SystemViewModel;
@@ -11,68 +17,61 @@ import org.gecko.viewmodel.SystemViewModel;
 /**
  * A concrete representation of an {@link AbstractInspectorList} encapsulating an {@link InspectorVariableField}.
  */
-public class InspectorVariableList extends AbstractInspectorList<InspectorVariableField> {
-
-    private static final int MIN_HEIGHT = 60;
+public class InspectorVariableList implements InspectorElement<VBox> {
+    private static final double SPACING = 5;
+    private static final String STYLE_CLASS = "inspector-list";
 
     private final ActionManager actionManager;
     private final SystemViewModel viewModel;
     private final Visibility visibility;
 
-    public InspectorVariableList(ActionManager actionManager, SystemViewModel viewModel, Visibility visibility) {
+    private final TableView<PortViewModel> view = new TableView<>();
+    private final VBox box = new VBox(view);
+
+    public InspectorVariableList(ActionManager actionManager,
+                                 SystemViewModel viewModel,
+                                 Visibility visibility) {
         this.actionManager = actionManager;
         this.viewModel = viewModel;
         this.visibility = visibility;
 
-        setMinHeight(MIN_HEIGHT);
+        FilteredList<PortViewModel> ports = new FilteredList<>(viewModel.getPortsProperty(),
+                port -> port.getVisibility() == visibility);
+        view.itemsProperty().set(ports);
 
-        viewModel.getPortsProperty().addListener(this::onPortsListChanged);
-        viewModel.getPorts().stream().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
-        viewModel.getPorts().forEach(port -> port.getVisibilityProperty().addListener(this::onVisibilityChanged));
-    }
+        //viewModel.getPortsProperty().addListener(this::onPortsListChanged);
+        //viewModel.getPorts().stream().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
+        //viewModel.getPorts().forEach(port -> port.getVisibilityProperty().addListener(this::onVisibilityChanged));
 
-    private void onPortsListChanged(ListChangeListener.Change<? extends PortViewModel> change) {
-        while (change.next()) {
-            if (change.wasAdded()) {
-                change.getAddedSubList().forEach(port -> {
-                    port.getVisibilityProperty().addListener(this::onVisibilityChanged);
-                    if (port.getVisibility() == visibility) {
-                        addPortItem(port);
-                    }
-                });
+
+        TableColumn<PortViewModel, String> colName = new TableColumn<>("Name");
+        colName.setSortType(TableColumn.SortType.ASCENDING);
+        colName.setCellValueFactory(tcf -> tcf.getValue().getNameProperty());
+
+        TableColumn<PortViewModel, String> colDatatype = new TableColumn<>("Type");
+        colDatatype.setSortType(TableColumn.SortType.ASCENDING);
+        colDatatype.setCellValueFactory(tcf -> tcf.getValue().getTypeProperty());
+
+        view.getColumns().setAll(colName, colDatatype);
+
+        view.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.DELETE) {
+                    keyEvent.consume();
+
+                    final var selected = view.getSelectionModel().getSelectedItems();
+                    viewModel.getPortsProperty().removeAll(selected);
+                }
             }
-            if (change.wasRemoved()) {
-                change.getRemoved().forEach(port -> {
-                    if (port.getVisibility() == visibility) {
-                        removePortItem(port);
-                    }
-                });
-            }
-        }
+        });
+
+
+        view.getStyleClass().add(STYLE_CLASS);
     }
 
-    private void onVisibilityChanged(
-        ObservableValue<? extends Visibility> observable, Visibility oldValue, Visibility newValue) {
-        //Since the visibility property of a port changed we should always find that port
-        PortViewModel port = viewModel.getPorts()
-            .stream()
-            .filter(p -> p.getVisibilityProperty() == observable)
-            .findFirst()
-            .orElseThrow();
-        if (port.getVisibility() == visibility) {
-            addPortItem(port);
-        } else {
-            removePortItem(port);
-        }
+    @Override
+    public VBox getControl() {
+        return box;
     }
-
-    private void addPortItem(PortViewModel port) {
-        InspectorVariableField field = new InspectorVariableField(actionManager, port);
-        getItems().add(field);
-    }
-
-    private void removePortItem(PortViewModel port) {
-        getItems().removeIf(field -> field.getViewModel().equals(port));
-    }
-
 }

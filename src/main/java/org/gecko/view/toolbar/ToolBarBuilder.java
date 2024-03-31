@@ -32,11 +32,10 @@ public class ToolBarBuilder {
     private static final String REDO_ICON_STYLE_NAME = "redo-toolbar-icon";
     private static final int BUTTON_SIZE = 30;
 
-    private final ToolBar toolBar;
+    private final ToolBar toolBar = new ToolBar();
     private final EditorView editorView;
 
     public ToolBarBuilder(ActionManager actionManager, EditorView editorView, EditorViewModel editorViewModel) {
-        this.toolBar = new ToolBar();
         this.editorView = editorView;
         toolBar.setOrientation(Orientation.VERTICAL);
 
@@ -76,7 +75,7 @@ public class ToolBarBuilder {
         //undoButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
         //undoButton.getStyleClass().add(UNDO_ICON_STYLE_NAME);
 
-        Button redoButton = new Button(ResourceHandler.getString("Buttons", "redo"),
+        var redoButton = new Button(ResourceHandler.getString("Buttons", "redo"),
                 FontIcon.of(REDO, 24));
         toolTip =
                 "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "redo"), Shortcuts.REDO.get().getDisplayText());
@@ -85,19 +84,15 @@ public class ToolBarBuilder {
         redoButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         undoButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         toolBar.getItems().addAll(undoButton, redoButton);
-
     }
 
     private void addTools(ActionManager actionManager, ToggleGroup toggleGroup, List<Tool> toolList) {
         for (Tool tool : toolList) {
             ToolType toolType = tool.getToolType();
-            ToggleButton toolButton = new ToggleButton(toolType.getLabel(), FontIcon.of(toolType.getIcon(),24));
-            toolButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-
-            //PrefSize is important
-            toolButton.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
-            toolButton.setMaxSize(BUTTON_SIZE, BUTTON_SIZE);
-            toolButton.setMinSize(BUTTON_SIZE, BUTTON_SIZE);
+            ToggleButton toolButton = new ToggleButton(
+                    toolType.getLabel(),
+                    FontIcon.of(toolType.getIcon(),24));
+            toolButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
 
             //Would like to bind the selectedproperty of the button here but cannot because of a javafx bug
             editorView.getViewModel().getCurrentToolProperty().addListener((observable, oldValue, newValue) ->
@@ -111,10 +106,9 @@ public class ToolBarBuilder {
                 }
             });
 
-            toolButton.getStyleClass().set(0, DEFAULT_TOOLBAR_ICON_STYLE_NAME);
             //toolButton.getStyleClass().add(toolType.getIcon());
-            Tooltip tooltip =
-                    new Tooltip(toolType.getLabel() + " (" + toolType.getKeyCodeCombination().getDisplayText() + ")");
+            Tooltip tooltip = new Tooltip("%s (%s)"
+                    .formatted(toolType.getLabel(), toolType.getKeyCodeCombination().getDisplayText()));
             toolButton.setTooltip(tooltip);
             toolBar.getItems().add(toolButton);
             toggleGroup.getToggles().add(toolButton);

@@ -1,0 +1,162 @@
+@import url("gecko-base.css");
+
+* {
+    -fx-bg: #efefef;
+    -fx-fg0: #e0e0e0;
+    -fx-fg1: #d0d0d0;
+    -fx-fg2: #bababa;
+    -fx-text: #222222;
+    -fx-highlight: #ee4700;
+    -fx-highlight-hover: #ee2700;
+    -fx-highlight2: #41c2d3;
+    -fx-highlight2-hover: #4179d3;
+    -fx-highlight3: #96e876;
+    -fx-highlight3-hover: #76e88e;
+    -fx-green: #5dbb63;
+    -fx-editable: #ffffff;
+}
+
+.root {
+    -fx-focus-color: transparent;
+}
+
+.undo-toolbar-icon {
+    -fx-background-image: url('icons/Redo.png');
+}
+
+.redo-toolbar-icon {
+    -fx-background-image: url('icons/Undo.png');
+}
+
+.cursor-icon {
+    -fx-background-image: url('icons/Toolbar_Cursor.png');
+}
+
+.hand-icon {
+    -fx-background-image: url('icons/Toolbar_Hand.png');
+}
+
+.edge-icon {
+    -fx-background-image: url('icons/Toolbar_Edge.png');
+}
+
+.zoom-icon {
+    -fx-background-image: url('icons/Toolbar_Zoom.png');
+}
+
+.marquee-icon {
+    -fx-background-image: url('icons/Toolbar_Marquee.png');
+}
+
+.variable-block-creator-icon {
+    -fx-background-image: url('icons/Toolbar_Variable.png');
+}
+
+.state-creator-icon {
+    -fx-background-image: url('icons/Toolbar_State.png');
+}
+
+.system-creator-icon {
+    -fx-background-image: url('icons/Toolbar_System_Component.png');
+}
+
+.pan-icon {
+    -fx-background-image: url('icons/Toolbar_Hand.png');
+}
+
+.region-creator-icon {
+    -fx-background-image: url('icons/Toolbar_Region.png');
+}
+
+.inspector-selection-forward-button {
+    -fx-background-image: url('icons/Selection_Next.png');
+}
+
+.inspector-selection-backward-button {
+    -fx-background-image: url('icons/Selection_Previous.png');
+}
+
+.inspector-collapse-button {
+    -fx-background-image: url('icons/Inspector_Collapse.png');
+}
+
+.inspector-remove-button {
+    -fx-background-image: url('icons/Inspector_Remove.png');
+}
+
+.inspector-contract-expand-button {
+    -fx-background-image: url('icons/Inspector_Contract_Expand.png');
+    -fx-background-size: 12px 12px;
+    -icon-paint: transparent;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.inspector-contract-expanded-button {
+    -fx-background-image: url('icons/Inspector_Contract_Expanded.png');
+    -fx-background-size: 12px 12px;
+    -icon-paint: transparent;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.inspector-focus-element-button {
+    -fx-background-image: url('icons/Locate.png');
+}
+
+.floating-uncollapse-inspector-button {
+    -fx-background-image: url('icons/Inspector_Uncollapse.png');
+}
+
+.floating-zoom-in-button {
+    -fx-background-image: url('icons/Zoom_Plus.png');
+}
+
+.floating-zoom-out-button {
+    -fx-background-image: url('icons/Zoom_Minus.png');
+}
+
+.floating-parent-system-switch-button {
+    -fx-background-image: url('icons/Back_To_System.png');
+}
+
+.floating-switch-to-system-button {
+    -fx-background-image: url('icons/Toolbar_System_Component.png');
+}
+
+.floating-switch-to-automaton-button {
+    -fx-background-image: url('icons/Toolbar_State.png');
+}
+
+/*region*/
+.keyword {
+    -fx-fill: purple;
+    -fx-font-weight: bold;
+}
+.semicolon {
+    -fx-font-weight: bold;
+}
+.paren {
+    -fx-fill: firebrick;
+    -fx-font-weight: bold;
+}
+.bracket {
+    -fx-fill: darkgreen;
+    -fx-font-weight: bold;
+}
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+.string {
+    -fx-fill: blue;
+}
+
+.comment {
+    -fx-fill: cadetblue;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+/*end region*/

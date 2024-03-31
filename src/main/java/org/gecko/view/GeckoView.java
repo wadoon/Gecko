@@ -1,5 +1,6 @@
 package org.gecko.view;
 
+import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
@@ -26,6 +27,7 @@ import org.gecko.viewmodel.SystemViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -34,7 +36,6 @@ import java.util.Set;
  * editor.
  */
 public class GeckoView {
-
     private static final String STYLE_SHEET_LIGHT = "/styles/gecko.css";
     private static final String STYLE_SHEET_DARK = "/styles/gecko-dark.css";
 
@@ -63,8 +64,10 @@ public class GeckoView {
         this.openedViews = new ArrayList<>();
         this.currentViewProperty = new SimpleObjectProperty<>();
 
-        // mainPane.getStylesheets()
-        //    .add(Objects.requireNonNull(GeckoView.class.getResource(STYLE_SHEET_LIGHT)).toString());
+        mainPane.getStylesheets()
+                .add(Objects.requireNonNull(GeckoView.class.getResource(STYLE_SHEET_LIGHT)).toString());
+
+        CSSFX.start(mainPane);
 
         // Listener for current editor
         viewModel.getCurrentEditorProperty().addListener(this::onUpdateCurrentEditorFromViewModel);
