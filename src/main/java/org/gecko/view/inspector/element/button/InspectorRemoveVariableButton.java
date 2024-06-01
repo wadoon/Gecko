@@ -13,7 +13,7 @@ public class InspectorRemoveVariableButton extends AbstractInspectorButton {
 
     public InspectorRemoveVariableButton(ActionManager actionManager, PortViewModel portViewModel) {
         getStyleClass().add(ICON_STYLE_NAME);
-        setTooltip(new Tooltip(ResourceHandler.getString("Tooltips", "inspector_remove_variable")));
+        setTooltip(new Tooltip(ResourceHandler.inspector_remove_variable));
         setOnAction(event -> {
             actionManager.run(
                 actionManager.getActionFactory().createDeletePositionableViewModelElementAction(portViewModel));

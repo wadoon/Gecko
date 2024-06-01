@@ -23,7 +23,7 @@ public class InspectorCodeSystemContainer extends VBox implements InspectorEleme
             return;
         }
 
-        getChildren().add(new InspectorLabel(ResourceHandler.getString("Inspector", "code")));
+        getChildren().add(new InspectorLabel(ResourceHandler.code));
         var codeField = new InspectorCodeSystemField(actionManager, viewModel);
         codeField.prefWidthProperty().bind(widthProperty().subtract(FIELD_OFFSET));
 

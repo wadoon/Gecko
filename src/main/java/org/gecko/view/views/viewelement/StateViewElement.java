@@ -102,11 +102,11 @@ public class StateViewElement extends BlockViewElement implements ViewElement<St
 
         // center the label
         name.layoutXProperty()
-            .bind(Bindings.createDoubleBinding(() -> (stateName.getWidth() - name.getWidth()) / 2,
-                stateName.widthProperty(), name.widthProperty()));
+                .bind(Bindings.createDoubleBinding(() -> (stateName.getWidth() - name.getWidth()) / 2,
+                        stateName.widthProperty(), name.widthProperty()));
         name.layoutYProperty()
-            .bind(Bindings.createDoubleBinding(() -> (stateName.getHeight() - name.getHeight()) / 2,
-                stateName.heightProperty(), name.heightProperty()));
+                .bind(Bindings.createDoubleBinding(() -> (stateName.getHeight() - name.getHeight()) / 2,
+                        stateName.heightProperty(), name.heightProperty()));
 
         stateName.getChildren().add(name);
 
@@ -115,11 +115,11 @@ public class StateViewElement extends BlockViewElement implements ViewElement<St
 
         // Contracts
         Labeled contracts = new Label(
-            ResourceHandler.getString("Labels", "contract_plural") + ": " + stateViewModel.getContractsProperty()
-                .size());
+                ResourceHandler.contract_plural + ": " + stateViewModel.getContractsProperty()
+                        .size());
         contracts.textProperty()
-            .bind(Bindings.createStringBinding(() -> ResourceHandler.getString("Labels", "contract_plural") + ": "
-                + stateViewModel.getContractsProperty().size(), stateViewModel.getContractsProperty()));
+                .bind(Bindings.createStringBinding(() -> ResourceHandler.contract_plural + ": "
+                        + stateViewModel.getContractsProperty().size(), stateViewModel.getContractsProperty()));
 
         contents.getChildren().add(contracts);
 
@@ -149,13 +149,13 @@ public class StateViewElement extends BlockViewElement implements ViewElement<St
             contractLabel.textProperty().bind(contract.getNameProperty());
 
             HBox preconditionBox = new HBox();
-            Label preconditionLabel = new Label(ResourceHandler.getString("Labels", "pre_condition_short") + ": ");
+            Label preconditionLabel = new Label(ResourceHandler.pre_condition_short + ": ");
             Label precondition = new Label(contract.getPrecondition());
             precondition.textProperty().bind(contract.getPreConditionProperty());
             preconditionBox.getChildren().addAll(preconditionLabel, precondition);
 
             HBox postconditionBox = new HBox();
-            Label postconditionLabel = new Label(ResourceHandler.getString("Labels", "post_condition_short") + ": ");
+            Label postconditionLabel = new Label(ResourceHandler.post_condition_short + ": ");
             Label postcondition = new Label(contract.getPostcondition());
             postcondition.textProperty().bind(contract.getPostConditionProperty());
             postconditionBox.getChildren().addAll(postconditionLabel, postcondition);
@@ -180,8 +180,8 @@ public class StateViewElement extends BlockViewElement implements ViewElement<St
         isStartStateProperty.bind(stateViewModel.getIsStartStateProperty());
         contractsProperty.bind(stateViewModel.getContractsProperty());
         prefWidthProperty().bind(
-            Bindings.createDoubleBinding(() -> stateViewModel.getSize().getX(), stateViewModel.getSizeProperty()));
+                Bindings.createDoubleBinding(() -> stateViewModel.getSize().getX(), stateViewModel.getSizeProperty()));
         prefHeightProperty().bind(
-            Bindings.createDoubleBinding(() -> stateViewModel.getSize().getY(), stateViewModel.getSizeProperty()));
+                Bindings.createDoubleBinding(() -> stateViewModel.getSize().getY(), stateViewModel.getSizeProperty()));
     }
 }

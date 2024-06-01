@@ -30,12 +30,12 @@ public class StateViewElementContextMenuBuilder extends ViewContextMenuBuilder {
         SeparatorMenuItem dataTransferToStateEditingSeparator = new SeparatorMenuItem();
 
         // State editing commands:
-        MenuItem startStateMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "set_start_state"));
+        MenuItem startStateMenuItem = new MenuItem(ResourceHandler.set_start_state);
         startStateMenuItem.setDisable(stateViewModel.getIsStartState());
         startStateMenuItem.setOnAction(e -> actionManager.run(
             actionManager.getActionFactory().createSetStartStateViewModelElementAction(stateViewModel)));
 
-        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "delete"));
+        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.delete);
         deleteMenuItem.setOnAction(e -> actionManager.run(
             actionManager.getActionFactory().createDeletePositionableViewModelElementAction(stateViewModel)));
 

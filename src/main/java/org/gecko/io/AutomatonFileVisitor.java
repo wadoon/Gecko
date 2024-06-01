@@ -428,8 +428,8 @@ public class AutomatonFileVisitor extends SystemDefBaseVisitor<Void> {
         vBox.getChildren().add(comboBox);
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(ResourceHandler.getString("Warnings", "title"));
-        alert.setHeaderText(ResourceHandler.getString("Warnings", "multiple_top_level_header"));
+        alert.setTitle(ResourceHandler.title);
+        alert.setHeaderText(ResourceHandler.multiple_top_level_header);
         alert.getDialogPane().setContent(vBox);
 
         alert.setOnCloseRequest(event -> {

@@ -40,12 +40,12 @@ public class DeleteActionsCreatorVisitor
             new DeleteActionsCreatorVisitor(geckoViewModel, systemViewModel);
         for (System childSystem : systemViewModel.getTarget().getChildren()) {
             SystemViewModel childSystemViewModel = (SystemViewModel) geckoViewModel.getViewModelElement(childSystem);
-            deleteActions.addAll((Set<AbstractPositionableViewModelElementAction>) childSystemViewModel.accept(
+            deleteActions.addAll(childSystemViewModel.accept(
                 deleteActionsCreatorVisitor));
         }
 
         systemViewModel.getPorts().forEach(portViewModel -> {
-            deleteActions.addAll((Set<AbstractPositionableViewModelElementAction>) portViewModel.accept(this));
+            deleteActions.addAll(portViewModel.accept(this));
         });
 
         System system = systemViewModel.getTarget();
@@ -144,7 +144,7 @@ public class DeleteActionsCreatorVisitor
         geckoViewModel.getViewModelElements(systemConnections).forEach(systemConnectionViewModel -> {
             DeleteActionsCreatorVisitor deleteActionsCreatorVisitor =
                 new DeleteActionsCreatorVisitor(geckoViewModel, systemViewModel);
-            deleteActions.addAll((Set<AbstractPositionableViewModelElementAction>) systemConnectionViewModel.accept(
+            deleteActions.addAll(systemConnectionViewModel.accept(
                 deleteActionsCreatorVisitor));
         });
     }

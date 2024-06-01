@@ -18,8 +18,8 @@ public class InspectorAddVariableButton extends AbstractInspectorButton {
     public InspectorAddVariableButton(
         ActionManager actionManager, SystemViewModel systemViewModel, Visibility visibility) {
         getStyleClass().add(STYLE);
-        setText(ResourceHandler.getString("Buttons", "inspector_add_variable"));
-        setTooltip(new Tooltip(ResourceHandler.getString("Tooltips", "inspector_add_variable")));
+        setText(ResourceHandler.inspector_add_variable);
+        setTooltip(new Tooltip(ResourceHandler.inspector_add_variable));
         setPrefWidth(WIDTH);
         setOnAction(event -> {
             actionManager.run(actionManager.getActionFactory().createCreatePortViewModelElementAction(systemViewModel));

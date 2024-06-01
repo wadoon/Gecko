@@ -14,7 +14,7 @@ public class InspectorFocusButton extends AbstractInspectorButton {
 
     public InspectorFocusButton(ActionManager actionManager, PositionableViewModelElement<?> element) {
         getStyleClass().add(ICON_STYLE_NAME);
-        setTooltip(new Tooltip(ResourceHandler.getString("Tooltips", "inspector_focus_element")));
+        setTooltip(new Tooltip(ResourceHandler.inspector_focus_element));
         setOnAction(event -> {
             actionManager.run(actionManager.getActionFactory().createFocusPositionableViewModelElementAction(element));
         });

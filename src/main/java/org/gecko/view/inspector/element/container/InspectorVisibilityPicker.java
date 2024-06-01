@@ -13,7 +13,7 @@ import org.gecko.viewmodel.PortViewModel;
 public class InspectorVisibilityPicker extends LabeledInspectorElement {
 
     public InspectorVisibilityPicker(ActionManager actionManager, PortViewModel viewModel) {
-        super(new InspectorLabel(ResourceHandler.getString("Inspector", "visibility")),
+        super(new InspectorLabel(ResourceHandler.visibility),
             new InspectorVisibilityComboBox(actionManager, viewModel));
     }
 }

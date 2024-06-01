@@ -20,7 +20,7 @@ public class InspectorSelectionBackwardButton extends AbstractInspectorButton {
 
     public InspectorSelectionBackwardButton(ActionManager actionManager) {
         getStyleClass().add(ICON_STYLE_NAME);
-        String toolTip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "inspector_selection_backward"),
+        String toolTip = "%s (%s)".formatted(ResourceHandler.inspector_selection_backward,
             Shortcuts.SELECTION_BACK.get().getDisplayText());
         setTooltip(new Tooltip(toolTip));
         setOnAction(event -> {

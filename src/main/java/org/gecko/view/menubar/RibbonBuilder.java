@@ -97,8 +97,7 @@ public class RibbonBuilder {
 
     public Button createBigButton(String s, Ikon icon) {
         final var ico = icon == null ? null : FontIcon.of(icon, 32);
-        final var txt = s == null ? null : ResourceHandler.getString("Buttons", s);
-        Button b = new Button(txt, ico);
+        Button b = new Button(s, ico);
         b.setContentDisplay(ContentDisplay.TOP);
         if (s == null) b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         b.getStyleClass().add("big");
@@ -109,7 +108,7 @@ public class RibbonBuilder {
 
     public Button createColButton(String s, Ikon icon) {
         final var ico = icon == null ? null : FontIcon.of(icon, 16);
-        Button b = new Button(ResourceHandler.getString("Buttons", s), ico);
+        Button b = new Button(s, ico);
         b.setContentDisplay(ContentDisplay.LEFT);
         b.getStyleClass().add("normal");
         b.setWrapText(false);
@@ -119,8 +118,7 @@ public class RibbonBuilder {
 
     private RibbonGroup setupFileMenu() {
         var fileMenu = new RibbonGroup();
-        fileMenu.setTitle(ResourceHandler.getString("Labels", "file"));
-
+        fileMenu.setTitle(ResourceHandler.file);
         Button newFileItem = createBigButton("new", FILE);
         newFileItem.setOnAction(e -> GeckoIOManager.getInstance().createNewProject());
         view.addMnemonic(newFileItem,Shortcuts.NEW.get());
@@ -189,7 +187,7 @@ public class RibbonBuilder {
     }
 
     private RibbonGroup setupEditMenu() {
-        var editMenu = new RibbonGroup();//ResourceHandler.getString("Labels", "edit"));
+        var editMenu = new RibbonGroup();//ResourceHandler.edit);
 
         // Edit history navigation:
         Button undoButton = createBigButton("undo", UNDO);
@@ -245,19 +243,8 @@ public class RibbonBuilder {
         return editMenu;
     }
 
-    /*private CustomButton getRenameRootSystemCustomButton() {
-        GeckoViewModel viewModel = view.getViewModel();
-        TextField renameRootSystemTextField = new InspectorRenameField(actionManager,
-                (Renamable) viewModel.getViewModelElement(viewModel.getGeckoModel().getRoot()));
-        Label renameRootSystemLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "rename_root_system"));
-        VBox renameRootSystemContainer = new VBox(renameRootSystemLabel, renameRootSystemTextField);
-        CustomButton renameRootSystemCustomButton = new CustomButton(renameRootSystemContainer, false);
-        renameRootSystemCustomButton.setOnAction(e -> renameRootSystemTextField.requestFocus());
-        return renameRootSystemCustomButton;
-    }*/
-
     private RibbonGroup setupViewMenu() {
-        var viewMenu = new RibbonGroup(); // ResourceHandler.getString("Labels", "view"));
+        var viewMenu = new RibbonGroup(); // ResourceHandler.view);
 
         // View change commands:
         Button changeViewButton = createColButton("change_view", TOGGLE_SWITCH);
@@ -303,7 +290,7 @@ public class RibbonBuilder {
     }
 
     private RibbonGroup setupToolsMenu() {
-        var toolsMenu = new RibbonGroup();// (ResourceHandler.getString("Labels", "tools"));
+        var toolsMenu = new RibbonGroup();// (ResourceHandler.tools);
 
         // General tools:
         Button cursorButton = new Button(ToolType.CURSOR.getLabel());

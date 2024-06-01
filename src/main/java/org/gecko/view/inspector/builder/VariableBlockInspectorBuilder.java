@@ -29,7 +29,7 @@ public class VariableBlockInspectorBuilder extends AbstractInspectorBuilder<Port
         addInspectorElement(new InspectorTypeLabel(actionManager, viewModel));
 
         // Value
-        addInspectorElement(new InspectorLabel(ResourceHandler.getString("Inspector", "variable_value")));
+        addInspectorElement(new InspectorLabel(ResourceHandler.variable_value));
         addInspectorElement(new InspectorVariableValueField(actionManager, viewModel));
     }
 }

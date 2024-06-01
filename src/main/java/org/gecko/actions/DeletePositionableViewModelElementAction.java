@@ -38,7 +38,7 @@ public class DeletePositionableViewModelElementAction extends Action {
                 new DeleteActionsCreatorVisitor(geckoViewModel, geckoViewModel.getCurrentEditor().getCurrentSystem());
             Set<AbstractPositionableViewModelElementAction> foundDeleteActions;
             try {
-                foundDeleteActions = (Set<AbstractPositionableViewModelElementAction>) element.accept(visitor);
+                foundDeleteActions = element.accept(visitor);
             } catch (ClassCastException e) {
                 throw new GeckoException("Error while deleting element");
             }

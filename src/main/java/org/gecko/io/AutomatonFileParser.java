@@ -61,8 +61,8 @@ public class AutomatonFileParser implements FileParser {
 
     private void showWarnings(Set<String> warnings) {
         Alert warningAlert = new Alert(Alert.AlertType.WARNING);
-        warningAlert.setTitle(ResourceHandler.getString("Warnings", "title"));
-        warningAlert.setHeaderText(ResourceHandler.getString("Warnings", "parse_header"));
+        warningAlert.setTitle(ResourceHandler.title);
+        warningAlert.setHeaderText(ResourceHandler.parse_header);
         warningAlert.setContentText(String.join(System.lineSeparator(), warnings));
         warningAlert.showAndWait();
     }

@@ -43,7 +43,7 @@ public class ViewContextMenuBuilder {
         ContextMenu contextMenu = new ContextMenu();
 
         // Data transfer commands:
-        MenuItem cutMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "cut"));
+        MenuItem cutMenuItem = new MenuItem(ResourceHandler.cut);
         cutMenuItem.setOnAction(e -> {
             actionManager.run(actionManager.getActionFactory().createCopyPositionableViewModelElementAction());
             actionManager.run(actionManager.getActionFactory().createDeletePositionableViewModelElementAction());
@@ -56,7 +56,7 @@ public class ViewContextMenuBuilder {
                     editorViewModel.getSelectionManager().getCurrentSelectionProperty()));
         }
 
-        MenuItem copyMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "copy"));
+        MenuItem copyMenuItem = new MenuItem(ResourceHandler.copy);
         copyMenuItem.setOnAction(
             e -> actionManager.run(actionManager.getActionFactory().createCopyPositionableViewModelElementAction()));
         copyMenuItem.setAccelerator(Shortcuts.COPY.get());
@@ -67,7 +67,7 @@ public class ViewContextMenuBuilder {
                     editorViewModel.getSelectionManager().getCurrentSelectionProperty()));
         }
 
-        MenuItem pasteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "paste"));
+        MenuItem pasteMenuItem = new MenuItem(ResourceHandler.paste);
         pasteMenuItem.setOnAction(e -> {
             Point2D center = editorView.getViewElementPane().screenCenterWorldCoords();
             actionManager.run(actionManager.getActionFactory().createPastePositionableViewModelElementAction(center));
@@ -77,7 +77,7 @@ public class ViewContextMenuBuilder {
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
         separatorMenuItem.setText("");
 
-        MenuItem selectMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "select_all"));
+        MenuItem selectMenuItem = new MenuItem(ResourceHandler.select_all);
         selectMenuItem.setOnAction(e -> actionManager.run(actionManager.getActionFactory()
             .createSelectAction(editorViewModel.getPositionableViewModelElements(), true)));
         selectMenuItem.setAccelerator(Shortcuts.SELECT_ALL.get());
@@ -88,7 +88,7 @@ public class ViewContextMenuBuilder {
                     editorViewModel.getContainedPositionableViewModelElementsProperty()));
         }
 
-        MenuItem deselectMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "deselect_all"));
+        MenuItem deselectMenuItem = new MenuItem(ResourceHandler.deselect_all);
         deselectMenuItem.setOnAction(e -> actionManager.run(actionManager.getActionFactory().createDeselectAction()));
         deselectMenuItem.setAccelerator(Shortcuts.DESELECT_ALL.get());
         if (editorViewModel != null) {

@@ -1,15 +1,11 @@
 package org.gecko.model;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.gecko.exceptions.MissingViewModelElementException;
 import org.gecko.exceptions.ModelException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ElementTest {
     static Element element;
@@ -37,7 +33,7 @@ public class ElementTest {
 
     @Test
     void testEquals() {
-        assertTrue(element.equals(element));
+        assertEquals(element, element);
 
         final Element[] other = new Element[4];
         assertDoesNotThrow(() -> other[0] = new Element(1) {
@@ -56,10 +52,10 @@ public class ElementTest {
         assertDoesNotThrow(() -> other[2] = new State(2, "state"));
         assertDoesNotThrow(() -> other[3] = new State(0, "state"));
 
-        assertFalse(element.equals(other[0]));
-        assertTrue(element.equals(other[1]));
-        assertFalse(element.equals(other[2]));
-        assertTrue(element.equals(other[3]));
-        assertFalse(element.equals(null));
+        assertNotEquals(element, other[0]);
+        assertEquals(element, other[1]);
+        assertNotEquals(element, other[2]);
+        assertEquals(element, other[3]);
+        assertNotEquals(null, element);
     }
 }

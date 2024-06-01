@@ -112,16 +112,16 @@ public class RegionViewElement extends BlockViewElement implements ViewElement<R
         GridPane gridPane = new GridPane();
         gridPane.getStyleClass().add(INNER_STYLE);
 
-        Label nameDesc = new Label(ResourceHandler.getString("Labels", "name") + ": ");
+        Label nameDesc = new Label(ResourceHandler.name + ": ");
         Label name = new Label();
         name.textProperty().bind(nameProperty);
-        Label preConditionDesc = new Label(ResourceHandler.getString("Labels", "pre_condition_short") + ": ");
+        Label preConditionDesc = new Label(ResourceHandler.pre_condition_short + ":") ;
         Label preCondition = new Label();
         preCondition.textProperty().bind(regionViewModel.getContract().getPreConditionProperty());
-        Label postConditionDesc = new Label(ResourceHandler.getString("Labels", "post_condition_short") + ": ");
+        Label postConditionDesc = new Label(ResourceHandler.post_condition_short + ":");
         Label postCondition = new Label();
         postCondition.textProperty().bind(regionViewModel.getContract().getPostConditionProperty());
-        Label invariantDesc = new Label(ResourceHandler.getString("Labels", "invariant_short") + ": ");
+        Label invariantDesc = new Label(ResourceHandler.invariant_short + ": ");
         Label invariant = new Label();
         invariant.textProperty().bind(invariantProperty);
         gridPane.add(nameDesc, 0, 0);

@@ -52,7 +52,7 @@ public class InspectorContractItem extends VBox implements InspectorElement<VBox
 
         GridPane contractConditions = new GridPane();
 
-        InspectorLabel preConditionLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "pre_condition"));
+        InspectorLabel preConditionLabel = new InspectorLabel(ResourceHandler.pre_condition);
         InspectorAreaField preConditionField = new InspectorPreconditionField(actionManager, contractViewModel);
         contractFields.add(preConditionField);
         preConditionField.prefWidthProperty().bind(widthProperty().subtract(FIELD_OFFSET));
@@ -61,7 +61,7 @@ public class InspectorContractItem extends VBox implements InspectorElement<VBox
 
 
         InspectorLabel postConditionLabel =
-            new InspectorLabel(ResourceHandler.getString("Inspector", "post_condition"));
+            new InspectorLabel(ResourceHandler.post_condition);
         InspectorAreaField postConditionField = new InspectorPostconditionField(actionManager, contractViewModel);
         contractFields.add(postConditionField);
         postConditionField.prefWidthProperty().bind(widthProperty().subtract(FIELD_OFFSET));
@@ -90,11 +90,11 @@ public class InspectorContractItem extends VBox implements InspectorElement<VBox
     public InspectorContractItem(ActionManager actionManager, RegionViewModel regionViewModel) {
 
         GridPane regionConditions = new GridPane();
-        addContractItem(ResourceHandler.getString("Inspector", "pre_condition"),
+        addContractItem(ResourceHandler.pre_condition,
             new InspectorPreconditionField(actionManager, regionViewModel.getContract()), 0, regionConditions);
-        addContractItem(ResourceHandler.getString("Inspector", "post_condition"),
+        addContractItem(ResourceHandler.post_condition,
             new InspectorPostconditionField(actionManager, regionViewModel.getContract()), 1, regionConditions);
-        addContractItem(ResourceHandler.getString("Inspector", "invariant"),
+        addContractItem(ResourceHandler.invariant,
             new InspectorInvariantField(actionManager, regionViewModel), 2, regionConditions);
 
         // Build the contract item

@@ -29,9 +29,9 @@ public class EdgeInspectorBuilder extends AbstractInspectorBuilder<EdgeViewModel
 
         // Connected states
         addInspectorElement(new InspectorEdgeStateLabel(actionManager, viewModel.getSource(),
-            ResourceHandler.getString("Inspector", "source")));
+            ResourceHandler.source));
         addInspectorElement(new InspectorEdgeStateLabel(actionManager, viewModel.getDestination(),
-            ResourceHandler.getString("Inspector", "target")));
+            ResourceHandler.target));
         addInspectorElement(new InspectorSeparator());
 
         // Priority
@@ -39,7 +39,7 @@ public class EdgeInspectorBuilder extends AbstractInspectorBuilder<EdgeViewModel
         addInspectorElement(new InspectorSeparator());
 
         // Contracts
-        addInspectorElement(new InspectorLabel(ResourceHandler.getString("Inspector", "contract_plural")));
+        addInspectorElement(new InspectorLabel(ResourceHandler.contract_plural));
         addInspectorElement(new InspectorContractComboBox(actionManager, viewModel));
     }
 }

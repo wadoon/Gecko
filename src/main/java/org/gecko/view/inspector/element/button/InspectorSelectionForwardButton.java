@@ -18,7 +18,7 @@ public class InspectorSelectionForwardButton extends AbstractInspectorButton {
 
     public InspectorSelectionForwardButton(ActionManager actionManager) {
         getStyleClass().add(ICON_STYLE_NAME);
-        String toolTip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "inspector_selection_forward"),
+        String toolTip = "%s (%s)".formatted(ResourceHandler.inspector_selection_forward,
             Shortcuts.SELECTION_FORWARD.get().getDisplayText());
         setTooltip(new Tooltip(toolTip));
         setOnAction(event -> {

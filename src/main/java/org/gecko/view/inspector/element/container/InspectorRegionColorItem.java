@@ -13,7 +13,7 @@ import org.gecko.viewmodel.RegionViewModel;
 public class InspectorRegionColorItem extends LabeledInspectorElement {
 
     public InspectorRegionColorItem(ActionManager actionManager, RegionViewModel regionViewModel) {
-        super(new InspectorLabel(ResourceHandler.getString("Inspector", "color")),
+        super(new InspectorLabel(ResourceHandler.color),
             new InspectorColorPicker(actionManager, regionViewModel));
     }
 }

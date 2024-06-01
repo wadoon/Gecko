@@ -13,7 +13,7 @@ import org.gecko.viewmodel.EdgeViewModel;
 public class InspectorKindPicker extends LabeledInspectorElement {
 
     public InspectorKindPicker(ActionManager actionManager, EdgeViewModel viewModel) {
-        super(new InspectorLabel(ResourceHandler.getString("Inspector", "kind")),
+        super(new InspectorLabel(ResourceHandler.kind),
             new InspectorKindComboBox(actionManager, viewModel));
     }
 }

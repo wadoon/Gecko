@@ -32,14 +32,14 @@ public class InspectorVariableField extends VBox implements InspectorElement<VBo
         HBox typeContainer = new HBox();
 
 
-        var nameLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "name"));
+        var nameLabel = new InspectorLabel(ResourceHandler.name);
         var variableNameField = new InspectorRenameField(actionManager, portViewModel);
         var deleteButton = new InspectorRemoveVariableButton(actionManager, portViewModel);
         nameAndDeleteContainer.getChildren().addAll(
                 nameLabel.getControl(), variableNameField.getControl(),
                 spacer, deleteButton.getControl());
 
-        var typeLabel = new InspectorLabel(ResourceHandler.getString("Inspector", "type"));
+        var typeLabel = new InspectorLabel(ResourceHandler.type);
         var typeField = new InspectorTypeComboBox(actionManager, portViewModel);
 
         typeContainer.getChildren().addAll(typeLabel.getControl(), typeField.getControl());

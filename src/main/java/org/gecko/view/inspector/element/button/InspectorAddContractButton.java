@@ -15,8 +15,8 @@ public class InspectorAddContractButton extends AbstractInspectorButton {
 
     public InspectorAddContractButton(ActionManager actionManager, StateViewModel stateViewModel) {
         getStyleClass().add(STYLE);
-        setText(ResourceHandler.getString("Buttons", "inspector_add_contract"));
-        setTooltip(new Tooltip(ResourceHandler.getString("Tooltips", "inspector_add_contract")));
+        setText(ResourceHandler.inspector_add_contract);
+        setTooltip(new Tooltip(ResourceHandler.inspector_add_contract));
         setPrefWidth(WIDTH);
         setOnAction(event -> {
             actionManager.run(

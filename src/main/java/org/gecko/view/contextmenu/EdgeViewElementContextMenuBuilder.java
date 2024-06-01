@@ -33,7 +33,7 @@ public class EdgeViewElementContextMenuBuilder extends ViewContextMenuBuilder {
         SeparatorMenuItem dataTransferToEdgeEditingSeparator = new SeparatorMenuItem();
 
         // Edge editing commands:
-        Menu changeKindMenu = new Menu(ResourceHandler.getString("Buttons", "change_kind"));
+        Menu changeKindMenu = new Menu(ResourceHandler.change_kind);
 
         for (Kind kind : Kind.values()) {
             MenuItem kindMenuItem = createKindMenuItem(kind);
@@ -45,7 +45,7 @@ public class EdgeViewElementContextMenuBuilder extends ViewContextMenuBuilder {
             changeKindMenu.getItems().add(kindMenuItem);
         }
 
-        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "delete"));
+        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.delete);
         deleteMenuItem.setOnAction(e -> actionManager.run(
             actionManager.getActionFactory().createDeletePositionableViewModelElementAction(edgeViewModel)));
 

@@ -63,11 +63,11 @@ public class ToolBarBuilder {
 
         toolBar.getItems().add(spacer);
 
-        Button undoButton = new Button(ResourceHandler.getString("Buttons", "undo"),
+        Button undoButton = new Button(ResourceHandler.undo,
                 FontIcon.of(UNDO, 24));
 
         String toolTip = "%s (%s)".formatted(
-                ResourceHandler.getString("Tooltips", "undo"),
+                ResourceHandler.undo,
                 Shortcuts.UNDO.get().getDisplayText());
 
         undoButton.setTooltip(new Tooltip(toolTip));
@@ -75,10 +75,10 @@ public class ToolBarBuilder {
         //undoButton.getStyleClass().add(DEFAULT_TOOLBAR_ICON_STYLE_NAME);
         //undoButton.getStyleClass().add(UNDO_ICON_STYLE_NAME);
 
-        var redoButton = new Button(ResourceHandler.getString("Buttons", "redo"),
+        var redoButton = new Button(ResourceHandler.redo,
                 FontIcon.of(REDO, 24));
         toolTip =
-                "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "redo"), Shortcuts.REDO.get().getDisplayText());
+                "%s (%s)".formatted(ResourceHandler.redo, Shortcuts.REDO.get().getDisplayText());
         redoButton.setTooltip(new Tooltip(toolTip));
         redoButton.setOnAction(event -> actionManager.redo());
         redoButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);

@@ -51,11 +51,9 @@ public class FloatingUIBuilder {
         Button zoomInButton = createStyledButton();
         zoomInButton.setGraphic(FontIcon.of(MaterialDesignM.MAGNIFY_PLUS,24));
         zoomInButton.getStyleClass().add(ZOOM_IN_STYLE_CLASS);
-        zoomInButton.setOnAction(event -> {
-            actionManager.run(
-                actionManager.getActionFactory().createZoomCenterAction(EditorViewModel.getDefaultZoomStep()));
-        });
-        String zoomInTooltip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "zoom_in"),
+        zoomInButton.setOnAction(event -> actionManager.run(
+            actionManager.getActionFactory().createZoomCenterAction(EditorViewModel.getDefaultZoomStep())));
+        String zoomInTooltip = "%s (%s)".formatted(ResourceHandler.zoom_in,
             Shortcuts.ZOOM_IN.get().getDisplayText());
         zoomInButton.setTooltip(new Tooltip(zoomInTooltip));
 
@@ -70,7 +68,7 @@ public class FloatingUIBuilder {
         zoomOutButton.getStyleClass().add(ZOOM_OUT_STYLE_CLASS);
         zoomOutButton.setOnAction(event -> actionManager.run(
             actionManager.getActionFactory().createZoomCenterAction(1 / EditorViewModel.getDefaultZoomStep())));
-        String zoomOutTooltip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "zoom_out"),
+        String zoomOutTooltip = "%s (%s)".formatted(ResourceHandler.zoom_out,
             Shortcuts.ZOOM_OUT.get().getDisplayText());
         zoomOutButton.setTooltip(new Tooltip(zoomOutTooltip));
 
@@ -105,7 +103,7 @@ public class FloatingUIBuilder {
 
         final List<PositionableViewModelElement<?>> matches = new ArrayList<>();
         TextField searchTextField = new TextField();
-        searchTextField.setPromptText(ResourceHandler.getString("Labels", "search"));
+        searchTextField.setPromptText(ResourceHandler.search);
 
         searchBar.getItems().addAll(closeButton, searchTextField, backwardButton, forwardButton, matchesLabel);
 
@@ -119,11 +117,11 @@ public class FloatingUIBuilder {
                 actionManager.run(
                     actionManager.getActionFactory().createFocusPositionableViewModelElementAction(matches.getFirst()));
                 matchesLabel.setText(
-                    String.format(ResourceHandler.getString("Labels", "matches_format_string"), 1, matches.size()));
+                    String.format(ResourceHandler.matches_format_string, 1, matches.size()));
                 backwardButton.setDisable(true);
                 forwardButton.setDisable(matches.size() == 1);
             } else {
-                matchesLabel.setText(String.format(ResourceHandler.getString("Labels", "matches_format_string"), 0, 0));
+                matchesLabel.setText(String.format(ResourceHandler.matches_format_string, 0, 0));
                 backwardButton.setDisable(true);
                 forwardButton.setDisable(true);
             }
@@ -158,7 +156,7 @@ public class FloatingUIBuilder {
             .createFocusPositionableViewModelElementAction(matches.get(currentPosition + direction)));
         currentPosition += direction;
         matchesLabel.setText(
-            String.format(ResourceHandler.getString("Labels", "matches_format_string"), currentPosition + 1,
+            String.format(ResourceHandler.matches_format_string, currentPosition + 1,
                 matches.size()));
         backwardButton.setDisable(currentPosition == 0);
         forwardButton.setDisable(currentPosition == matches.size() - 1);
@@ -188,7 +186,7 @@ public class FloatingUIBuilder {
         switchViewButton.setGraphic(FontIcon.of(
                 editorViewModel.isAutomatonEditor() ? MaterialDesignR.RECTANGLE_OUTLINE : MaterialDesignC.CIRCLE_OUTLINE,24));
 
-        String switchViewTooltip = "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "switch_view"),
+        String switchViewTooltip = "%s (%s)".formatted(ResourceHandler.switch_view,
             Shortcuts.SWITCH_EDITOR.get().getDisplayText());
         switchViewButton.setTooltip(new Tooltip(switchViewTooltip));
 
@@ -202,7 +200,7 @@ public class FloatingUIBuilder {
             parentSystemSwitchButton.setOnAction(event -> actionManager.run(actionManager.getActionFactory()
                 .createViewSwitchAction(editorViewModel.getParentSystem(), editorViewModel.isAutomatonEditor())));
             String parentSystemSwitchTooltip =
-                "%s (%s)".formatted(ResourceHandler.getString("Tooltips", "parent_system"),
+                "%s (%s)".formatted(ResourceHandler.parent_system,
                     Shortcuts.OPEN_PARENT_SYSTEM_EDITOR.get().getDisplayText());
             parentSystemSwitchButton.setTooltip(new Tooltip(parentSystemSwitchTooltip));
 

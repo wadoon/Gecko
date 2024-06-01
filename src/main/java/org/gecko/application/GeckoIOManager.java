@@ -77,7 +77,7 @@ public class GeckoIOManager {
             gvm = projectFileParser.parse(fileToLoad);
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR,
-                ResourceHandler.getString("Warnings", "corrupted_file") + fileToLoad.getPath() + ".", ButtonType.OK);
+                ResourceHandler.corrupted_file + fileToLoad.getPath() + ".", ButtonType.OK);
             alert.showAndWait();
             return;
         }
@@ -99,7 +99,7 @@ public class GeckoIOManager {
             gvm = automatonFileParser.parse(file);
         } catch (IOException e) {
             String message =
-                ResourceHandler.getString("Warnings", "could_not_read_file") + "%s.%s%s".formatted(file.getPath(),
+                ResourceHandler.could_not_read_file + "%s.%s%s".formatted(file.getPath(),
                     System.lineSeparator(), e.getMessage());
             Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
             alert.showAndWait();
@@ -121,7 +121,7 @@ public class GeckoIOManager {
             projectFileSerializer.writeToFile(file);
         } catch (IOException e) {
             Alert alert =
-                new Alert(Alert.AlertType.ERROR, ResourceHandler.getString("Warnings", "could_not_write_file"),
+                new Alert(Alert.AlertType.ERROR, ResourceHandler.could_not_write_file,
                     ButtonType.OK);
             alert.showAndWait();
         }
@@ -138,7 +138,7 @@ public class GeckoIOManager {
             fileSerializer.writeToFile(file);
         } catch (IOException e) {
             Alert alert =
-                new Alert(Alert.AlertType.ERROR, ResourceHandler.getString("Warnings", "could_not_write_file"),
+                new Alert(Alert.AlertType.ERROR, ResourceHandler.could_not_write_file,
                     ButtonType.OK);
             alert.showAndWait();
         }
@@ -170,9 +170,9 @@ public class GeckoIOManager {
 
     private void launchSaveChangesAlert() throws GeckoException {
         Alert saveChangesAlert =
-            new Alert(Alert.AlertType.NONE, ResourceHandler.getString("Labels", "save_changes_prompt"), ButtonType.YES,
+            new Alert(Alert.AlertType.NONE, ResourceHandler.save_changes_prompt, ButtonType.YES,
                 ButtonType.NO);
-        saveChangesAlert.setTitle(ResourceHandler.getString("Labels", "confirm_exit"));
+        saveChangesAlert.setTitle(ResourceHandler.confirm_exit);
         saveChangesAlert.showAndWait();
 
         if (saveChangesAlert.getResult().equals(ButtonType.NO)) {

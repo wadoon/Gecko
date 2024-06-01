@@ -31,7 +31,7 @@ public class RegionViewElementContextMenuBuilder extends ViewContextMenuBuilder 
         SeparatorMenuItem dataTransferToRegionEditingSeparator = new SeparatorMenuItem();
 
         // Region editing commands:
-        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "delete"));
+        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.delete);
         deleteMenuItem.setOnAction(e -> actionManager.run(
             actionManager.getActionFactory().createDeletePositionableViewModelElementAction(regionViewModel)));
 

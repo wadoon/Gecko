@@ -31,7 +31,7 @@ public class SystemConnectionViewElementContextMenuBuilder extends ViewContextMe
         SeparatorMenuItem dataTransferToEdgeEditingSeparator = new SeparatorMenuItem();
 
         // SystemConnection editing commands:
-        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "delete"));
+        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.delete);
         deleteMenuItem.setOnAction(e -> actionManager.run(actionManager.getActionFactory()
             .createDeletePositionableViewModelElementAction(systemConnectionViewModel)));
 

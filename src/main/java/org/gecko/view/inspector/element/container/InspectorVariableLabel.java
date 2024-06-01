@@ -21,8 +21,8 @@ public class InspectorVariableLabel extends LabeledInspectorElement {
     //Cant be public because it is called in the super constructor
     private static String getLabel(Visibility visibility) {
         return switch (visibility) {
-            case INPUT -> ResourceHandler.getString("Inspector", "input");
-            case OUTPUT -> ResourceHandler.getString("Inspector", "output");
+            case INPUT -> ResourceHandler.input;
+            case OUTPUT -> ResourceHandler.output;
             default -> "";
         };
     }

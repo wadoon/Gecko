@@ -13,7 +13,7 @@ import org.gecko.viewmodel.PortViewModel;
 public class InspectorTypeLabel extends LabeledInspectorElement {
 
     public InspectorTypeLabel(ActionManager actionManager, PortViewModel viewModel) {
-        super(new InspectorLabel(ResourceHandler.getString("Inspector", "type")),
+        super(new InspectorLabel(ResourceHandler.type),
             new InspectorTypeComboBox(actionManager, viewModel));
     }
 }

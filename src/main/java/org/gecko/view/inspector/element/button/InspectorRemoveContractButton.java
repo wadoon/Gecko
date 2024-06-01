@@ -16,7 +16,7 @@ public class InspectorRemoveContractButton extends AbstractInspectorButton {
     public InspectorRemoveContractButton(
         ActionManager actionManager, StateViewModel stateViewModel, ContractViewModel contractViewModel) {
         getStyleClass().add(ICON_STYLE_NAME);
-        setTooltip(new Tooltip(ResourceHandler.getString("Tooltips", "inspector_remove_contract")));
+        setTooltip(new Tooltip(ResourceHandler.inspector_remove_contract));
         setOnAction(event -> {
             getParent().requestFocus();
             actionManager.run(actionManager.getActionFactory()

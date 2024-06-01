@@ -13,7 +13,7 @@ import org.gecko.viewmodel.EdgeViewModel;
 public class InspectorPriorityLabel extends LabeledInspectorElement {
 
     public InspectorPriorityLabel(ActionManager actionManager, EdgeViewModel viewModel) {
-        super(new InspectorLabel(ResourceHandler.getString("Inspector", "priority")),
+        super(new InspectorLabel(ResourceHandler.priority),
             new InspectorPriorityField(actionManager, viewModel));
     }
 }

@@ -30,7 +30,7 @@ public class VariableBlockViewElementContextMenuBuilder extends ViewContextMenuB
         SeparatorMenuItem dataTransferToVariableBlockEditingSeparator = new SeparatorMenuItem();
 
         // Variable Block editing commands:
-        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.getString("Buttons", "delete"));
+        MenuItem deleteMenuItem = new MenuItem(ResourceHandler.delete);
         deleteMenuItem.setOnAction(e -> actionManager.run(
             actionManager.getActionFactory().createDeletePositionableViewModelElementAction(portViewModel)));
 
