@@ -8,9 +8,9 @@ plugins {
     id("application")
     id("antlr")
     id("org.openjfx.javafxplugin") version "0.1.0"
-    //id("net.ltgt.errorprone") version "3.1.0"
-    id("io.freefair.lombok") version "8.4"
     id("pmd")
+    kotlin("jvm")
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 group = "org.gecko"
@@ -28,17 +28,12 @@ repositories {
 
 
 dependencies {
-    // css watcher
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("fr.brouillard.oss:cssfx:11.4.0")
-
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.16.1")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.testfx:testfx-junit5:4.0.18")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-
-    //errorprone("com.google.errorprone:error_prone_core:2.23.0")
 
     implementation("org.antlr:antlr4-runtime:4.13.1")
     antlr("org.antlr:antlr4:4.13.1")
@@ -51,21 +46,21 @@ dependencies {
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
     implementation("com.pixelduke:fxribbon:1.2.2")
     implementation("com.miglayout:miglayout-javafx:11.3")
-//implementation("org.kordamp.ikonli:ikonli-materialdesign-pack:12.3.1")
     implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
-
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
     implementation("org.jfxtras:jmetro:11.6.15")
+    implementation("io.github.mkpaz:atlantafx-base:2.0.1")
+
+    implementation("no.tornado:tornadofx:1.7.20")
+
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    //options.errorprone.disable("SameNameButDifferent")
-    //options.errorprone.disableWarningsInGeneratedCode.set(true)
+    options.release = 21
 }
 
-checkstyle {
-    toolVersion = "10.12.5"
-}
+checkstyle { toolVersion = "10.12.5" }
 
 val generateGrammarSource by tasks.existing(AntlrTask::class) {
     arguments.add("-visitor")
@@ -94,17 +89,18 @@ tasks.jacocoTestReport {
     }))
 }
 
-pmd {
-// Disabling build failure on rule violations
-    isIgnoreFailures = true
-}
+pmd { isIgnoreFailures = true }
 
-application {
-    mainClass.set("org.gecko.application.Main")
-}
+application { mainClass.set("org.gecko.application.Main") }
 
 tasks {
     shadowJar {
         exclude("module-info.class")
     }
 }
+
+kotlin {
+    jvmToolchain(21)
+}
+
+tasks.getByName("compileKotlin").dependsOn(generateGrammarSource)
