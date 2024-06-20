@@ -1,5 +1,6 @@
 package org.gecko.application
 
+import atlantafx.base.theme.PrimerDark
 import atlantafx.base.theme.PrimerLight
 import javafx.application.Application
 import javafx.scene.Scene
@@ -15,27 +16,20 @@ import java.util.function.Consumer
  * Represents a manager for the active [Gecko]. Additionally, holds a reference to the [Stage] of the
  * application.
  */
-class GeckoManager(val stage: Stage) {
+class GeckoManager(val stage: Stage, gecko: Gecko = Gecko()) {
     var gecko: Gecko = Gecko()
-        set(value) {
-            field = value
-            val scene = Scene(value.view.mainPane, SCENE_WIDTH, SCENE_HEIGHT)
-            value.view.mnemonicsProperty().forEach(Consumer { mnemonic: Mnemonic? -> scene.addMnemonic(mnemonic) })
-            stage.scene = scene
-            //metro.scene = scene
-            //metro.reApplyTheme()
 
-            Application.setUserAgentStylesheet(PrimerLight().userAgentStylesheet)
-            //Application.setUserAgentStylesheet(PrimerDark().userAgentStylesheet)
+    init {
+        val scene = Scene(gecko.view.mainPane, SCENE_WIDTH, SCENE_HEIGHT)
+        gecko.view.mnemonicsProperty().forEach(Consumer { mnemonic: Mnemonic? -> scene.addMnemonic(mnemonic) })
+        stage.scene = scene
 
-            gecko.view.darkModeProperty().onChange { n -> setStyle(if (n) Style.DARK else Style.LIGHT) }
+        gecko.view.darkModeProperty().onChange { n ->
+            Application.setUserAgentStylesheet(
+                if (!n) PrimerLight().userAgentStylesheet
+                else PrimerDark().userAgentStylesheet
+            )
         }
-
-    val metro = JMetro(Style.LIGHT)
-
-    fun setStyle(style: Style?) {
-        metro.style = style
-        metro.reApplyTheme()
     }
 
     companion object {

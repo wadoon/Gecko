@@ -10,9 +10,9 @@ class App : Application() {
         // Initialize Gecko
         stage.title = "Gecko"
         stage.icons.add(Image("file:gecko_logo.png"))
-        stage.show()
         val geckoManager = GeckoManager(stage)
         GeckoIOManager.geckoManager = geckoManager
         GeckoIOManager.stage = stage
+        stage.show()
     }
 }

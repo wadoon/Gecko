@@ -1,5 +1,10 @@
 package org.gecko.model
 
+import javafx.beans.property.SimpleListProperty
+import javafx.collections.FXCollections
+import tornadofx.getValue
+import tornadofx.setValue
+
 /**
  * Represents the Model component of a [Gecko][org.gecko.application.Gecko]. Holds the root-[System] and a
  * [ModelFactory], which allow the creation of and access to Gecko's elements, the data and dependencies of which
@@ -7,6 +12,10 @@ package org.gecko.model
  */
 class GeckoModel(val root: System = System()) {
     val modelFactory: ModelFactory = ModelFactory(this)
+
+    val knownVariantGroupsProperty: SimpleListProperty<VariantGroup> = SimpleListProperty<VariantGroup>(FXCollections.observableArrayList())
+    var knownVariantGroups by knownVariantGroupsProperty
+
     var globalCode: String? = null
     var globalDefines: String? = null
 

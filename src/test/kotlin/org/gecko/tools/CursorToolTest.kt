@@ -29,7 +29,7 @@ internal class CursorToolTest {
     private fun start(stage: Stage) {
         stage.show()
 
-        val geckoManager = GeckoManager(stage)
+        val geckoManager = GeckoManager(stage, null)
         GeckoIOManager.geckoManager = geckoManager
         GeckoIOManager.stage = stage
 

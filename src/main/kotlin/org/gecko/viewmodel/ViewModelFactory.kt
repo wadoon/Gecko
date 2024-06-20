@@ -25,7 +25,7 @@ class ViewModelFactory(
     var viewModelElementId = 0
 
     fun createEditorViewModel(
-        systemViewModel: SystemViewModel, parentSystem: SystemViewModel, isAutomatonEditor: Boolean
+        systemViewModel: SystemViewModel, parentSystem: SystemViewModel?, isAutomatonEditor: Boolean
     ): EditorViewModel {
         return EditorViewModel(
             actionManager, systemViewModel, parentSystem, isAutomatonEditor,

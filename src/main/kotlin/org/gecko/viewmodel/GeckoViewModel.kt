@@ -67,8 +67,7 @@ class GeckoViewModel(val geckoModel: GeckoModel) {
         if (nextSystemViewModel.target.parent != null) {
             parent = getViewModelElement(nextSystemViewModel.target.parent!!) as SystemViewModel
         }
-        val editorViewModel =
-            viewModelFactory.createEditorViewModel(nextSystemViewModel, parent!!, isAutomatonEditor)
+        val editorViewModel = viewModelFactory.createEditorViewModel(nextSystemViewModel, parent, isAutomatonEditor)
         openedEditorsProperty.add(editorViewModel)
         currentEditor = editorViewModel
     }

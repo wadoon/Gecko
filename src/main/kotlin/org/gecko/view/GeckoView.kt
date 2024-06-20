@@ -16,7 +16,7 @@ import javafx.scene.control.TabPane.TabClosingPolicy
 import javafx.scene.input.*
 import javafx.scene.layout.BorderPane
 import org.gecko.actions.*
-import org.gecko.view.menubar.RibbonBuilder
+import org.gecko.view.menubar.ToolbarBuilder
 import org.gecko.view.views.*
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.GeckoViewModel
@@ -77,7 +77,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
 
         // Menubar
         // MenuBar menuBar = new MenuBarBuilder(this, viewModel.getActionManager()).build();
-        val menuBar = RibbonBuilder(this, viewModel.actionManager).build()
+        val menuBar = ToolbarBuilder(this, viewModel.actionManager).build()
         mainPane.top = menuBar
         mainPane.center = centerPane
 
@@ -272,6 +272,14 @@ class GeckoView(var viewModel: GeckoViewModel) {
 
     fun mnemonicsProperty(): ListProperty<Mnemonic> {
         return mnemonicsProperty
+    }
+
+
+    fun showVersionManager() {
+        val dialog = Dialog<Void>()
+        dialog.title = "Version Manager"
+        dialog.dialogPane = VersionManagerPane()
+        dialog.show()
     }
 
     companion object {

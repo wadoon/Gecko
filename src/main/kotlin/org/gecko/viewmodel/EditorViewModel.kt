@@ -27,7 +27,7 @@ import kotlin.math.min
 class EditorViewModel(
     val actionManager: ActionManager,
     val currentSystem: SystemViewModel,
-    val parentSystem: SystemViewModel,
+    val parentSystem: SystemViewModel?,
     val isAutomatonEditor: Boolean,
     val id: Int
 ) {
