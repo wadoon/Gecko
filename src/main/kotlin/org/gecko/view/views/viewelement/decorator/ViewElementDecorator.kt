@@ -10,7 +10,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  * decorated [ViewElement], which can be selected and encapsulates a [PositionableViewModelElement].
  */
 abstract class ViewElementDecorator(val decoratorTarget: ViewElement<*>) :
-    ViewElement<PositionableViewModelElement<*>?> {
+    ViewElement<PositionableViewModelElement?> {
     override var isSelected = false
 
     override val zPriority: Int

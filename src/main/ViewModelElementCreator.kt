@@ -4,14 +4,14 @@ import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import org.gecko.exceptions.MissingViewModelElementException
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 import org.gecko.viewmodel.*
 import java.io.IOException
 
 
 /**
  * Performs operations for every [Model-Element][org.gecko.model.Element] from the subtree of a [System],
- * creating for each of them a [ViewModel-Element][org.gecko.viewmodel.AbstractViewModelElement], depending on the
+ * creating for each of them a [ViewModel-Element][org.gecko.viewmodel.Element], depending on the
  * attributes of the corresponding [ViewModelPropertiesContainer].
  */
 class ViewModelElementCreator(
@@ -111,7 +111,7 @@ class ViewModelElementCreator(
     }
 
     @Throws(IOException::class)
-    fun createContractViewModel(contract: Contract) {
+    fun createContractViewModel(contract: ContractViewModel) {
         viewModelFactory.createContractViewModelFrom(contract)
         updateHighestId(contract)
     }
@@ -223,7 +223,7 @@ class ViewModelElementCreator(
 }
 
 private fun setPositionAndSize(
-    element: PositionableViewModelElement<*>, container: ViewModelPropertiesContainer?
+    element: PositionableViewModelElement, container: ViewModelPropertiesContainer?
 ) {
     if (container != null) {
         element.position = Point2D(container.positionX, container.positionY)

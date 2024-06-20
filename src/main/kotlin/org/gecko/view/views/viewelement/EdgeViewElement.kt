@@ -1,18 +1,22 @@
 package org.gecko.view.views.viewelement
 
-import javafx.beans.property.*
+
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.util.Pair
-
-import org.gecko.model.*
 import org.gecko.viewmodel.ContractViewModel
 import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Kind
+import org.gecko.viewmodel.onChange
 import kotlin.math.*
 
 /**
@@ -21,7 +25,7 @@ import kotlin.math.*
  */
 
 class EdgeViewElement(edgeViewModel: EdgeViewModel) :
-    ConnectionViewElement(listOf<Point2D>(edgeViewModel.startPoint, edgeViewModel.endPoint)),
+    ConnectionViewElement(listOf(edgeViewModel.startPoint, edgeViewModel.endPoint)),
     ViewElement<EdgeViewModel> {
     override val target: EdgeViewModel
     val contractProperty: Property<ContractViewModel>
@@ -30,11 +34,11 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
     val label: Label
 
     init {
-        edgeViewModel.startPointProperty.addListener { obs: ObservableValue<out Point2D?>?, o: Point2D?, n: Point2D? ->
+        edgeViewModel.startPointProperty.onChange { _: Point2D?, n: Point2D? ->
             pathSource[0] = n
         }
 
-        edgeViewModel.endPointProperty.addListener { obs: ObservableValue<out Point2D?>?, o: Point2D?, n: Point2D? ->
+        edgeViewModel.endPointProperty.onChange { _: Point2D?, n: Point2D? ->
             pathSource[1] = n
         }
 
@@ -50,20 +54,18 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
         label.text = edgeViewModel.representation
 
         val updateLabelPosition =
-            ChangeListener { observable: ObservableValue<*>?, oldValue: Any?, newValue: Any? -> calculateLabelPosition() }
+            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> calculateLabelPosition() }
         label.heightProperty().addListener(updateLabelPosition)
         label.widthProperty().addListener(updateLabelPosition)
         edgeViewModel.startPointProperty.addListener(updateLabelPosition)
         edgeViewModel.endPointProperty.addListener(updateLabelPosition)
 
         val updateLabel =
-            ChangeListener { observable: ObservableValue<*>?, oldValue: Any?, newValue: Any? ->
-                label.text = edgeViewModel.representation
-            }
+            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> label.text = edgeViewModel.representation }
 
         val contract = edgeViewModel.contract
         contract?.nameProperty?.addListener(updateLabel)
-        contractProperty.addListener { observable: ObservableValue<out ContractViewModel>?, oldValue: ContractViewModel?, newValue: ContractViewModel? ->
+        contractProperty.addListener { _: ObservableValue<out ContractViewModel>?, _: ContractViewModel?, newValue: ContractViewModel? ->
             label.text = edgeViewModel.representation
             newValue?.nameProperty?.addListener(updateLabel)
         }
@@ -75,7 +77,7 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
         isLoopProperty.bind(edgeViewModel.isLoopProperty.and(edgeViewModel.isCurrentlyModified.not()))
         orientationProperty.bind(edgeViewModel.orientationProperty)
 
-        isLoopProperty.addListener { observable: ObservableValue<out Boolean?>?, oldValue: Boolean?, newValue: Boolean? -> calculateLabelPosition() }
+        isLoopProperty.addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, _: Boolean? -> calculateLabelPosition() }
         constructVisualization()
         calculateLabelPosition()
     }

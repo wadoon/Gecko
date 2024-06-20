@@ -12,15 +12,14 @@ class ChangeInvariantViewModelElementAction internal constructor(
     val regionViewModel: RegionViewModel,
     val newInvariant: String
 ) : Action() {
-    val oldInvariant: String = regionViewModel.invariant
+    val oldInvariant: String = regionViewModel.invariant.value
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         if (newInvariant.isEmpty()) {
             return false
         }
-        regionViewModel.invariant = newInvariant
-        regionViewModel.updateTarget()
+        regionViewModel.invariant.value = newInvariant
         return true
     }
 

@@ -65,7 +65,6 @@ class MoveEdgeViewModelElementAction : Action {
         }
 
         elementScalerBlock.updatePosition()
-        edgeViewModel.updateTarget()
         return true
     }
 
@@ -81,10 +80,9 @@ class MoveEdgeViewModelElementAction : Action {
     }
 
     fun getStateViewModelAt(point: Point2D): StateViewModel? {
-        for (state in editorViewModel.currentSystem.target.automaton.states) {
-            val stateViewModel = geckoViewModel.getViewModelElement(state) as StateViewModel
-            if (point.x > stateViewModel.position.x && point.x < stateViewModel.position.x + stateViewModel.size.x && point.y > stateViewModel.position.y && point.y < stateViewModel.position.y + stateViewModel.size.y) {
-                return stateViewModel
+        for (state in editorViewModel.currentSystem.automaton.states) {
+            if (point.x > state.position.x && point.x < state.position.x + state.size.x && point.y > state.position.y && point.y < state.position.y + state.size.y) {
+                return state
             }
         }
         return null

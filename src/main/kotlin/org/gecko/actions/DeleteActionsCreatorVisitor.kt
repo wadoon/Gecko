@@ -1,11 +1,8 @@
 package org.gecko.actions
 
-import org.gecko.model.Edge
-import org.gecko.model.System
-import org.gecko.model.SystemConnection
+
 import org.gecko.viewmodel.*
 import java.util.function.Consumer
-import java.util.stream.Collectors
 
 /**
  * Follows the visitor pattern, implementing the [PositionableViewModelElementVisitor] interface. Determines all
@@ -20,8 +17,8 @@ class DeleteActionsCreatorVisitor
     override fun visit(systemViewModel: SystemViewModel): Set<AbstractPositionableViewModelElementAction> {
         val deleteActionsCreatorVisitor =
             DeleteActionsCreatorVisitor(geckoViewModel, systemViewModel)
-        for (childSystem in systemViewModel.target!!.children) {
-            val childSystemViewModel = geckoViewModel.getViewModelElement(childSystem) as SystemViewModel
+        for (childSystem in systemViewModel.subSystems) {
+            val childSystemViewModel = childSystem as SystemViewModel
             deleteActions.addAll(
                 childSystemViewModel.accept(
                     deleteActionsCreatorVisitor
@@ -37,22 +34,12 @@ class DeleteActionsCreatorVisitor
             )
         })
 
-        val system = systemViewModel.target
-        geckoViewModel.getViewModelElements(system.connections)
-            .forEach(Consumer { systemConnectionViewModel: PositionableViewModelElement<*> ->
-                systemConnectionViewModel.accept(
-                    deleteActionsCreatorVisitor
-                )
-            })
-        geckoViewModel.getViewModelElements(system.automaton.allElements)
-            .forEach(Consumer { element: PositionableViewModelElement<*> ->
-                element.accept(
-                    this
-                )
-            })
+        val system = systemViewModel
+        system.connections.forEach { it.accept(deleteActionsCreatorVisitor) }
+        system.automaton.allElements.forEach { element -> element.accept(this) }
 
         deleteActions.add(
-            DeleteSystemViewModelElementAction(geckoViewModel, systemViewModel, parentSystemViewModel.target)
+            DeleteSystemViewModelElementAction(geckoViewModel, systemViewModel, parentSystemViewModel)
         )
 
         return deleteActions
@@ -62,7 +49,7 @@ class DeleteActionsCreatorVisitor
         deleteActions.add(
             DeleteRegionViewModelElementAction(
                 geckoViewModel, regionViewModel,
-                parentSystemViewModel.target.automaton
+                parentSystemViewModel.automaton
             )
         )
 
@@ -75,7 +62,7 @@ class DeleteActionsCreatorVisitor
         deleteActions.add(
             DeleteSystemConnectionViewModelElementAction(
                 geckoViewModel, systemConnectionViewModel,
-                parentSystemViewModel.target
+                parentSystemViewModel
             )
         )
 
@@ -86,7 +73,7 @@ class DeleteActionsCreatorVisitor
         deleteActions.add(
             DeleteEdgeViewModelElementAction(
                 geckoViewModel, edgeViewModel,
-                parentSystemViewModel.target.automaton
+                parentSystemViewModel.automaton
             )
         )
 
@@ -94,20 +81,10 @@ class DeleteActionsCreatorVisitor
     }
 
     override fun visit(stateViewModel: StateViewModel): Set<AbstractPositionableViewModelElementAction> {
-        val edges = parentSystemViewModel.target
-            .automaton
-            .edges
-            .stream()
-            .filter { edge: Edge ->
-                edge.source == stateViewModel.target || (edge.destination
-                        == stateViewModel.target)
-            }
-            .collect(Collectors.toSet())
-        geckoViewModel.getViewModelElements(edges).forEach(Consumer { edgeViewModel: PositionableViewModelElement<*> ->
-            edgeViewModel.accept(
-                this
-            )
-        })
+        val edges = parentSystemViewModel.automaton.edges
+            .filter { edge -> edge.source == stateViewModel || (edge.destination == stateViewModel) }
+            .toSet()
+        edges.forEach { it.accept(this) }
         deleteActions.add(DeleteStateViewModelElementAction(geckoViewModel, stateViewModel, parentSystemViewModel))
 
         return deleteActions
@@ -118,14 +95,12 @@ class DeleteActionsCreatorVisitor
         val actualParentSystemViewModel: SystemViewModel
         val containingSystemViewModel: SystemViewModel
         if (parentSystemViewModel.ports.contains(portViewModel)) {
-            actualParentSystemViewModel =
-                geckoViewModel.getViewModelElement(parentSystemViewModel.target!!.parent!!) as SystemViewModel
+            actualParentSystemViewModel = parentSystemViewModel.parent!!
             containingSystemViewModel = parentSystemViewModel
         } else {
             actualParentSystemViewModel = parentSystemViewModel
-            containingSystemViewModel = geckoViewModel.getViewModelElement(
-                parentSystemViewModel.target!!.children
-                    .first { system: System -> system.variables.contains(portViewModel.target) }) as SystemViewModel
+            containingSystemViewModel =
+                parentSystemViewModel.subSystems.first { system -> system.ports.contains(portViewModel) }
         }
 
         if (actualParentSystemViewModel != null) {
@@ -139,12 +114,16 @@ class DeleteActionsCreatorVisitor
         return deleteActions
     }
 
+    override fun visit(automatonViewModel: AutomatonViewModel): Set<AbstractPositionableViewModelElementAction> {
+        TODO("Not yet implemented")
+    }
+
     fun visitSystemConnections(systemViewModel: SystemViewModel, portViewModel: PortViewModel) {
-        val systemConnections = systemViewModel.target!!
+        val systemConnections = systemViewModel
             .connections
-            .filter { systemConnection: SystemConnection -> systemConnection.source == portViewModel.target || systemConnection.destination == portViewModel.target }
+            .filter { systemConnection -> systemConnection.source == portViewModel || systemConnection.destination == portViewModel }
             .toSet()
-        geckoViewModel.getViewModelElements(systemConnections).forEach {
+        systemConnections.forEach {
             val deleteActionsCreatorVisitor = DeleteActionsCreatorVisitor(geckoViewModel, systemViewModel)
             deleteActions.addAll(
                 it.accept(deleteActionsCreatorVisitor)

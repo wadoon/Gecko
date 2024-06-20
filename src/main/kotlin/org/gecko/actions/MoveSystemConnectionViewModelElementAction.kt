@@ -2,7 +2,7 @@ package org.gecko.actions
 
 import javafx.geometry.Point2D
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.*
+
 import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
 
@@ -59,8 +59,8 @@ class MoveSystemConnectionViewModelElementAction : Action {
         }
 
         val parentSystem = geckoViewModel.currentEditor!!.currentSystem
-        var sourcePortViewModel = systemConnectionViewModel!!.source
-        var destinationPortViewModel = systemConnectionViewModel.destination
+        var sourcePortViewModel = systemConnectionViewModel!!.source!!
+        var destinationPortViewModel = systemConnectionViewModel.destination!!
 
         if (isSource) {
             if (portViewModel == sourcePortViewModel) {
@@ -121,10 +121,7 @@ class MoveSystemConnectionViewModelElementAction : Action {
             previousPortViewModel = systemConnectionViewModel.destination
             systemConnectionViewModel.destination = destinationPortViewModel
         }
-
         elementScalerBlock.updatePosition()
-        systemConnectionViewModel.updateTarget()
-
         return true
     }
 
@@ -148,21 +145,19 @@ class MoveSystemConnectionViewModelElementAction : Action {
 
     fun getPortViewModelAt(point: Point2D): PortViewModel? {
         // Check for variable blocks in the current system
-        for (variable in editorViewModel.currentSystem.target!!.variables) {
-            val portViewModel = geckoViewModel.getViewModelElement(variable) as PortViewModel
-            if (point.x > portViewModel.position.x && point.x < portViewModel.position.x + portViewModel.size.x && point.y > portViewModel.position.y && point.y < portViewModel.position.y + portViewModel.size.y) {
+        for (variable in editorViewModel.currentSystem.ports) {
+            if (point.x > variable.position.x && point.x < variable.position.x + variable.size.x && point.y > variable.position.y && point.y < variable.position.y + variable.size.y) {
                 isVariableBlock = true
-                return portViewModel
+                return variable
             }
         }
 
         // Check for ports in the children systems
-        for (system in editorViewModel.currentSystem.target.children) {
-            for (variable in system.variables) {
-                val portViewModel = geckoViewModel.getViewModelElement(variable) as PortViewModel
-                if (point.x > portViewModel.systemPortPositionProperty.value.x && point.x < portViewModel.systemPortPositionProperty.value.x + portViewModel.systemPortSizeProperty.value.x && point.y > portViewModel.systemPortPositionProperty.value.y && point.y < portViewModel.systemPortPositionProperty.value.y + portViewModel.systemPortSizeProperty.value.y) {
+        for (system in editorViewModel.currentSystem.subSystems) {
+            for (variable in system.ports) {
+                if (point.x > variable.systemPortPositionProperty.value.x && point.x < variable.systemPortPositionProperty.value.x + variable.systemPortSizeProperty.value.x && point.y > variable.systemPortPositionProperty.value.y && point.y < variable.systemPortPositionProperty.value.y + variable.systemPortSizeProperty.value.y) {
                     isVariableBlock = false
-                    return portViewModel
+                    return variable
                 }
             }
         }

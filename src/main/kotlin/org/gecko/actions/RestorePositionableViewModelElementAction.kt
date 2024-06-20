@@ -11,9 +11,9 @@ import org.gecko.viewmodel.PositionableViewModelElement
 class RestorePositionableViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val actionGroup: ActionGroup?,
-    deletedElements: Set<PositionableViewModelElement<*>>?
+    deletedElements: Set<PositionableViewModelElement>?
 ) : Action() {
-    val deletedElements: Set<PositionableViewModelElement<*>> = HashSet(deletedElements)
+    val deletedElements: Set<PositionableViewModelElement> = HashSet(deletedElements)
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {

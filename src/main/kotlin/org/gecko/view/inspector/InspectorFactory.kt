@@ -17,7 +17,7 @@ class InspectorFactory(val actionManager: ActionManager, val editorViewModel: Ed
      * @param viewElement The view model element to create an inspector for.
      * @return The inspector for the given view model.
      */
-    fun createInspector(viewElement: PositionableViewModelElement<*>?): Inspector? {
+    fun createInspector(viewElement: PositionableViewModelElement?): Inspector? {
         val visitor = InspectorFactoryVisitor(this)
         if (viewElement == null) {
             return null

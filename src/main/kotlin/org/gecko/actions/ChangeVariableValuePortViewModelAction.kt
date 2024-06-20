@@ -21,7 +21,6 @@ class ChangeVariableValuePortViewModelAction internal constructor(
             newValue = null
         }
         portViewModel.value = newValue
-        portViewModel.updateTarget()
         return true
     }
 

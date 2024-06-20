@@ -1,18 +1,18 @@
 package org.gecko.view.views.viewelement
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.*
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
-import javafx.scene.shape.*
-
-import org.gecko.model.*
+import javafx.scene.shape.Rectangle
 import org.gecko.viewmodel.PortViewModel
-import java.util.concurrent.Callable
+import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
@@ -24,6 +24,7 @@ class VariableBlockViewElement(override val target: PortViewModel) : BlockViewEl
     val nameProperty: StringProperty = SimpleStringProperty()
     val typeProperty: StringProperty = SimpleStringProperty()
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()
+    override var isSelected: Boolean = false
 
     init {
         bindViewModel()
@@ -60,8 +61,8 @@ class VariableBlockViewElement(override val target: PortViewModel) : BlockViewEl
         rectangle.heightProperty().bind(heightProperty())
         rectangle.fillProperty()
             .bind(
-                Bindings.createObjectBinding<Color>(
-                    Callable<Color> { PortViewModel.Companion.getBackgroundColor(visibilityProperty.value) },
+                Bindings.createObjectBinding(
+                    { visibilityProperty.value.color },
                     visibilityProperty
                 )
             )

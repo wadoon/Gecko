@@ -6,8 +6,6 @@ import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.input.Mnemonic
 import javafx.stage.Stage
-import jfxtras.styles.jmetro.JMetro
-import jfxtras.styles.jmetro.Style
 import tornadofx.onChange
 import java.util.function.Consumer
 
@@ -24,7 +22,7 @@ class GeckoManager(val stage: Stage, gecko: Gecko = Gecko()) {
         gecko.view.mnemonicsProperty().forEach(Consumer { mnemonic: Mnemonic? -> scene.addMnemonic(mnemonic) })
         stage.scene = scene
 
-        gecko.view.darkModeProperty().onChange { n ->
+        gecko.view.darkModeProperty.onChange { n ->
             Application.setUserAgentStylesheet(
                 if (!n) PrimerLight().userAgentStylesheet
                 else PrimerDark().userAgentStylesheet

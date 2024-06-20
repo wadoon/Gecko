@@ -1,7 +1,6 @@
 package org.gecko.model
 
-import javafx.beans.property.SimpleListProperty
-import javafx.collections.FXCollections
+import org.gecko.viewmodel.VariantGroup
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -12,9 +11,6 @@ import tornadofx.setValue
  */
 class GeckoModel(val root: System = System()) {
     val modelFactory: ModelFactory = ModelFactory(this)
-
-    val knownVariantGroupsProperty: SimpleListProperty<VariantGroup> = SimpleListProperty<VariantGroup>(FXCollections.observableArrayList())
-    var knownVariantGroups by knownVariantGroupsProperty
 
     var globalCode: String? = null
     var globalDefines: String? = null

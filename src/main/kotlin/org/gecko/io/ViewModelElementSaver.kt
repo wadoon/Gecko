@@ -1,27 +1,24 @@
 package org.gecko.io
 
 
-import org.gecko.model.*
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.*
 
 /**
  * Performs operations for every [Model-Element][org.gecko.model.Element] from the subtree of a [System],
  * creating for each of them a [ViewModelPropertiesContainer], depending on the attributes of the corresponding
  * [PositionableViewModelElement].
  */
-class ViewModelElementSaver internal constructor(val geckoViewModel: GeckoViewModel) {
+class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
     val viewModelProperties: MutableList<ViewModelPropertiesContainer> = arrayListOf()
     val startStates: MutableList<StartStateContainer> = arrayListOf()
 
-    fun getViewModelProperties(root: System): List<ViewModelPropertiesContainer> {
+    fun getViewModelProperties(root: SystemViewModel): List<ViewModelPropertiesContainer> {
         gatherSystemAttributes(root)
         return this.viewModelProperties
     }
 
-    fun gatherSystemAttributes(system: System) {
-        for (variable in system.variables) {
+    fun gatherSystemAttributes(system: SystemViewModel) {
+        for (variable in system.ports) {
             this.savePortViewModelProperties(variable)
         }
 
@@ -33,7 +30,7 @@ class ViewModelElementSaver internal constructor(val geckoViewModel: GeckoViewMo
 
         if (automaton.startState != null) {
             val startStateContainer = StartStateContainer()
-            startStateContainer.systemId = system.id
+            //startStateContainer.systemId = system.hashCode()
             startStateContainer.startStateName = automaton.startState!!.name
             startStates.add(startStateContainer)
         }
@@ -50,23 +47,21 @@ class ViewModelElementSaver internal constructor(val geckoViewModel: GeckoViewMo
             this.saveEdgeModelProperties(edge)
         }
 
-        for (child in system.children) {
+        for (child in system.subSystems) {
             this.saveSystemViewModelProperties(child)
             this.gatherSystemAttributes(child)
         }
     }
 
-    fun saveStateViewModelProperties(state: State) {
-        val stateViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(state))
+    fun saveStateViewModelProperties(state: StateViewModel) {
+        val stateViewModelContainer = this.getCoordinateContainer(state)
         viewModelProperties.add(stateViewModelContainer)
     }
 
-    fun saveRegionViewModelProperties(region: Region) {
-        val regionViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(region))
+    fun saveRegionViewModelProperties(region: RegionViewModel) {
+        val regionViewModelContainer = this.getCoordinateContainer(region)
 
-        val color = (geckoViewModel.getViewModelElement(region) as RegionViewModel).color
+        val color = region.color
         regionViewModelContainer.red = color.red
         regionViewModelContainer.green = color.green
         regionViewModelContainer.blue = color.blue
@@ -74,34 +69,30 @@ class ViewModelElementSaver internal constructor(val geckoViewModel: GeckoViewMo
         viewModelProperties.add(regionViewModelContainer)
     }
 
-    fun saveSystemViewModelProperties(system: System) {
-        val systemViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(system))
+    fun saveSystemViewModelProperties(system: SystemViewModel) {
+        val systemViewModelContainer = this.getCoordinateContainer((system))
         viewModelProperties.add(systemViewModelContainer)
     }
 
-    fun saveSystemConnectionViewModelProperties(systemConnection: SystemConnection) {
-        val systemConnectionViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(systemConnection))
+    fun saveSystemConnectionViewModelProperties(systemConnection: SystemConnectionViewModel) {
+        val systemConnectionViewModelContainer = this.getCoordinateContainer((systemConnection))
         viewModelProperties.add(systemConnectionViewModelContainer)
     }
 
-    fun saveEdgeModelProperties(edge: Edge) {
-        val edgeViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(edge))
+    fun saveEdgeModelProperties(edge: EdgeViewModel) {
+        val edgeViewModelContainer = this.getCoordinateContainer(edge)
         viewModelProperties.add(edgeViewModelContainer)
     }
 
-    fun savePortViewModelProperties(variable: Variable) {
-        val variableViewModelContainer =
-            this.getCoordinateContainer(geckoViewModel.getViewModelElement(variable))
+    fun savePortViewModelProperties(variable: PortViewModel) {
+        val variableViewModelContainer = this.getCoordinateContainer(variable)
         viewModelProperties.add(variableViewModelContainer)
     }
 
-    fun getCoordinateContainer(element: PositionableViewModelElement<*>): ViewModelPropertiesContainer {
+    fun getCoordinateContainer(element: PositionableViewModelElement): ViewModelPropertiesContainer {
         val container = ViewModelPropertiesContainer()
-        container.elementId = element.target.id
-        container.id = element.id
+        //container.elementId = element.hashCode()
+        container.id = element.hashCode()
         container.positionX = element.position.x
         container.positionY = element.position.y
         container.sizeX = element.size.x

@@ -18,10 +18,8 @@ class RestoreContractViewModelElementAction internal constructor(
     override fun run(): Boolean {
         for (edge in edgesWithContract!!) {
             edge.contract = contractViewModel
-            edge.updateTarget()
         }
         parent.addContract(contractViewModel!!)
-        parent.updateTarget()
         return true
     }
 

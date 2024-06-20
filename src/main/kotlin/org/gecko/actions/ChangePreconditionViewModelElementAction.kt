@@ -12,15 +12,14 @@ class ChangePreconditionViewModelElementAction internal constructor(
     val contractViewModel: ContractViewModel,
     val newPrecondition: String
 ) : Action() {
-    val oldPrecondition: String = contractViewModel.precondition
+    val oldPrecondition: String = contractViewModel.preCondition.value
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         if (newPrecondition.isEmpty()) {
             return false
         }
-        contractViewModel.precondition = (newPrecondition)
-        contractViewModel.updateTarget()
+        contractViewModel.preCondition.value = newPrecondition
         return true
     }
 

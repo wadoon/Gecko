@@ -1,49 +1,49 @@
 package org.gecko.io
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import org.gecko.model.GeckoModel
-import org.gecko.model.System
 import org.gecko.viewmodel.GeckoViewModel
-import java.io.File
-import java.io.IOException
+import org.gecko.viewmodel.SystemViewModel
+import org.hildan.fxgson.FxGson
+import java.io.*
+
+
+var gson = FxGson.fullBuilder()
+    .setPrettyPrinting()
+    .create()
+
+inline fun <reified T : Any> decodeFromStream(it: InputStream) = gson.fromJson(InputStreamReader(it), T::class.java)
+
+inline fun <reified T> encodeToStream(obj: T, it: OutputStream) =
+    gson.toJson(obj, T::class.java, OutputStreamWriter(it))
 
 /**
  * Provides methods for the conversion of data from a JSON file into Gecko-specific data.
  */
-
 class ProjectFileParser : FileParser {
     @Throws(IOException::class)
     override fun parse(file: File): GeckoViewModel {
-        val geckoJsonWrapper =
+        val wrapper =
             file.inputStream().use {
-                Json.decodeFromStream<GeckoJsonWrapper>(it)
+                decodeFromStream<GeckoJsonWrapper>(it)
             }
+        val model = wrapper.model
 
-        val model = GeckoModel(geckoJsonWrapper.model)
-        val viewModel = GeckoViewModel(model)
+        //val viewModel = GeckoViewModel(geckoJsonWrapper)
 
+        /*
         val creator =
             ViewModelElementCreator(
                 viewModel, geckoJsonWrapper.viewModelProperties,
                 geckoJsonWrapper.startStates
             )
-        creator.traverseModel(model.root)
+        creator.traverseModel(model.root)*/
+
         updateSystemParents(model.root)
 
-        if (creator.foundNonexistentStartState) {
-            throw IOException("Not all start-states belong to the corresponding automaton's states.")
-        }
-
-        if (creator.foundNullContainer) {
-            throw IOException("Not all elements have view model properties.")
-        }
-        viewModel.geckoModel.modelFactory.elementId = creator.highestId + 1u
-        return viewModel
+        return model
     }
 
-    fun updateSystemParents(system: System) {
-        for (child in system.children) {
+    fun updateSystemParents(system: SystemViewModel) {
+        for (child in system.subSystems) {
             child.parent = system
             updateSystemParents(child)
         }

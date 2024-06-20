@@ -3,7 +3,7 @@ package org.gecko.view.inspector.element.button
 import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
-import org.gecko.model.Visibility
+import org.gecko.viewmodel.Visibility
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.SystemViewModel
 
@@ -21,17 +21,12 @@ class InspectorAddVariableButton(
         text = ResourceHandler.inspector_add_variable
         tooltip = Tooltip(ResourceHandler.inspector_add_variable)
         prefWidth = WIDTH.toDouble()
-        onAction = EventHandler { event ->
+        onAction = EventHandler { _ ->
             actionManager.run(actionManager.actionFactory.createCreatePortViewModelElementAction(systemViewModel))
             // Newly added port is the last in the list.
             val addedPort = systemViewModel.portsProperty.last()
             // This is not an action because it should not be undoable.
             addedPort.visibility = visibility!!
-            try {
-                addedPort.updateTarget()
-            } catch (e: Exception) {
-                throw RuntimeException("Failed while changing a port's visibility. This should never happen.")
-            }
         }
     }
 

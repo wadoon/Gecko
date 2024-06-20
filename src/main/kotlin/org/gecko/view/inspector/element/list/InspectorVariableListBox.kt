@@ -3,10 +3,10 @@ package org.gecko.view.inspector.element.list
 import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
 import org.gecko.actions.*
-import org.gecko.model.*
 import org.gecko.view.inspector.element.container.InspectorVariableField
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Visibility
 import java.util.function.Consumer
 
 /**

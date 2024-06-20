@@ -16,7 +16,7 @@ class CutPositionableViewModelElementAction internal constructor(var geckoViewMo
         actions.add(delete)
     }
 
-    override fun getUndoAction(actionFactory: ActionFactory): Action? {
+    override fun getUndoAction(actionFactory: ActionFactory): Action {
         return delete.getUndoAction(actionFactory)
     }
 }

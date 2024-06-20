@@ -1,7 +1,7 @@
 package org.gecko.viewmodel
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.GeckoModel
+
 
 import org.gecko.tools.ToolType
 import org.junit.jupiter.api.*

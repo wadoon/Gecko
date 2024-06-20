@@ -1,10 +1,11 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.*
 
 class ChangeVisibilityPortViewModelElementActionTest {

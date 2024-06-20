@@ -16,7 +16,7 @@ class CreateVariableAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val position: Point2D?
 ) : Action() {
-    lateinit var createdPortViewModel: PortViewModel
+    private lateinit var createdPortViewModel: PortViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {

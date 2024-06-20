@@ -11,9 +11,9 @@ import java.util.*
  * selected elements.
  */
 data class SelectionManager(
-    val undoSelectionStack: Deque<MutableSet<PositionableViewModelElement<*>>> = ArrayDeque(),
-    val redoSelectionStack: Deque<Set<PositionableViewModelElement<*>>> = ArrayDeque(),
-    val currentSelectionProperty: SetProperty<PositionableViewModelElement<*>> =
+    val undoSelectionStack: Deque<MutableSet<PositionableViewModelElement>> = ArrayDeque(),
+    val redoSelectionStack: Deque<Set<PositionableViewModelElement>> = ArrayDeque(),
+    val currentSelectionProperty: SetProperty<PositionableViewModelElement> =
         SimpleSetProperty(FXCollections.observableSet())
 ) {
     /**
@@ -38,7 +38,7 @@ data class SelectionManager(
         currentSelectionProperty.set(redoSelectionStack.pop().asObservable())
     }
 
-    fun select(element: PositionableViewModelElement<*>) {
+    fun select(element: PositionableViewModelElement) {
         select(setOf(element))
     }
 
@@ -49,7 +49,7 @@ data class SelectionManager(
      *
      * @param elements the elements to be selected
      */
-    fun select(elements: Set<PositionableViewModelElement<*>>) {
+    fun select(elements: Set<PositionableViewModelElement>) {
         if (elements.isEmpty() || elements == currentSelectionProperty.get()) {
             return
         }
@@ -58,7 +58,7 @@ data class SelectionManager(
         currentSelectionProperty.set(elements.asObservable())
     }
 
-    fun deselect(element: PositionableViewModelElement<*>) {
+    fun deselect(element: PositionableViewModelElement) {
         deselect(setOf(element))
     }
 
@@ -68,15 +68,15 @@ data class SelectionManager(
      *
      * @param elements the elements to be deselected
      */
-    fun deselect(elements: Set<PositionableViewModelElement<*>>) {
+    fun deselect(elements: Set<PositionableViewModelElement>) {
         if (elements.isEmpty() || elements.stream()
-                .noneMatch { o: PositionableViewModelElement<*> -> currentSelectionProperty.get().contains(o) }
+                .noneMatch { o: PositionableViewModelElement -> currentSelectionProperty.get().contains(o) }
         ) {
             return
         }
         redoSelectionStack.clear()
         addSelectionToUndoStack(HashSet(currentSelectionProperty.get()))
-        val newSelection: MutableSet<PositionableViewModelElement<*>> = HashSet(currentSelectionProperty.get())
+        val newSelection: MutableSet<PositionableViewModelElement> = HashSet(currentSelectionProperty.get())
         newSelection.removeAll(elements)
         currentSelectionProperty.set(newSelection.asObservable())
     }
@@ -85,7 +85,7 @@ data class SelectionManager(
         deselect(currentSelectionProperty.get())
     }
 
-    val currentSelection: Set<PositionableViewModelElement<*>>
+    val currentSelection: Set<PositionableViewModelElement>
         get() = HashSet(currentSelectionProperty.get())
 
     /**
@@ -94,12 +94,12 @@ data class SelectionManager(
      *
      * @param removedElements the elements that are removed from the view model
      */
-    fun updateSelections(removedElements: Set<PositionableViewModelElement<*>>) {
-        val selectionToBeRemoved = ArrayDeque<MutableSet<PositionableViewModelElement<*>>>()
+    fun updateSelections(removedElements: Set<PositionableViewModelElement>) {
+        val selectionToBeRemoved = ArrayDeque<MutableSet<PositionableViewModelElement>>()
         if (removedElements.stream()
-                .anyMatch { o: PositionableViewModelElement<*> -> currentSelectionProperty.value.contains(o) }
+                .anyMatch { o: PositionableViewModelElement -> currentSelectionProperty.value.contains(o) }
         ) {
-            val newSelection: MutableSet<PositionableViewModelElement<*>> = HashSet(currentSelectionProperty.value)
+            val newSelection: MutableSet<PositionableViewModelElement> = HashSet(currentSelectionProperty.value)
             newSelection.removeAll(removedElements)
             currentSelectionProperty.set(newSelection.asObservable())
             redoSelectionStack.clear()
@@ -120,11 +120,11 @@ data class SelectionManager(
         undoSelectionStack.removeAll(selectionToBeRemoved)
     }
 
-    fun updateSelections(removedElement: PositionableViewModelElement<*>) {
+    fun updateSelections(removedElement: PositionableViewModelElement) {
         updateSelections(setOf(removedElement))
     }
 
-    fun addSelectionToUndoStack(selection: MutableSet<PositionableViewModelElement<*>>) {
+    fun addSelectionToUndoStack(selection: MutableSet<PositionableViewModelElement>) {
         if (undoSelectionStack.size >= MAX_STACK_SIZE) {
             undoSelectionStack.removeLast()
         }

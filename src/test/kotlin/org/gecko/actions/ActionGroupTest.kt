@@ -2,7 +2,7 @@ package org.gecko.actions
 
 import javafx.scene.paint.Color
 import org.gecko.exceptions.ModelException
-import org.gecko.model.GeckoModel
+
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.RegionViewModel
 import org.junit.jupiter.api.*

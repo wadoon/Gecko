@@ -10,11 +10,11 @@ import org.gecko.viewmodel.SelectionManager
  */
 class SelectAction internal constructor(
     editorViewModel: EditorViewModel,
-    elements: Set<PositionableViewModelElement<*>>?,
+    elements: Set<PositionableViewModelElement>?,
     val newSelection: Boolean
 ) : Action() {
     val selectionManager: SelectionManager = editorViewModel.selectionManager
-    val elementsToSelect: MutableSet<PositionableViewModelElement<*>> = elements!!.toMutableSet()
+    val elementsToSelect: MutableSet<PositionableViewModelElement> = elements!!.toMutableSet()
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {

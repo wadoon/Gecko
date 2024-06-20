@@ -17,7 +17,6 @@ class DeletePortViewModelElementAction(
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         system.removePort(portViewModel)
-        system.updateTarget()
         geckoViewModel.deleteViewModelElement(portViewModel)
         return true
     }

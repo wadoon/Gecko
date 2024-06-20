@@ -3,9 +3,8 @@ package org.gecko.actions
 import javafx.geometry.Point2D
 import javafx.util.Pair
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
-import org.gecko.viewmodel.*
 
+import org.gecko.viewmodel.*
 
 class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel) :
     PositionableViewModelElementVisitor<Void?> {
@@ -14,14 +13,14 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
     val elementToPosAndSize = HashMap<Element?, Pair<Point2D, Point2D>>()
 
 
-    val failedCopies: MutableSet<PositionableViewModelElement<*>> = HashSet()
+    val failedCopies: MutableSet<PositionableViewModelElement> = HashSet()
     val copiedElements: MutableSet<Element> = HashSet()
 
     override fun visit(systemViewModel: SystemViewModel): Void? {
-        val original = systemViewModel.target
+        val original = systemViewModel
         val copyResult: Pair<System, Map<Element, Element>>
         try {
-            copyResult = geckoViewModel.geckoModel.modelFactory.copySystem(systemViewModel.target)
+            copyResult = geckoViewModel.copySystem(systemViewModel)
         } catch (e: ModelException) {
             failedCopies.add(systemViewModel)
             return null
@@ -35,8 +34,8 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
     }
 
     override fun visit(regionViewModel: RegionViewModel): Void? {
-        val original = regionViewModel.target
-        val copy = geckoViewModel.geckoModel.modelFactory.copyRegion(original)
+        val original = regionViewModel
+        val copy = geckoViewModel.copyRegion(original)
         originalToClipboard[original] = copy
         savePositionAndSize(copy, regionViewModel)
         copiedElements.add(copy)
@@ -47,8 +46,8 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
         val selection =
             geckoViewModel.currentEditor!!.selectionManager.currentSelection
         if (selection.contains(edgeViewModel.source) && selection.contains(edgeViewModel.destination)) {
-            val original = edgeViewModel.target
-            val copy = geckoViewModel.geckoModel.modelFactory.copyEdge(original)
+            val original = edgeViewModel
+            val copy = geckoViewModel.copyEdge(original)
             val sourceOnClipboard = originalToClipboard[original.source] as State?
             val destinationOnClipboard = originalToClipboard[original.destination] as State?
             val contractOnClipboard = originalToClipboard[original.contract] as Contract?
@@ -66,9 +65,9 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
     }
 
     override fun visit(stateViewModel: StateViewModel): Void? {
-        val original = stateViewModel.target
+        val original = stateViewModel
         val copyResult =
-            geckoViewModel.geckoModel.modelFactory.copyState(original)
+            geckoViewModel.copyState(original)
         val copy = copyResult.key
         originalToClipboard.putAll(copyResult.value)
         originalToClipboard[original] = copy
@@ -78,38 +77,42 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
     }
 
     override fun visit(portViewModel: PortViewModel): Void? {
-        val original = portViewModel.target
-        val copy = geckoViewModel.geckoModel.modelFactory.copyVariable(original)
+        val original = portViewModel
+        val copy = geckoViewModel.copyVariable(original)
         originalToClipboard[original] = copy
         savePositionAndSize(copy, portViewModel)
         copiedElements.add(copy)
         return null
     }
 
+    override fun visit(automatonViewModel: AutomatonViewModel): Void? {
+        TODO("Not yet implemented")
+    }
+
     override fun visit(systemConnectionViewModel: SystemConnectionViewModel): Void? {
         val selection =
             geckoViewModel.currentEditor!!.selectionManager.currentSelection
-        val sourceSystemViewModel = geckoViewModel.getViewModelElement(
-            geckoViewModel.currentEditor!!.currentSystem.target
-                .getChildSystemWithVariable(systemConnectionViewModel.target.source)!!
+        val sourceSystemViewModel = (
+            geckoViewModel.currentEditor!!.currentSystem
+                .getChildSystemWithVariable(systemConnectionViewModel.source)!!
         ) as SystemViewModel
 
-        val destinationSystemViewModel = geckoViewModel.getViewModelElement(
-            geckoViewModel.currentEditor!!.currentSystem.target
-                .getChildSystemWithVariable(systemConnectionViewModel.target.destination)!!
+        val destinationSystemViewModel = (
+            geckoViewModel.currentEditor!!.currentSystem
+                .getChildSystemWithVariable(systemConnectionViewModel.destination)!!
         ) as SystemViewModel
 
-        val original = systemConnectionViewModel.target
+        val original = systemConnectionViewModel
 
         val sourceSelected = selection.contains(sourceSystemViewModel) || selection.contains(
-            geckoViewModel.getViewModelElement(original.source)
+            (original.source)
         )
         val destinationSelected = selection.contains(destinationSystemViewModel) || selection.contains(
-            geckoViewModel.getViewModelElement(original.destination)
+            (original.destination)
         )
 
         if (sourceSelected && destinationSelected) {
-            val copy = geckoViewModel.geckoModel.modelFactory.copySystemConnection(original)
+            val copy = geckoViewModel.copySystemConnection(original)
             val sourceOnClipboard = originalToClipboard[original.source] as Variable?
             val destinationOnClipboard = originalToClipboard[original.destination] as Variable?
             if (sourceOnClipboard == null || destinationOnClipboard == null) {
@@ -130,19 +133,19 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
 
     fun savePositionRecursively(original: System) {
         val copy = originalToClipboard[original] as System?
-        savePositionAndSize(copy, geckoViewModel.getViewModelElement(original))
+        savePositionAndSize(copy, (original))
         for (state in original.automaton.states) {
-            savePositionAndSize(originalToClipboard[state], geckoViewModel.getViewModelElement(state))
+            savePositionAndSize(originalToClipboard[state], (state))
         }
         for (region in original.automaton.regions) {
-            savePositionAndSize(originalToClipboard[region], geckoViewModel.getViewModelElement(region))
+            savePositionAndSize(originalToClipboard[region], (region))
         }
         for (child in original.children) {
             savePositionRecursively(child)
         }
     }
 
-    fun savePositionAndSize(key: Element?, positionSource: PositionableViewModelElement<*>) {
+    fun savePositionAndSize(key: Element?, positionSource: PositionableViewModelElement) {
         elementToPosAndSize[key] = Pair(positionSource.position, positionSource.size)
     }
 }

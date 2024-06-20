@@ -2,8 +2,9 @@ package org.gecko.io
 
 import gecko.parser.SystemDefBaseVisitor
 import gecko.parser.SystemDefParser.*
+import org.gecko.viewmodel.builtinTypes
 
-import org.gecko.model.*
+
 import java.util.function.Consumer
 
 /**

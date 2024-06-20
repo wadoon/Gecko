@@ -29,7 +29,6 @@ class CreateRegionViewModelElementAction internal constructor(
         if (color != null) {
             createdRegionViewModel.color = (color)
         }
-        createdRegionViewModel.updateTarget()
         val actionManager = geckoViewModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdRegionViewModel, true))
         geckoViewModel.currentEditor!!.updateRegions()

@@ -1,7 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.Automaton
+import org.gecko.viewmodel.AutomatonViewModel
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.StateViewModel
 import org.gecko.viewmodel.SystemViewModel
@@ -14,19 +14,14 @@ class RestoreStateViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val stateViewModel: StateViewModel,
     val systemViewModel: SystemViewModel,
-    val wasStartState: Boolean
+    val wasStartState: Boolean = false
 ) : Action() {
-    val automaton: Automaton = systemViewModel.target!!.automaton!!
+    val automaton: AutomatonViewModel = systemViewModel.automaton
 
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        automaton.addState(stateViewModel.target!!)
-        geckoViewModel.addViewModelElement(stateViewModel)
-        if (wasStartState) {
-            systemViewModel.startState = stateViewModel
-            systemViewModel.updateTarget()
-        }
+        automaton.states.add(stateViewModel)
         return true
     }
 

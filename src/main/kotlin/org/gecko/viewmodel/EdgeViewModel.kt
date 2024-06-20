@@ -4,8 +4,6 @@ package org.gecko.viewmodel
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import javafx.geometry.Point2D
-import org.gecko.exceptions.ModelException
-import org.gecko.model.*
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -16,15 +14,19 @@ import tornadofx.setValue
  * [ContractViewModel] is handled. Contains methods for managing the afferent data and updating the
  * target-[Edge].
  */
-class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: StateViewModel) :
-    PositionableViewModelElement<Edge>(id, target) {
-    val kindProperty: ObjectProperty<Kind> = SimpleObjectProperty()
-    val priorityProperty: IntegerProperty = SimpleIntegerProperty()
-    val contractProperty: ObjectProperty<ContractViewModel?> = SimpleObjectProperty()
-    val sourceProperty: ObjectProperty<StateViewModel> = SimpleObjectProperty()
-    val destinationProperty: ObjectProperty<StateViewModel> = SimpleObjectProperty()
-    val isLoopProperty: BooleanProperty = SimpleBooleanProperty()
-    val orientationProperty: IntegerProperty = SimpleIntegerProperty()
+data class EdgeViewModel(
+    val kindProperty: ObjectProperty<Kind> = SimpleObjectProperty(Kind.HIT),
+    val priorityProperty: IntegerProperty = SimpleIntegerProperty(0),
+    val contractProperty: ObjectProperty<ContractViewModel?> = SimpleObjectProperty(),
+    val sourceProperty: ObjectProperty<StateViewModel?> = SimpleObjectProperty(),
+    val destinationProperty: ObjectProperty<StateViewModel?> = SimpleObjectProperty(),
+    val isLoopProperty: BooleanProperty = SimpleBooleanProperty(false),
+    val orientationProperty: IntegerProperty = SimpleIntegerProperty(0),
+) : PositionableViewModelElement() {
+    constructor(src: StateViewModel, dst: StateViewModel) : this() {
+        destination = dst
+        source = src
+    }
 
     /**
      * The list of edge points that define the path of the edge.
@@ -34,26 +36,11 @@ class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: 
     val startOffsetProperty: ObjectProperty<Point2D> = SimpleObjectProperty(Point2D.ZERO)
     val endOffsetProperty: ObjectProperty<Point2D> = SimpleObjectProperty(Point2D.ZERO)
 
-    var priority: Int
-        get() = priorityProperty.value
-        set(priority) {
-            priorityProperty.value = priority
-        }
-
-    var kind: Kind
-        get() = kindProperty.value
-        set(kind) {
-            kindProperty.value = kind
-        }
-
-    var contract: ContractViewModel?
-        get() = contractProperty.value
-        set(contract) {
-            contractProperty.value = contract
-        }
-
-    var source: StateViewModel by sourceProperty
-    var destination: StateViewModel by destinationProperty
+    var priority: Int by priorityProperty
+    var kind: Kind by kindProperty
+    var contract: ContractViewModel? by contractProperty
+    var source: StateViewModel? by sourceProperty
+    var destination: StateViewModel? by destinationProperty
 
     val representation: String
         /**
@@ -88,36 +75,21 @@ class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: 
     val isLoop: Boolean
         get() = isLoopProperty.value
 
-
-    @Throws(ModelException::class)
-    override fun updateTarget() {
-        target.kind = kind
-        target!!.priority = priority.toUInt()
-        if (contractProperty.value != null) {
-            target.contract = contractProperty.value!!.target
-        }
-        target.source = (sourceProperty.value.target)
-        target.destination = (destinationProperty.value.target)
-    }
-
     init {
         sourceProperty.onChange { field, new ->
-            field.outgoingEdges.remove(this)
+            field?.outgoingEdges!!.remove(this)
             removeBindings()
             setBindings()
-            new.outgoingEdges.add(this)
+            new?.outgoingEdges?.add(this)
         }
 
         destinationProperty.onChange { field, new ->
-            field.incomingEdges.remove(this)
+            field?.incomingEdges?.remove(this)
             removeBindings()
             setBindings()
-            new.incomingEdges.add(this)
+            new?.incomingEdges?.add(this)
         }
 
-
-        kind = target.kind
-        priority = target.priority.toInt()
         sourceProperty.set(source)
         destinationProperty.set(destination)
         isLoopProperty.bind(
@@ -130,19 +102,21 @@ class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: 
         sizeProperty.value = Point2D.ZERO
         setBindings()
 
-        this.source.outgoingEdges.add(this)
-        this.destination.incomingEdges.add(this)
+        this.source?.outgoingEdges?.add(this)
+        this.destination?.incomingEdges?.add(this)
     }
 
     fun setBindings() {
         startPointProperty.bind(
             Bindings.createObjectBinding(
-                { source.center!!.add(startOffsetProperty.value) }, startOffsetProperty, source.positionProperty
+                { source!!.center!!.add(startOffsetProperty.value) }, startOffsetProperty, source!!.positionProperty
             )
         )
         endPointProperty.bind(
             Bindings.createObjectBinding(
-                { destination.center!!.add(endOffsetProperty.value) }, endOffsetProperty, destination.positionProperty
+                { destination!!.center!!.add(endOffsetProperty.value) },
+                endOffsetProperty,
+                destination!!.positionProperty
             )
         )
     }
@@ -164,7 +138,6 @@ class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: 
         return visitor.visit(this)
     }
 
-
     fun setOrientation(orientation: Int) {
         orientationProperty.value = orientation
     }
@@ -172,14 +145,4 @@ class EdgeViewModel(id: Int, target: Edge, source: StateViewModel, destination: 
     override var center: Point2D?
         get() = startPointProperty.value.midpoint(endPointProperty.value)
         set(value) {}
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is EdgeViewModel) {
-            return false
-        }
-        return id == o.id
-    }
 }

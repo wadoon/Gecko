@@ -7,11 +7,9 @@ import javafx.collections.ObservableList
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.scene.paint.Color
-import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 import tornadofx.getValue
 import tornadofx.setValue
-import java.lang.System
 import java.util.*
 
 /**
@@ -19,29 +17,22 @@ import java.util.*
  * [Color], a set of [StateViewModel]s, a [ContractViewModel] and an invariant. Contains methods for
  * managing the afferent data and updating the target-[Region].
  */
-class RegionViewModel(id: Int, target: Region, val contract: ContractViewModel) :
-    BlockViewModelElement<Region>(id, target) {
-    val colorProperty: Property<Color>
-    val invariantProperty: StringProperty = SimpleStringProperty(target.invariant.condition)
-    val statesProperty: ObservableList<StateViewModel> = FXCollections.observableArrayList()
+data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElement() {
+    val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
+    var color: Color by colorProperty
+
+    val invariantProperty = SimpleObjectProperty<Condition>(Condition(""))
+    var invariant: Condition by invariantProperty
+
+    val statesProperty = listProperty<StateViewModel>()
+    var states: ObservableList<StateViewModel> by statesProperty
 
     init {
         val random = Random(System.currentTimeMillis())
         val red = random.nextInt(MAXIMUM_RGB_COLOR_VALUE)
         val green = random.nextInt(MAXIMUM_RGB_COLOR_VALUE)
         val blue = random.nextInt(MAXIMUM_RGB_COLOR_VALUE)
-        this.colorProperty = SimpleObjectProperty(Color.rgb(red, green, blue, 0.5))
-    }
-
-    @Throws(ModelException::class)
-    override fun updateTarget() {
-        super.updateTarget()
-        target.invariant.condition = (invariantProperty.value)
-        target.preAndPostCondition.preCondition!!.condition = (contract.precondition)
-        target.preAndPostCondition.postCondition!!.condition = (contract.postcondition)
-
-        target.states.clear()
-        target!!.addStates(statesProperty.map { it.target }.toSet())
+        color = Color.rgb(red, green, blue, 0.5)
     }
 
     fun addState(state: StateViewModel) {
@@ -59,9 +50,6 @@ class RegionViewModel(id: Int, target: Region, val contract: ContractViewModel) 
     override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
         return visitor.visit(this)
     }
-
-    var invariant: String by invariantProperty
-    var color: Color by colorProperty
 
     /**
      * Checks if the given state is in the region and adds it to the region if it is.
@@ -81,14 +69,9 @@ class RegionViewModel(id: Int, target: Region, val contract: ContractViewModel) 
         }
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is RegionViewModel) {
-            return false
-        }
-        return id == o.id
+    fun includes(state: StateViewModel): Boolean {
+        TODO()
+        return true
     }
 
     companion object {

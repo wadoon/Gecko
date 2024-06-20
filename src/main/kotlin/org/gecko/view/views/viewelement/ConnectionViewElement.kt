@@ -11,6 +11,7 @@ import javafx.scene.shape.*
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
+import org.gecko.viewmodel.listProperty
 import kotlin.math.abs
 
 /**
@@ -19,7 +20,7 @@ import kotlin.math.abs
  */
 
 abstract class ConnectionViewElement(line: List<Point2D>) {
-    val pathSource = SimpleListProperty(FXCollections.observableArrayList<Point2D>())
+    val pathSource = listProperty<Point2D>()
     val line = Path()
     val arrowHead = createDefaultHead()
     val pane = Group(this.line, arrowHead)

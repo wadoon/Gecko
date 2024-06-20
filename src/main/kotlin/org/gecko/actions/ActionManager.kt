@@ -16,10 +16,10 @@ class ActionManager(geckoViewModel: GeckoViewModel) {
 
     val actionFactory = ActionFactory(geckoViewModel)
     val undoStack = ArrayDeque<Action>()
-    val redoStack = ArrayDeque<Action?>()
+    val redoStack = ArrayDeque<Action>()
 
 
-    var copyVisitor: CopyPositionableViewModelElementVisitor? = null
+    //var copyVisitor: CopyPositionableViewModelElementVisitor? = null
 
     /**
      * Undoes the last action and makes it redoable.
@@ -37,7 +37,9 @@ class ActionManager(geckoViewModel: GeckoViewModel) {
             showExceptionAlert(e.message)
             return
         }
-        redoStack.addFirst(action.getUndoAction(actionFactory))
+        action.getUndoAction(actionFactory)?.let { undoAction ->
+            redoStack.addFirst(undoAction)
+        }
     }
 
     /**
@@ -47,16 +49,16 @@ class ActionManager(geckoViewModel: GeckoViewModel) {
         if (redoStack.isEmpty()) {
             return
         }
-        val action = redoStack.removeFirst()
+        val action: Action = redoStack.removeFirst()
         try {
-            if (!action!!.run()) {
+            if (!action.run()) {
                 return
             }
         } catch (e: GeckoException) {
             showExceptionAlert(e.message)
             return
         }
-        val undoAction = action!!.getUndoAction(actionFactory)
+        val undoAction = action.getUndoAction(actionFactory)
         if (undoAction != null) {
             undoStack.addFirst(undoAction)
         }

@@ -1,10 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.*
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PortViewModel
-import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.*
 import java.util.stream.Collectors
 
 /**
@@ -49,7 +46,6 @@ class ChangeVisibilityPortViewModelAction : Action {
 
         systemConnectionDeleteActionGroup!!.run()
         portViewModel.visibility = (visibility)
-        portViewModel.updateTarget()
         return true
     }
 
@@ -61,7 +57,7 @@ class ChangeVisibilityPortViewModelAction : Action {
     }
 
     fun getSystemConnectionDeleteActionGroup(): ActionGroup {
-        val containingSystem = geckoViewModel.getSystemViewModelWithPort(portViewModel)!!.target
+        val containingSystem = geckoViewModel.getSystemViewModelWithPort(portViewModel)!!
         val parentSystem = containingSystem.parent
         val deleteActions: MutableList<Action> = ArrayList(getSystemConnectionDeleteActions(containingSystem))
 
@@ -71,16 +67,14 @@ class ChangeVisibilityPortViewModelAction : Action {
         return ActionGroup(deleteActions)
     }
 
-    fun getSystemConnectionViewModels(system: System): Set<SystemConnectionViewModel> {
-        return system.connections
+    private fun getSystemConnectionViewModels(system: SystemViewModel): Set<SystemConnectionViewModel> =
+        system.connections
             .stream()
-            .filter { systemConnection: SystemConnection -> systemConnection.source == portViewModel.target || systemConnection.destination == portViewModel.target }
-            .map { systemConnection: SystemConnection? -> geckoViewModel.getViewModelElement(systemConnection!!) as SystemConnectionViewModel }
+            .filter { it.source == portViewModel || it.destination == portViewModel }
             .collect(Collectors.toSet())
-    }
 
-    fun getSystemConnectionDeleteActions(system: System): List<Action> {
-        return getSystemConnectionViewModels(system).stream()
+    private fun getSystemConnectionDeleteActions(system: SystemViewModel): List<Action> =
+        getSystemConnectionViewModels(system).stream()
             .map { systemConnectionViewModel: SystemConnectionViewModel? ->
                 DeleteSystemConnectionViewModelElementAction(
                     geckoViewModel,
@@ -88,5 +82,4 @@ class ChangeVisibilityPortViewModelAction : Action {
                 )
             }
             .toList()
-    }
 }

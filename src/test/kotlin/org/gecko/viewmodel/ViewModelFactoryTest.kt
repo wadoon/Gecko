@@ -2,7 +2,7 @@ package org.gecko.viewmodel
 
 import org.gecko.exceptions.MissingViewModelElementException
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 
 import org.gecko.util.TestHelper
 import org.junit.jupiter.api.*

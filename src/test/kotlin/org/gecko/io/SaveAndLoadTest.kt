@@ -1,8 +1,8 @@
 package org.gecko.io
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.GeckoModel
-import org.gecko.model.Visibility
+
+import org.gecko.viewmodel.Visibility
 import org.gecko.viewmodel.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

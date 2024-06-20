@@ -54,7 +54,7 @@ abstract class Tool protected constructor(
         //We need to consume all events so that they don't propagate to the view
         setAllHandlers(
             stateViewElement,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     /**
@@ -65,7 +65,7 @@ abstract class Tool protected constructor(
     override fun visit(edgeViewElement: EdgeViewElement) {
         setAllHandlers(
             edgeViewElement.pane,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     /**
@@ -86,7 +86,7 @@ abstract class Tool protected constructor(
     override fun visit(systemViewElement: SystemViewElement) {
         setAllHandlers(
             systemViewElement,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     /**
@@ -98,7 +98,7 @@ abstract class Tool protected constructor(
     override fun visit(systemConnectionViewElement: SystemConnectionViewElement) {
         setAllHandlers(
             systemConnectionViewElement.pane,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     /**
@@ -110,7 +110,7 @@ abstract class Tool protected constructor(
     override fun visit(variableBlockViewElement: VariableBlockViewElement) {
         setAllHandlers(
             variableBlockViewElement,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class Tool protected constructor(
     override fun visit(portViewElement: PortViewElement) {
         setAllHandlers(
             portViewElement,
-            if (transparentElements) null else EventHandler { obj: MouseEvent -> obj.consume() })
+            if (transparentElements) null else EventHandler { obj: MouseEvent? -> obj?.consume() })
     }
 
     protected fun setAllHandlers(node: Node?, handler: EventHandler<MouseEvent?>?) {

@@ -1,7 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.Automaton
+import org.gecko.viewmodel.AutomatonViewModel
 import org.gecko.viewmodel.EdgeViewModel
 import org.gecko.viewmodel.GeckoViewModel
 
@@ -12,14 +12,14 @@ import org.gecko.viewmodel.GeckoViewModel
 class RestoreEdgeViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val edgeViewModel: EdgeViewModel,
-    val automaton: Automaton
+    val automaton: AutomatonViewModel
 ) : Action() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        automaton.addEdge(edgeViewModel.target)
+        automaton.addEdge(edgeViewModel)
         geckoViewModel.addViewModelElement(edgeViewModel)
-        edgeViewModel.source.outgoingEdges.add(edgeViewModel)
-        edgeViewModel.destination.incomingEdges.add(edgeViewModel)
+        edgeViewModel.source!!.outgoingEdges.add(edgeViewModel)
+        edgeViewModel.destination!!.incomingEdges.add(edgeViewModel)
         return true
     }
 

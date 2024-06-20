@@ -19,6 +19,7 @@ import org.gecko.tools.ToolType
 import org.gecko.view.GeckoView
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
+import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.javafx.FontIcon
@@ -36,7 +37,7 @@ import java.io.File
  * finding an element by name matches, opening a comprehensive list of all shortcuts available or reading more
  * information about Gecko).
  */
-class ToolbarBuilder(view: GeckoView, private val actionManager: ActionManager) {
+class ToolbarBuilder(view: GeckoView, val model: GeckoViewModel, private val actionManager: ActionManager) {
     private val menuBar = ToolBar()
     private val view: GeckoView = view
 
@@ -56,7 +57,7 @@ class ToolbarBuilder(view: GeckoView, private val actionManager: ActionManager) 
         btnVMgr.onAction = EventHandler { it: ActionEvent? -> view.showVersionManager() }
 
         val btnActivateVariants = MenuButton("Activate Variants")
-        val vg = view.viewModel.geckoModel.knownVariantGroupsProperty
+        val vg = model.knownVariantGroupsProperty
         val mvg = MappedList(vg) { v ->
             val m = Menu(v.name)
             m.items.setAll(v.variants.stream().map { CheckMenuItem() }.toList())
@@ -206,27 +207,33 @@ class ToolbarBuilder(view: GeckoView, private val actionManager: ActionManager) 
         val cutButton = createColButton("cut", MaterialDesignC.CONTENT_CUT)
         cutButton.contentDisplay = ContentDisplay.LEFT
         cutButton.onAction =
-            EventHandler { e: ActionEvent? -> actionManager.run(actionManager.actionFactory.createCutPositionableViewModelElementAction()) }
+            EventHandler { e: ActionEvent? ->
+                TODO()
+                //actionManager.run(actionManager.actionFactory.createCutPositionableViewModelElementAction())
+            }
         view.addMnemonic(cutButton, Shortcuts.CUT.get())
 
         val copyButton = createColButton("copy", MaterialDesignC.CONTENT_COPY)
         copyButton.contentDisplay = ContentDisplay.LEFT
         copyButton.onAction =
-            EventHandler { e: ActionEvent? -> actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction()) }
+            EventHandler { _: ActionEvent? ->
+                TODO() //actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
+            }
         view.addMnemonic(copyButton, Shortcuts.COPY.get())
 
         val pasteButton = createColButton("paste", MaterialDesignC.CONTENT_PASTE)
         pasteButton.contentDisplay = ContentDisplay.LEFT
         pasteButton.onAction = EventHandler { e: ActionEvent? ->
             val center: Point2D = view.currentView!!.viewElementPane.screenCenterWorldCoords()
-            actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
+            //actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
+            TODO()
         }
         view.addMnemonic(pasteButton, Shortcuts.PASTE.get())
 
         // General selection commands:
         val selectAllButton = createColButton("select_all", MaterialDesignS.SELECT_ALL)
         selectAllButton.onAction = EventHandler { e: ActionEvent? ->
-            val allElements: Set<PositionableViewModelElement<*>> = view.allDisplayedElements
+            val allElements: Set<PositionableViewModelElement> = view.allDisplayedElements
             actionManager.run(actionManager.actionFactory.createSelectAction(allElements, true))
         }
         view.addMnemonic(selectAllButton, Shortcuts.SELECT_ALL.get())

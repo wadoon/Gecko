@@ -24,6 +24,7 @@ class RegionViewElement(override val target: RegionViewModel) : BlockViewElement
     val colorProperty: Property<Color> = SimpleObjectProperty()
     val invariantProperty: StringProperty = SimpleStringProperty()
     val states: MutableList<StateViewModel> = ArrayList()
+    override var isSelected: Boolean = false
 
     init {
         bindViewModel()
@@ -46,7 +47,7 @@ class RegionViewElement(override val target: RegionViewModel) : BlockViewElement
     fun bindViewModel() {
         nameProperty.bind(target.nameProperty)
         colorProperty.bind(target.colorProperty)
-        invariantProperty.bind(target.invariantProperty)
+        invariantProperty.bind(target.invariant.valueProperty)
         val listener = ListChangeListener { change: ListChangeListener.Change<out StateViewModel> ->
             while (change.next()) {
                 if (change.wasAdded()) {
@@ -93,10 +94,10 @@ class RegionViewElement(override val target: RegionViewModel) : BlockViewElement
         name.textProperty().bind(nameProperty)
         val preConditionDesc = Label(ResourceHandler.pre_condition_short + ":")
         val preCondition = Label()
-        preCondition.textProperty().bind(target.contract.preConditionProperty)
+        preCondition.textProperty().bind(target.contract.preCondition.valueProperty)
         val postConditionDesc = Label(ResourceHandler.post_condition_short + ":")
         val postCondition = Label()
-        postCondition.textProperty().bind(target.contract.postConditionProperty)
+        postCondition.textProperty().bind(target.contract.postCondition.valueProperty)
         val invariantDesc = Label(ResourceHandler.invariant_short + ": ")
         val invariant = Label()
         invariant.textProperty().bind(invariantProperty)

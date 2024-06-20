@@ -33,4 +33,8 @@ class ViewElementCreatorVisitor(val viewFactory: ViewFactory) :
     override fun visit(portViewModel: PortViewModel): ViewElement<*>? {
         return viewFactory.createViewElementFrom(portViewModel)
     }
+
+    override fun visit(automatonViewModel: AutomatonViewModel): ViewElement<*>? {
+        TODO("Not yet implemented")
+    }
 }

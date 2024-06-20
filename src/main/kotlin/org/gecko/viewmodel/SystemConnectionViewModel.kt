@@ -4,8 +4,9 @@ package org.gecko.viewmodel
 import javafx.beans.property.*
 import javafx.collections.FXCollections
 import javafx.geometry.Point2D
-import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
+import tornadofx.getValue
+import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [SystemConnection] model element. A [SystemConnectionViewModel] is
@@ -14,44 +15,29 @@ import org.gecko.model.*
  */
 
 
-class SystemConnectionViewModel(
-    id: Int,
-    target: SystemConnection?,
-    source: PortViewModel,
-    destination: PortViewModel
-) : PositionableViewModelElement<SystemConnection>(id, target!!), ConnectionViewModel {
-    val sourceProperty = SimpleObjectProperty<PortViewModel>()
-    val destinationProperty = SimpleObjectProperty<PortViewModel>()
-    override val edgePoints = SimpleListProperty(FXCollections.observableArrayList<Point2D>())
+data class SystemConnectionViewModel(
+    val sourceProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>(),
+    val destinationProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>()
+) : PositionableViewModelElement(), ConnectionViewModel {
+    override val edgePoints = listProperty<Point2D>()
+
+    var source: PortViewModel? by sourceProperty
+    var destination: PortViewModel? by destinationProperty
 
     init {
-        sourceProperty.set(source)
-        destinationProperty.set(destination)
         sizeProperty.value = Point2D.ZERO
-        source.addOutgoingConnection(this)
-        destination.addIncomingConnection(this)
-    }
+        source?.addOutgoingConnection(this)
+        destination?.addIncomingConnection(this)
 
-    var source: PortViewModel
-        get() = sourceProperty.value
-        set(source) {
-            sourceProperty.value.removeOutgoingConnection(this)
-            sourceProperty.value = source
-            source.addOutgoingConnection(this)
+        sourceProperty.onChange { old, new ->
+            old?.removeOutgoingConnection(this)
+            new?.addOutgoingConnection(this)
         }
 
-    var destination: PortViewModel
-        get() = destinationProperty.value
-        set(destination) {
-            destinationProperty.value.removeIncomingConnection(this)
-            destinationProperty.value = destination
-            destination.addIncomingConnection(this)
+        destinationProperty.onChange { old, new ->
+            old?.removeIncomingConnection(this)
+            new?.addIncomingConnection(this)
         }
-
-    @Throws(ModelException::class)
-    override fun updateTarget() {
-        target!!.source = source.target
-        target.destination = destination.target
     }
 
     override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
@@ -60,16 +46,6 @@ class SystemConnectionViewModel(
 
     override fun setEdgePoint(index: Int, newPosition: Point2D) {
         edgePoints[index] = newPosition
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is SystemConnectionViewModel) {
-            return false
-        }
-        return id == o.id
     }
 }
 
@@ -92,7 +68,7 @@ fun isConnectingAllowed(
     if (sourceSystem == null || destinationSystem == null || parentSystem == null) {
         return false
     }
-    if (destination.target.hasIncomingConnection && !(systemConnection != null && systemConnection.destination == destination)) {
+    if (destination.hasIncomingConnection && !(systemConnection != null && systemConnection.destination == destination)) {
         return false
     }
     if (sourceSystem == destinationSystem) {

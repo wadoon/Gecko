@@ -1,4 +1,4 @@
-package org.gecko.model
+package org.gecko.viewmodel
 
 import javafx.beans.property.ListProperty
 import javafx.beans.property.SimpleListProperty

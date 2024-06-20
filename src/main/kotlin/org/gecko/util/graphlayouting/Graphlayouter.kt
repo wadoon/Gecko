@@ -21,7 +21,7 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
     internal val elkGraphCreator = ELKGraphCreator(viewModel)
 
     fun layout() {
-        val root = viewModel.getViewModelElement(viewModel.geckoModel.root) as SystemViewModel
+        val root = viewModel.root
         layout(root)
     }
 
@@ -32,9 +32,8 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         val automatonGraph = elkGraphCreator.createAutomatonElkGraph(systemViewModel)
         layoutGraph(automatonGraph, LayoutAlgorithms.FORCE)
         applyAutomatonLayoutToViewModel(automatonGraph, systemViewModel)
-        for (system in systemViewModel.target.children) {
-            val svm = viewModel.getViewModelElement(system) as SystemViewModel
-            layout(svm)
+        for (system in systemViewModel.subSystems) {
+            layout(system)
         }
     }
 
@@ -53,7 +52,7 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
     }
 
     fun applySystemLayoutToViewModel(root: ElkNode?, viewModel: SystemViewModel) {
-        val children: MutableList<BlockViewModelElement<*>> = ArrayList(getChildSystemViewModels(viewModel))
+        val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(viewModel))
         children.addAll(viewModel.ports)
         for (child in children) {
             applyLayoutToNode(root, child)
@@ -66,8 +65,8 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         }
     }
 
-    fun applyLayoutToNode(root: ElkNode?, viewModel: BlockViewModelElement<*>) {
-        val node = findNodeById(root, viewModel.id)!!
+    fun applyLayoutToNode(root: ElkNode?, viewModel: BlockViewModelElement) {
+        val node = findNodeById(root, viewModel.hashCode())!!
         viewModel.position = Point2D(node.x, node.y)
         viewModel.size = Point2D(node.width, node.height)
     }
@@ -76,11 +75,9 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         root!!.children.firstOrNull { it.identifier == id.toString() }
 
     fun getChildSystemViewModels(systemViewModel: SystemViewModel): List<SystemViewModel> =
-        systemViewModel.target.children
-            .map { viewModel.getViewModelElement(it) as SystemViewModel }
+        systemViewModel.subSystems
 
-    fun getStates(systemViewModel: SystemViewModel): List<StateViewModel> = systemViewModel.target
+    fun getStates(systemViewModel: SystemViewModel): List<StateViewModel> = systemViewModel
         .automaton
         .states
-        .map { viewModel.getViewModelElement(it) as StateViewModel }
 }

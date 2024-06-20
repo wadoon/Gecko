@@ -5,7 +5,6 @@ import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.beans.value.ObservableValue
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.control.Label
@@ -13,20 +12,20 @@ import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
-
-import org.gecko.model.Visibility
 import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Visibility
+import org.gecko.viewmodel.onChange
+import tornadofx.getValue
+import tornadofx.setValue
 
 /**
  * Represents a type of a [Pane] used for the visualization of a [PortViewModel], to which it holds a
  * reference, along with its [name][String] and [Visibility].
  */
-
-class PortViewElement(val viewModel: PortViewModel?) : Pane() {
-    val nameProperty: StringProperty = SimpleStringProperty(viewModel!!.name)
-    val visibilityProperty: ObjectProperty<Visibility> = SimpleObjectProperty(
-        viewModel!!.visibility
-    )
+class PortViewElement(val viewModel: PortViewModel) : Pane() {
+    val nameProperty: StringProperty = SimpleStringProperty(viewModel.name)
+    val visibilityProperty: ObjectProperty<Visibility> = SimpleObjectProperty(viewModel.visibility)
+    var visibility: Visibility by visibilityProperty
 
     init {
         minWidth = MIN_WIDTH
@@ -52,9 +51,9 @@ class PortViewElement(val viewModel: PortViewModel?) : Pane() {
         get() = Point2D(width, height)
 
     fun bindToViewModel() {
-        nameProperty.bind(viewModel!!.nameProperty)
+        nameProperty.bind(viewModel.nameProperty)
         visibilityProperty.bind(viewModel.visibilityProperty)
-        visibilityProperty.addListener { observable: ObservableValue<out Visibility>?, oldValue: Visibility?, newValue: Visibility? -> updateBackgroundColor() }
+        visibilityProperty.onChange { _: Visibility, _: Visibility -> updateBackgroundColor() }
         viewModel.systemPortOffsetProperty.bind(
             Bindings.createObjectBinding(
                 { Point2D(layoutX, layoutY) }, layoutXProperty(), layoutYProperty()
@@ -72,11 +71,10 @@ class PortViewElement(val viewModel: PortViewModel?) : Pane() {
     }
 
     fun updateBackgroundColor() {
-        val isInput = viewModel!!.visibility == Visibility.INPUT
+        val isInput = viewModel.visibility == Visibility.INPUT
         val background = Background(
             BackgroundFill(
-                PortViewModel.Companion.getBackgroundColor(if (isInput) Visibility.OUTPUT else Visibility.INPUT),
-                if (isInput) INPUT_RADII else OUTPUT_RADII, null
+                visibility.color, if (isInput) INPUT_RADII else OUTPUT_RADII, null
             )
         )
         setBackground(background)

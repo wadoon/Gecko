@@ -1,7 +1,5 @@
 package org.gecko.io
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToStream
 import org.gecko.viewmodel.GeckoViewModel
 import java.io.File
 import java.io.IOException
@@ -13,14 +11,14 @@ import java.io.IOException
 class ProjectFileSerializer(val viewModel: GeckoViewModel) : FileSerializer {
     @Throws(IOException::class)
     override fun writeToFile(file: File) {
-        val root = viewModel.geckoModel.root
-        val saver = ViewModelElementSaver(viewModel)
-        val startStates = saver.startStates
-        val viewModelProperties = saver.getViewModelProperties(root)
-        val geckoJsonWrapper = GeckoJsonWrapper(root, startStates, viewModelProperties)
+        val root = viewModel
+        //val saver = ViewModelElementSaver(viewModel)
+        //val startStates = saver.startStates
+        //val viewModelProperties = saver.getViewModelProperties(root)
+        val geckoJsonWrapper = GeckoJsonWrapper(root)
 
         file.outputStream().use {
-            Json.encodeToStream(geckoJsonWrapper, it)
+            encodeToStream(geckoJsonWrapper, it)
         }
     }
 }

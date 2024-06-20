@@ -96,7 +96,7 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         val matchesLabel = Label()
         matchesLabel.textFill = Color.BLACK
 
-        val matches: MutableList<PositionableViewModelElement<*>> = ArrayList()
+        val matches: MutableList<PositionableViewModelElement> = ArrayList()
         val searchTextField = TextField()
         searchTextField.promptText = ResourceHandler.search
 
@@ -104,8 +104,8 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
 
         searchTextField.onAction = EventHandler<ActionEvent> { e: ActionEvent? ->
             editorViewModel.selectionManager.deselectAll()
-            val oldSearchMatches: List<PositionableViewModelElement<*>> = ArrayList(matches)
-            oldSearchMatches.forEach(Consumer { o: PositionableViewModelElement<*> -> matches.remove(o) })
+            val oldSearchMatches: List<PositionableViewModelElement> = ArrayList(matches)
+            oldSearchMatches.forEach(Consumer { o: PositionableViewModelElement -> matches.remove(o) })
             matches.addAll(editorViewModel.getElementsByName(searchTextField.text))
             if (!matches.isEmpty()) {
                 actionManager.run(
@@ -144,7 +144,7 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
     }
 
     fun searchNextResult(
-        matches: List<PositionableViewModelElement<*>>,
+        matches: List<PositionableViewModelElement>,
         matchesLabel: Label,
         backwardButton: Button,
         forwardButton: Button,

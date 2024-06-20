@@ -7,8 +7,9 @@ import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 import org.gecko.view.ResourceHandler
+import org.gecko.viewmodel.*
 import java.util.*
 
 /**
@@ -17,19 +18,15 @@ import java.util.*
  * [SystemDefParser.ModelContext] of a sys file.
  */
 class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
-
-    var model: GeckoModel
-
-
+    var model: GeckoViewModel = GeckoViewModel()
     val warnings: MutableSet<String>
 
-    var currentSystem: System
+    var currentSystem: SystemViewModel
     var nextSystemName: String? = null
     var scout: AutomatonFileScout? = null
     var elementsCreated = 0u
 
     init {
-        this.model = GeckoModel()
         this.warnings = TreeSet()
         currentSystem = model.root
     }
@@ -55,10 +52,9 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             throw RuntimeException("No root system found")
         }
         scout.getSystem(rootName!!)!!.accept(this)
-        val newRoot = model.root.children.first()
+        val newRoot = model.root.subSystems.first()
         newRoot.parent = null
-        model = GeckoModel(newRoot)
-        model.modelFactory.elementId = elementsCreated + 1u
+        model = GeckoViewModel(newRoot)
         if (ctx.globalCode != null) {
             model.globalCode = cleanCode(ctx.globalCode.text)
         }
@@ -108,7 +104,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             throw RuntimeException("Variables to substitute can only be from the same system")
         }
         val toReplaceWith = ctx.from.port.text
-        if (currentSystem.variables.stream().noneMatch { variable: Variable -> variable.name == toReplaceWith }) {
+        if (currentSystem.ports.stream().noneMatch { variable -> variable.name == toReplaceWith }) {
             throw RuntimeException(
                 String.format("Variable %s not found not found in system %s", toReplace, currentSystem.name)
             )
@@ -131,7 +127,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
         val startStateCandidates = currentSystem.automaton
             .states
-            .filter { state: State -> state.name!!.matches(START_STATE_REGEX.toRegex()) }
+            .filter { state: StateViewModel -> state.name!!.matches(START_STATE_REGEX.toRegex()) }
         if (startStateCandidates.size > 1) {
             throw RuntimeException(String.format("Multiple start states found in automaton %s", ctx.ident().text))
         } else if (startStateCandidates.size == 1) {
@@ -159,7 +155,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         var start = currentSystem.automaton.getStateByName(startName)
         if (start == null) {
             try {
-                start = model.modelFactory.createState(currentSystem.automaton)
+                start = currentSystem.automaton.createState()
                 elementsCreated++
                 start.name = startName
             } catch (e: ModelException) {
@@ -169,7 +165,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         var end = currentSystem.automaton.getStateByName(endName)
         if (end == null) {
             try {
-                end = model.modelFactory.createState(currentSystem.automaton)
+                end = currentSystem.automaton.createState()
                 elementsCreated++
                 end.name = endName
             } catch (e: ModelException) {
@@ -181,9 +177,9 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         } else {
             buildContract(start, ctx.pre.text, ctx.post.text)
         }
-        val edge: Edge
+        val edge: EdgeViewModel
         try {
-            edge = model.modelFactory.createEdge(currentSystem.automaton, start, end)
+            edge = currentSystem.automaton.createEdge(start, end)
             elementsCreated++
         } catch (e: ModelException) {
             throw RuntimeException(e.message)
@@ -211,13 +207,12 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
                 }
             }
             for (ident in variable.n) {
-                if (currentSystem.getVariableByName(ident.Ident().text) != null
-                    || scout!!.getSystem(ident.text) != null
+                if (currentSystem.getVariableByName(ident.Ident().text) != null || scout!!.getSystem(ident.text) != null
                 ) {
                     continue
                 }
                 try {
-                    val v: Variable = model.modelFactory.createVariable(currentSystem)
+                    val v = currentSystem.createVariable()
                     elementsCreated++
                     v.name = (ident.Ident().text)
                     v.type = (variable.t.text)
@@ -239,7 +234,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         val startSystem = parseSystemReference(ctx.from.inst.text)
         val start = startSystem.getVariableByName(ctx.from.port.text)
             ?: throw RuntimeException(String.format("Could not find variable %s", ctx.from.port.text))
-        val end: MutableSet<Variable> = HashSet()
+        val end: MutableSet<PortViewModel> = HashSet()
         for (ident in ctx.to) {
             val endSystem = parseSystemReference(ident.inst.text)
             val endVar = endSystem.getVariableByName(ident.port.text)
@@ -248,7 +243,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
         try {
             for (variable in end) {
-                model.modelFactory.createSystemConnection(currentSystem, start, variable)
+                model.viewModelFactory.createSystemConnectionViewModelIn(currentSystem, start, variable)
                 elementsCreated++
             }
         } catch (e: ModelException) {
@@ -256,17 +251,17 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
     }
 
-    fun buildSystem(ctx: SystemContext): System {
-        val system: System
+    fun buildSystem(ctx: SystemContext): SystemViewModel {
+        val system: SystemViewModel
         try {
-            system = model.modelFactory.createSystem(currentSystem)
+            system = currentSystem.createSubSystem()
             elementsCreated++
         } catch (e: ModelException) {
             throw RuntimeException(e.message)
         }
         if (nextSystemName != null) {
             try {
-                system.name = (nextSystemName)
+                system.name = nextSystemName!!
             } catch (e: ModelException) {
                 throw RuntimeException(e.message)
             }
@@ -288,7 +283,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return system
     }
 
-    fun buildContract(state: State, contract: PrepostContext?): Contract {
+    fun buildContract(state: StateViewModel, contract: PrepostContext?): ContractViewModel {
         val c = buildContract(state, contract!!.pre.text, contract.post.text)
         try {
             c.name = contract.name.text
@@ -298,16 +293,16 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return c
     }
 
-    fun buildContract(state: State, pre: String, post: String): Contract {
-        val newContract: Contract
+    fun buildContract(state: StateViewModel, pre: String, post: String): ContractViewModel {
+        val newContract: ContractViewModel
         val preCondition: Condition
         val postCondition: Condition
         try {
-            newContract = model.modelFactory.createContract(state)
+            newContract = ContractViewModel()
             elementsCreated++
-            preCondition = model.modelFactory.createCondition(pre)
+            preCondition = Condition(pre)
             elementsCreated++
-            postCondition = model.modelFactory.createCondition(post)
+            postCondition = Condition(post)
             elementsCreated++
             newContract.preCondition = preCondition
             newContract.postCondition = postCondition
@@ -317,7 +312,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return newContract
     }
 
-    fun applySubstitution(currentSystem: System, toReplace: String, toReplaceWith: String) {
+    fun applySubstitution(currentSystem: SystemViewModel, toReplace: String, toReplaceWith: String) {
         val automaton = currentSystem.automaton
         for (state in automaton.states) {
             for (contract in state.contracts) {
@@ -328,13 +323,13 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     fun applySubstitution(condition: Condition, toReplace: String, toReplaceWith: String) {
-        var con = condition.condition
+        var con = condition.value
         //replace normal occurrences (var -> newVar)
         con = con.replace("\\b$toReplace\\b".toRegex(), toReplaceWith)
         //replace history occurrences (h_var_\d -> h_newVar_\d)
         con = con.replace(("\\bh_" + toReplace + "_(\\d+)\\b").toRegex(), "h_" + toReplaceWith + "_$1")
         try {
-            condition.condition = con
+            condition.value = con
         } catch (e: ModelException) {
             throw RuntimeException("Failed to apply substitution")
         }
@@ -344,17 +339,12 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return code.substring(CODE_BEGIN.length, code.length - CODE_BEGIN.length)
     }
 
-    fun parseSystemReference(name: String): System {
-        val system: System?
-        if (name == SELF_REFERENCE_TOKEN) {
-            system = currentSystem
+    fun parseSystemReference(name: String): SystemViewModel {
+        return if (name == SELF_REFERENCE_TOKEN) {
+            currentSystem
         } else {
-            system = currentSystem.getChildByName(name)
-            if (system == null) {
-                error(String.format("Could not find system %s", name))
-            }
+            currentSystem.getChildByName(name) ?: error(String.format("Could not find system %s", name))
         }
-        return system
     }
 
     fun hasCyclicChildSystems(ctx: ModelContext): Boolean {
@@ -363,9 +353,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             var currentParents = scout!!.getParents(system)
             while (currentParents != null && currentParents.isNotEmpty()) {
                 parents.addAll(currentParents)
-                currentParents = currentParents
-                    .map { ctx -> scout!!.getParents(ctx) }
-                    .flatten()
+                currentParents = currentParents.map { scout!!.getParents(it) }.flatten()
                 if (parents.contains(system)) {
                     return true
                 }
@@ -384,8 +372,8 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         vBox.children.add(comboBox)
 
         val alert = Alert(Alert.AlertType.WARNING)
-        alert.title = ResourceHandler.Companion.title
-        alert.headerText = ResourceHandler.Companion.multiple_top_level_header
+        alert.title = ResourceHandler.title
+        alert.headerText = ResourceHandler.multiple_top_level_header
         alert.dialogPane.content = vBox
 
         alert.onCloseRequest = EventHandler { event: DialogEvent ->

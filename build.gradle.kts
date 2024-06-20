@@ -10,7 +10,7 @@ plugins {
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("pmd")
     kotlin("jvm")
-    kotlin("plugin.serialization") version "2.0.0"
+    //kotlin("plugin.serialization") version "2.0.0"
 }
 
 group = "org.gecko"
@@ -28,8 +28,8 @@ repositories {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    implementation("fr.brouillard.oss:cssfx:11.4.0")
+    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    //implementation("fr.brouillard.oss:cssfx:11.4.0")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -44,14 +44,17 @@ dependencies {
     implementation("org.eclipse.elk:org.eclipse.elk.alg.layered:0.8.1")
 
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
-    implementation("com.pixelduke:fxribbon:1.2.2")
+    //implementation("com.pixelduke:fxribbon:1.2.2")
     implementation("com.miglayout:miglayout-javafx:11.3")
     implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
-    implementation("org.jfxtras:jmetro:11.6.15")
+    //implementation("org.jfxtras:jmetro:11.6.15")
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
 
     implementation("no.tornado:tornadofx:1.7.20")
+
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("org.hildan.fxgson:fx-gson:5.0.0")
 
     implementation(kotlin("stdlib-jdk8"))
 }

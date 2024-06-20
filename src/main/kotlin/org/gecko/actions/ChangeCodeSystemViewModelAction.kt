@@ -10,7 +10,6 @@ class ChangeCodeSystemViewModelAction(val systemViewModel: SystemViewModel, val 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         systemViewModel.code = newCode
-        systemViewModel.updateTarget()
         return true
     }
 

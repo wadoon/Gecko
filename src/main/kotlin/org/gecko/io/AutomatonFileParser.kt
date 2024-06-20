@@ -45,9 +45,9 @@ class AutomatonFileParser : FileParser {
             showWarnings(visitor.warnings)
         }
 
-        val gvm = GeckoViewModel(visitor.model)
-        val vmVisitor = ViewModelElementCreator(gvm, listOf(), listOf())
-        vmVisitor.traverseModel(gvm.geckoModel.root)
+        val gvm = GeckoViewModel()
+        //val vmVisitor = ViewModelElementCreator(gvm, listOf(), listOf())
+        //vmVisitor.traverseModel(gvm.root)
         val graphlayouter = Graphlayouter(gvm)
         graphlayouter.layout()
         return gvm

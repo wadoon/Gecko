@@ -1,8 +1,8 @@
 package org.gecko.viewmodel
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.GeckoModel
-import org.gecko.model.ModelFactory
+
+
 
 import org.gecko.util.TestHelper
 import org.junit.jupiter.api.*

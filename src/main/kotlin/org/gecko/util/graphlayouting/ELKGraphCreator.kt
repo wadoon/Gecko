@@ -12,14 +12,14 @@ import org.gecko.viewmodel.*
 internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
     fun createSystemElkGraph(system: SystemViewModel): ElkNode {
         val root = ElkGraphUtil.createGraph()
-        val children: MutableList<BlockViewModelElement<*>> = ArrayList(getChildSystemViewModels(system))
+        val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(system))
         children.addAll(system.ports)
         for (child in children) {
             createElkNode(root, child)
         }
         for (connection in getConnectionViewModels(system)) {
-            val start = findPortOrSystemNode(root, system, connection.source)
-            val end = findPortOrSystemNode(root, system, connection.destination)
+            val start = findPortOrSystemNode(root, system, connection.source!!)
+            val end = findPortOrSystemNode(root, system, connection.destination!!)
             ElkGraphUtil.createSimpleEdge(start, end)
         }
         return root
@@ -32,42 +32,38 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
             createElkNode(root, child)
         }
         for (edge in getAutomatonEdges(system)) {
-            ElkGraphUtil.createSimpleEdge(findNode(root, edge.source), findNode(root, edge.destination))
+            ElkGraphUtil.createSimpleEdge(findNode(root, edge.source!!), findNode(root, edge.destination!!))
         }
         return root
     }
 
-    fun createElkNode(parent: ElkNode, block: BlockViewModelElement<*>) {
+    fun createElkNode(parent: ElkNode, block: BlockViewModelElement) {
         val node = ElkGraphUtil.createNode(parent)
         node.x = block.position.x
         node.y = block.position.y
         node.width = block.size.x
         node.height = block.size.y
-        node.identifier = block.id.toString()
+        node.identifier = block.hashCode().toString()
     }
 
     fun getChildSystemViewModels(systemViewModel: SystemViewModel): List<SystemViewModel> {
-        return systemViewModel.target!!.children
-            .map { s -> viewModel.getViewModelElement(s) as SystemViewModel }
+        return systemViewModel.subSystems
     }
 
     fun getAutomatonEdges(systemViewModel: SystemViewModel): List<EdgeViewModel> =
-        systemViewModel.target!!.automaton!!.edges
-            .map { viewModel.getViewModelElement(it!!) as EdgeViewModel }
+        systemViewModel.automaton.edges
 
     fun getConnectionViewModels(systemViewModel: SystemViewModel): List<SystemConnectionViewModel> =
-        systemViewModel.target!!.connections
-            .map { viewModel.getViewModelElement(it) as SystemConnectionViewModel }
+        systemViewModel.connections
 
     fun getStates(systemViewModel: SystemViewModel): List<StateViewModel> {
-        return systemViewModel.target.automaton.states
-            .map { s -> viewModel.getViewModelElement(s) as StateViewModel }
+        return systemViewModel.automaton.states
     }
 
-    fun findNode(graph: ElkNode, element: BlockViewModelElement<*>): ElkNode {
+    fun findNode(graph: ElkNode, element: BlockViewModelElement): ElkNode {
         return graph.children
             .stream()
-            .filter { e: ElkNode -> e.identifier == element.id.toString() }
+            .filter { e: ElkNode -> e.identifier == element.hashCode().toString() }
             .findFirst()
             .orElse(null)
     }
@@ -76,8 +72,8 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
         if (parentSystem.ports.contains(element)) {
             return findNode(graph, element)
         } else {
-            val sys = parentSystem.target.getChildSystemWithVariable(element.target)
-            return findNode(graph, viewModel.getViewModelElement(sys!!) as SystemViewModel)
+            val sys = parentSystem.getChildSystemWithVariable(element)
+            return findNode(graph, sys!!)
         }
     }
 }

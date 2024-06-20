@@ -2,7 +2,7 @@ package org.gecko.view.inspector.element.combobox
 
 import org.gecko.actions.Action
 import org.gecko.actions.ActionManager
-import org.gecko.model.Visibility
+import org.gecko.viewmodel.Visibility
 import org.gecko.viewmodel.PortViewModel
 
 /**

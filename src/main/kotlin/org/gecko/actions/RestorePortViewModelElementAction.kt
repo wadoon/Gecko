@@ -17,7 +17,6 @@ class RestorePortViewModelElementAction internal constructor(
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         system.addPort(portViewModel)
-        system.updateTarget()
         geckoViewModel.addViewModelElement(portViewModel)
         return true
     }

@@ -1,7 +1,8 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.Automaton
+import org.gecko.viewmodel.AutomatonViewModel
+
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.RegionViewModel
 
@@ -12,11 +13,11 @@ import org.gecko.viewmodel.RegionViewModel
 class RestoreRegionViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val regionViewModel: RegionViewModel,
-    val automaton: Automaton
+    val automaton: AutomatonViewModel
 ) : Action() {
     @Throws(ModelException::class)
     override fun run(): Boolean {
-        automaton.addRegion(regionViewModel.target!!)
+        automaton.addRegion(regionViewModel)
         geckoViewModel.addViewModelElement(regionViewModel)
         geckoViewModel.currentEditor!!.updateRegions()
         return true

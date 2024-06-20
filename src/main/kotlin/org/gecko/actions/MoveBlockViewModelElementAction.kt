@@ -11,7 +11,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  */
 class MoveBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
-    var elementsToMove: Set<PositionableViewModelElement<*>>?
+    var elementsToMove: Set<PositionableViewModelElement>?
     val delta: Point2D
 
     internal constructor(editorViewModel: EditorViewModel, delta: Point2D) {
@@ -22,7 +22,7 @@ class MoveBlockViewModelElementAction : Action {
 
     internal constructor(
         editorViewModel: EditorViewModel,
-        elementsToMove: Set<PositionableViewModelElement<*>>?,
+        elementsToMove: Set<PositionableViewModelElement>?,
         delta: Point2D
     ) {
         this.editorViewModel = editorViewModel

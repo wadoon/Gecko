@@ -9,7 +9,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
 /**
  * Represents a type of [AbstractInspectorButton] used for focusing on a [PositionableViewModelElement].
  */
-class InspectorFocusButton(actionManager: ActionManager, element: PositionableViewModelElement<*>?) :
+class InspectorFocusButton(actionManager: ActionManager, element: PositionableViewModelElement?) :
     AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)

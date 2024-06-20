@@ -2,8 +2,6 @@ package org.gecko.actions
 
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
-import org.gecko.model.Kind
-import org.gecko.model.Visibility
 import org.gecko.tools.ToolType
 import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
@@ -71,14 +69,15 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         )
     }
 
+    /*
     fun createCopyPositionableViewModelElementAction(): CopyPositionableViewModelElementAction {
         return CopyPositionableViewModelElementAction(geckoViewModel)
-    }
+    }*/
 
     fun createCreateContractViewModelElementAction(
         stateViewModel: StateViewModel
     ): CreateContractViewModelElementAction {
-        return CreateContractViewModelElementAction(geckoViewModel.viewModelFactory, stateViewModel)
+        return CreateContractViewModelElementAction(geckoViewModel, stateViewModel)
     }
 
     fun createCreateEdgeViewModelElementAction(
@@ -122,13 +121,13 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
     }
 
     fun createDeletePositionableViewModelElementAction(
-        element: PositionableViewModelElement<*>
+        element: PositionableViewModelElement
     ): DeletePositionableViewModelElementAction {
         return DeletePositionableViewModelElementAction(geckoViewModel, element)
     }
 
     fun createDeletePositionableViewModelElementAction(
-        elements: Set<PositionableViewModelElement<*>>?
+        elements: Set<PositionableViewModelElement>?
     ): DeletePositionableViewModelElementAction {
         return DeletePositionableViewModelElementAction(geckoViewModel, elements)
     }
@@ -145,7 +144,7 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
     }
 
     fun createMoveBlockViewModelElementAction(
-        elementsToMove: Set<PositionableViewModelElement<*>>?, delta: Point2D
+        elementsToMove: Set<PositionableViewModelElement>?, delta: Point2D
     ): MoveBlockViewModelElementAction {
         return MoveBlockViewModelElementAction(geckoViewModel.currentEditor!!, elementsToMove, delta)
     }
@@ -185,12 +184,12 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         )
     }
 
-    fun createPastePositionableViewModelElementAction(center: Point2D?): PastePositionableViewModelElementAction {
+    /*fun createPastePositionableViewModelElementAction(center: Point2D?): PastePositionableViewModelElementAction {
         return PastePositionableViewModelElementAction(geckoViewModel, center!!)
-    }
+    }*/
 
     fun createRenameViewModelElementAction(renamable: Renamable, name: String): RenameViewModelElementAction {
-        return RenameViewModelElementAction(geckoViewModel.geckoModel, renamable, name)
+        return RenameViewModelElementAction(renamable, name)
     }
 
     fun createRestoreContractViewModelElementAction(
@@ -200,7 +199,7 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
     }
 
     fun createScaleBlockViewModelElementAction(
-        blockViewModelElement: BlockViewModelElement<*>, elementScalerBlock: ElementScalerBlock?, position: Point2D?,
+        blockViewModelElement: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?, position: Point2D?,
         size: Point2D?, isPreviousScale: Boolean
     ): ScaleBlockViewModelElementAction {
         return ScaleBlockViewModelElementAction(
@@ -210,7 +209,7 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
     }
 
     fun createScaleBlockViewModelElementAction(
-        blockViewModelElement: BlockViewModelElement<*>, elementScalerBlock: ElementScalerBlock?
+        blockViewModelElement: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?
     ): ScaleBlockViewModelElementAction {
         return ScaleBlockViewModelElementAction(
             geckoViewModel.currentEditor!!, blockViewModelElement,
@@ -219,7 +218,7 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
     }
 
     fun createFocusPositionableViewModelElementAction(
-        element: PositionableViewModelElement<*>
+        element: PositionableViewModelElement
     ): FocusPositionableViewModelElementAction {
         return FocusPositionableViewModelElementAction(geckoViewModel.currentEditor!!, element)
     }
@@ -230,11 +229,11 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         return ModifyEdgeViewModelPriorityAction(edgeViewModel, priority)
     }
 
-    fun createSelectAction(element: PositionableViewModelElement<*>, newSelection: Boolean): SelectAction {
-        return createSelectAction(java.util.Set.of(element), newSelection)
+    fun createSelectAction(element: PositionableViewModelElement, newSelection: Boolean): SelectAction {
+        return createSelectAction(setOf(element), newSelection)
     }
 
-    fun createSelectAction(elements: Set<PositionableViewModelElement<*>>?, newSelection: Boolean): SelectAction {
+    fun createSelectAction(elements: Set<PositionableViewModelElement>?, newSelection: Boolean): SelectAction {
         return SelectAction(geckoViewModel.currentEditor!!, elements, newSelection)
     }
 
@@ -254,10 +253,8 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         return SelectToolAction(geckoViewModel.currentEditor!!, tool)
     }
 
-    fun createSetStartStateViewModelElementAction(
-        stateViewModel: StateViewModel?
-    ): SetStartStateViewModelElementAction {
-        return SetStartStateViewModelElementAction(geckoViewModel, stateViewModel)
+    fun createSetStartStateViewModelElementAction(stateViewModel: StateViewModel): SetStartStateViewModelElementAction {
+        return SetStartStateViewModelElementAction(geckoViewModel, stateViewModel, true)
     }
 
     fun createViewSwitchAction(systemViewModel: SystemViewModel?, isAutomaton: Boolean): ViewSwitchAction {
@@ -278,7 +275,7 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         return ChangeCodeSystemViewModelAction(systemViewModel, newCode)
     }
 
-    fun createCutPositionableViewModelElementAction(): CutPositionableViewModelElementAction {
+    /*fun createCutPositionableViewModelElementAction(): CutPositionableViewModelElementAction {
         return CutPositionableViewModelElementAction(geckoViewModel)
-    }
+    }*/
 }

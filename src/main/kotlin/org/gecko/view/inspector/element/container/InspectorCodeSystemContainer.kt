@@ -17,7 +17,7 @@ import java.nio.file.Files
 class InspectorCodeSystemContainer(actionManager: ActionManager, viewModel: SystemViewModel) : VBox(),
     InspectorElement<VBox> {
     init {
-        if (viewModel.target.children.isEmpty()) {
+        if (viewModel.subSystems.isEmpty()) {
             children.add(InspectorLabel(ResourceHandler.code))
             val codeField = InspectorCodeSystemField(actionManager, viewModel)
             codeField.prefWidthProperty().bind(widthProperty().subtract(InspectorElement.FIELD_OFFSET))

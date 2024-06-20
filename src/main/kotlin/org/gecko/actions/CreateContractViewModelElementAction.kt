@@ -1,9 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.ContractViewModel
-import org.gecko.viewmodel.StateViewModel
-import org.gecko.viewmodel.ViewModelFactory
+import org.gecko.viewmodel.*
 
 /**
  * A concrete representation of an [Action] that creates a [ContractViewModel] in a given
@@ -11,14 +9,14 @@ import org.gecko.viewmodel.ViewModelFactory
  * [GeckoViewModel][org.gecko.viewmodel.GeckoViewModel].
  */
 class CreateContractViewModelElementAction internal constructor(
-    val viewModelFactory: ViewModelFactory,
+    val viewModelFactory: GeckoViewModel,
     val stateViewModel: StateViewModel
 ) : Action() {
-    var createdContractViewModel: ContractViewModel? = null
+    val createdContractViewModel: ContractViewModel = ContractViewModel()
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        createdContractViewModel = viewModelFactory.createContractViewModelIn(stateViewModel)
+        stateViewModel.addContract(createdContractViewModel)
         return true
     }
 

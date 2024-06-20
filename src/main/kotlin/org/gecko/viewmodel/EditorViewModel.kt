@@ -1,14 +1,11 @@
 package org.gecko.viewmodel
 
 import javafx.beans.property.*
-import javafx.beans.value.ObservableValue
 import javafx.collections.*
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
 import org.gecko.actions.*
-import org.gecko.exceptions.ModelException
-import org.gecko.model.*
 import org.gecko.tools.*
 import org.gecko.view.views.ViewElementSearchVisitor
 import java.util.*
@@ -29,58 +26,43 @@ class EditorViewModel(
     val currentSystem: SystemViewModel,
     val parentSystem: SystemViewModel?,
     val isAutomatonEditor: Boolean,
-    val id: Int
 ) {
-    val containedPositionableViewModelElementsProperty: ObservableSet<PositionableViewModelElement<*>> =
-        FXCollections.observableSet()
+    val containedPositionableViewModelElementsProperty: ObservableSet<PositionableViewModelElement> = FXCollections.observableSet()
     val tools: MutableList<List<Tool>> = FXCollections.observableArrayList()
     val selectionManager = SelectionManager()
-
     val pivotProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
     val zoomScaleProperty: DoubleProperty = SimpleDoubleProperty(DEFAULT_ZOOM_SCALE)
     val needsRefocusProperty: BooleanProperty = SimpleBooleanProperty(false)
-
-    val currentToolProperty: Property<Tool> = SimpleObjectProperty()
-    val focusedElementProperty: Property<PositionableViewModelElement<*>?> = SimpleObjectProperty()
+    val currentToolProperty = SimpleObjectProperty<Tool>()
+    val focusedElementProperty = SimpleObjectProperty<PositionableViewModelElement>()
 
     init {
         initializeTools()
 
-        selectionManager.currentSelectionProperty.addListener { observable: ObservableValue<out Set<PositionableViewModelElement<*>?>>?, oldValue: Set<PositionableViewModelElement<*>?>?, newValue: Set<PositionableViewModelElement<*>?> ->
-            if (newValue.size == 1) {
-                focusedElement = newValue.iterator().next()
-            } else {
-                focusedElement = null
-            }
+        selectionManager.currentSelectionProperty.onChange { old, new ->
+            focusedElement = new.firstOrNull()
         }
 
         setCurrentTool(ToolType.CURSOR)
     }
 
-    /**
-     * Updates the regions of the automaton that is displayed by this [EditorViewModel]. This works by checking if
-     * a state of the automaton is in a region and updating the regions accordingly.
-     *
-     * @throws ModelException if the update of the regions fails
-     */
-    @Throws(ModelException::class)
     fun updateRegions() {
-        val automaton: Automaton = currentSystem.target.automaton
-        val regionViewModels = containedPositionableViewModelElementsProperty
-            .filter { it.target in automaton.regions }
-            .map { it as RegionViewModel }
-            .toSet()
-        val stateViewModels = containedPositionableViewModelElementsProperty
-            .filter { it.target in automaton.states }
-            .map { it as StateViewModel? }
-            .toSet()
-        for (regionViewModel in regionViewModels) {
-            regionViewModel.clearStates()
-            for (stateViewModel in stateViewModels) {
-                regionViewModel.checkStateInRegion(stateViewModel!!)
-                regionViewModel.updateTarget()
-            }
-        }
+//        val automaton:  = currentSystem.target.automaton
+//        val regionViewModels = containedPositionableViewModelElementsProperty
+//            .filter { it.target in automaton.regions }
+//            .map { it as RegionViewModel }
+//            .toSet()
+//        val stateViewModels = containedPositionableViewModelElementsProperty
+//            .filter { it.target in automaton.states }
+//            .map { it as StateViewModel? }
+//            .toSet()
+//        for (regionViewModel in regionViewModels) {
+//            regionViewModel.clearStates()
+//            for (stateViewModel in stateViewModels) {
+//                regionViewModel.checkStateInRegion(stateViewModel!!)
+//                regionViewModel.updateTarget()
+//            }
+//        }
     }
 
     /**
@@ -92,18 +74,18 @@ class EditorViewModel(
      */
     fun getRegionViewModels(stateViewModel: StateViewModel): ObservableList<RegionViewModel> {
         val regionViewModels = FXCollections.observableArrayList<RegionViewModel>()
-        val regions = currentSystem.target.automaton.regions
+        val regions = currentSystem.automaton.regions
         val containingStateRegions =
-            regions.filter { it.states.contains(stateViewModel.target) }.toList()
+            regions.filter { it.states.contains(stateViewModel) }.toList()
         val containedRegionViewModels = containedPositionableViewModelElementsProperty.stream()
-            .filter { containingStateRegions.contains(it.target) }
+            .filter { containingStateRegions.contains(it) }
             .map { it as RegionViewModel }
             .toList()
         regionViewModels.addAll(containedRegionViewModels)
 
         for (region in containedPositionableViewModelElementsProperty.stream()
-            .filter { element: PositionableViewModelElement<*> -> regions.contains(element.target) }
-            .map { element: PositionableViewModelElement<*> -> element as RegionViewModel }
+            .filter { element: PositionableViewModelElement -> regions.contains(element) }
+            .map { element: PositionableViewModelElement -> element as RegionViewModel }
             .toList()) {
             region.statesProperty.addListener { change: ListChangeListener.Change<out StateViewModel> ->
                 updateStateRegionList(stateViewModel, region, change, regionViewModels)
@@ -132,7 +114,7 @@ class EditorViewModel(
             .find { it.toolType == toolType }
     }
 
-    var focusedElement: PositionableViewModelElement<*>?
+    var focusedElement: PositionableViewModelElement?
         get() = focusedElementProperty.value
         set(focusedElement) {
             focusedElementProperty.value = focusedElement
@@ -143,7 +125,7 @@ class EditorViewModel(
      *
      * @param elements the elements to add
      */
-    fun addPositionableViewModelElements(elements: MutableSet<PositionableViewModelElement<*>>) {
+    fun addPositionableViewModelElements(elements: MutableList<PositionableViewModelElement>) {
         elements.removeAll(containedPositionableViewModelElementsProperty)
         containedPositionableViewModelElementsProperty.addAll(elements)
     }
@@ -154,34 +136,30 @@ class EditorViewModel(
      *
      * @param elements the elements to remove
      */
-    fun removePositionableViewModelElements(elements: Set<PositionableViewModelElement<*>>) {
-        elements.forEach(Consumer { o: PositionableViewModelElement<*> ->
-            containedPositionableViewModelElementsProperty.remove(
-                o
-            )
-        })
+    fun removePositionableViewModelElements(elements: Set<PositionableViewModelElement>) {
+        elements.forEach { containedPositionableViewModelElementsProperty.remove(it) }
     }
 
-    val positionableViewModelElements: Set<PositionableViewModelElement<*>>
+    val positionableViewModelElements: Set<PositionableViewModelElement>
         get() = containedPositionableViewModelElementsProperty
 
     fun initializeTools() {
         tools.add(
-            java.util.List.of(
+            listOf(
                 CursorTool(actionManager, selectionManager, this), MarqueeTool(actionManager, this),
                 PanTool(actionManager), ZoomTool(actionManager)
             )
         )
         if (isAutomatonEditor) {
             tools.add(
-                java.util.List.of(
+                listOf(
                     StateCreatorTool(actionManager), EdgeCreatorTool(actionManager),
                     RegionCreatorTool(actionManager)
                 )
             )
         } else {
             tools.add(
-                java.util.List.of(
+                listOf(
                     SystemCreatorTool(actionManager), SystemConnectionCreatorTool(actionManager),
                     VariableBlockCreatorTool(actionManager)
                 )
@@ -226,11 +204,11 @@ class EditorViewModel(
         zoom(factor, pivotProperty.value)
     }
 
-    fun getElementsByName(name: String): List<PositionableViewModelElement<*>> {
-        val matches: MutableList<PositionableViewModelElement<*>> = ArrayList()
+    fun getElementsByName(name: String): List<PositionableViewModelElement> {
+        val matches: MutableList<PositionableViewModelElement> = ArrayList()
         val visitor: PositionableViewModelElementVisitor<*> = ViewElementSearchVisitor(name)
-        containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement<*> ->
-            val searchResult = element.accept(visitor) as PositionableViewModelElement<*>?
+        containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement ->
+            val searchResult = element.accept(visitor) as PositionableViewModelElement?
             if (searchResult != null) {
                 matches.add(searchResult)
             }
@@ -244,9 +222,9 @@ class EditorViewModel(
      * @param bound the area in world coordinates
      * @return the elements that are in the given area
      */
-    fun getElementsInArea(bound: Bounds): Set<PositionableViewModelElement<*>> {
+    fun getElementsInArea(bound: Bounds): Set<PositionableViewModelElement> {
         return containedPositionableViewModelElementsProperty.stream()
-            .filter { element: PositionableViewModelElement<*> ->
+            .filter { element: PositionableViewModelElement ->
                 if (element.size == Point2D.ZERO) {
                     return@filter false
                 }
@@ -257,20 +235,6 @@ class EditorViewModel(
                     )
                 bound.intersects(elementBound)
             }.collect(Collectors.toSet())
-    }
-
-    override fun hashCode(): Int {
-        return Objects.hash(id)
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is EditorViewModel) {
-            return false
-        }
-        return id == o.id
     }
 
     companion object {

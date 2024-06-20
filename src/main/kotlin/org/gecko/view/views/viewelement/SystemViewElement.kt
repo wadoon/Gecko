@@ -1,7 +1,10 @@
 package org.gecko.view.views.viewelement
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.*
+import javafx.beans.property.ListProperty
+import javafx.beans.property.SimpleListProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
@@ -9,15 +12,16 @@ import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.*
-import javafx.scene.layout.*
+import javafx.scene.control.Label
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.shape.*
-
-import org.gecko.model.*
+import javafx.scene.shape.Rectangle
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.SystemConnectionViewModel
 import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Visibility
 import java.util.function.Consumer
 import kotlin.math.min
 
@@ -28,20 +32,14 @@ import kotlin.math.min
 class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(systemViewModel),
     ViewElement<SystemViewModel> {
     override val target: SystemViewModel = systemViewModel
-
-
     val nameProperty: StringProperty = SimpleStringProperty()
-
-
     val codeProperty: StringProperty = SimpleStringProperty()
-
-
     val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList())
-
     val inputPortsAligner = VBox()
     val outputPortsAligner = VBox()
     val portViewElements: ListProperty<PortViewElement> =
         SimpleListProperty(FXCollections.observableArrayList<PortViewElement>())
+
 
     val positionListener =
         ChangeListener { _: ObservableValue<out Point2D?>?, _: Point2D?, _: Point2D? -> reorderPorts() }
@@ -55,6 +53,8 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     override fun drawElement(): Node {
         return this
     }
+
+    override var isSelected: Boolean = false
 
     override val position: Point2D
         get() = target.position
@@ -245,14 +245,12 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     }
 
     fun compare(p1: PortViewElement, p2: PortViewElement): Int {
-        var compare = getOtherPortY(p1.viewModel!!).compareTo(getOtherPortY(p2.viewModel!!))
-        if (compare == 0) {
-            compare = p1.viewModel!!.id.compareTo(p2.viewModel.id)
-        }
-        return compare
+        return getOtherPortY(p1.viewModel!!).compareTo(getOtherPortY(p2.viewModel!!))
     }
 
-    fun getSortPosition(portViewModel: PortViewModel): Point2D {
+    fun getSortPosition(portViewModel: PortViewModel?): Point2D {
+        if (portViewModel == null) return Point2D.ZERO
+
         if (isVariableBlock(portViewModel)) {
             return portViewModel.center!!
         }
@@ -277,7 +275,7 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     }
 
     fun isVariableBlock(portViewModel: PortViewModel): Boolean {
-        return target.target.parent!!.variables.contains(portViewModel.target)
+        return target.parent!!.ports.contains(portViewModel)
     }
 
     private val edgePointListener = { change: ListChangeListener.Change<out Point2D> ->

@@ -8,7 +8,7 @@ import org.gecko.viewmodel.*
  * [PositionableViewModelElement][org.gecko.viewmodel.PositionableViewModelElement]s, if present.
  */
 class ViewElementSearchVisitor(val search: String) :
-    PositionableViewModelElementVisitor<AbstractViewModelElement<*>?> {
+    PositionableViewModelElementVisitor<Element?> {
     override fun visit(systemViewModel: SystemViewModel): SystemViewModel? {
         if (systemViewModel.name.lowercase().contains(search.lowercase())) {
             return systemViewModel
@@ -48,6 +48,10 @@ class ViewElementSearchVisitor(val search: String) :
             return portViewModel
         }
         return null
+    }
+
+    override fun visit(automatonViewModel: AutomatonViewModel): Element? {
+        TODO("Not yet implemented")
     }
 
     fun visit(contractViewModel: ContractViewModel): Boolean {

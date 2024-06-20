@@ -1,7 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.GeckoModel
+
 
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.StateViewModel

@@ -1,50 +1,48 @@
 package org.gecko.viewmodel
 
-import javafx.beans.property.*
+import javafx.beans.property.ListProperty
+import javafx.beans.property.SimpleListProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.geometry.Point2D
-import org.gecko.exceptions.ModelException
-import org.gecko.model.System
 import tornadofx.getValue
 import tornadofx.setValue
-import java.util.stream.Collectors
 
 /**
  * Represents an abstraction of a [System] model element. A [SystemViewModel] is described by a code snippet
  * and a set of [PortViewModel]s. Contains methods for managing the afferent data and updating the
  * target-[System].
  */
-class SystemViewModel(id: Int, target: System) : BlockViewModelElement<System>(id, target) {
-    val codeProperty = SimpleStringProperty(target.code)
+data class SystemViewModel(
+    val codeProperty: SimpleStringProperty = SimpleStringProperty(""),
     val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList())
-    var startState: StateViewModel? = null
-        /**
-         * Sets the start state of the automaton of the system.
-         *
-         * @param value the new start state
-         */
-        set(value) {
-            field?.let { it.isStartState = false }
-            value?.isStartState = true
-            field = value
+) : BlockViewModelElement() {
+    val allElements: MutableList<PositionableViewModelElement>
+        get() {
+            val allElements = ArrayList<PositionableViewModelElement>(subSystems.size + portsProperty.size + connections.size)
+            allElements.addAll(subSystems)
+            allElements.addAll(portsProperty)
+            allElements.addAll(connections)
+            return allElements
         }
+
+    val connectionsProperty = listProperty<SystemConnectionViewModel>()
+    val connections by connectionsProperty
+
+    var parent: SystemViewModel? = null
+
+    var code: String by codeProperty
+    var ports: ObservableList<PortViewModel> by portsProperty
+    val subSystemsProperty = listProperty<SystemViewModel>()
+    var subSystems: ObservableList<SystemViewModel> by subSystemsProperty
+
+    val automatonProperty = objectProperty(AutomatonViewModel())
+    var automaton: AutomatonViewModel by automatonProperty
+
 
     init {
         size = DEFAULT_SYSTEM_SIZE
-    }
-
-    val ports: List<PortViewModel>
-        get() = ArrayList(portsProperty)
-
-    var code: String by codeProperty
-
-    @Throws(ModelException::class)
-    override fun updateTarget() {
-        super.updateTarget()
-        target!!.code = this.code
-        target.variables.clear()
-        target.addVariables(portsProperty.stream().map { obj: PortViewModel -> obj.target }.collect(Collectors.toSet()))
-        target.automaton.startState = if (startState != null) startState!!.target else null
     }
 
     fun addPort(port: PortViewModel) {
@@ -57,20 +55,22 @@ class SystemViewModel(id: Int, target: System) : BlockViewModelElement<System>(i
         port.systemPositionProperty.unbind()
     }
 
-
     override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
         return visitor.visit(this)
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is SystemViewModel) {
-            return false
-        }
-        return id == o.id
-    }
+    fun removeConnection(con: SystemConnectionViewModel) = connectionsProperty.remove(con)
+    fun addConnection(con: SystemConnectionViewModel) = connections.add(con)
+
+    fun getChildByName(name: String): SystemViewModel? =
+        subSystems.firstOrNull { it.name == name }
+
+    fun getChildSystemWithVariable(element: PortViewModel) =
+        subSystems.firstOrNull() { it.ports.contains(element) }
+
+    fun getVariableByName(text: String?): PortViewModel? = ports.firstOrNull() { it.name == text }
+    fun createVariable(): PortViewModel = PortViewModel().also { addPort(it) }
+    fun createSubSystem(): SystemViewModel = SystemViewModel().also { subSystems.add(it) }
 
     companion object {
         val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)

@@ -1,17 +1,14 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
-import org.gecko.viewmodel.StateViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.*
 import org.junit.jupiter.api.*
 
 class DeletePositionableViewModelElementActionTest {
-    private var elements: Set<PositionableViewModelElement<*>>? = null
+    private var elements: Set<PositionableViewModelElement>? = null
     private var stateViewModel1: StateViewModel? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null

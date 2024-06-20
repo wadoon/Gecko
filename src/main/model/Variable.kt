@@ -3,6 +3,7 @@ package org.gecko.model
 import kotlinx.serialization.Serializable
 import org.gecko.exceptions.MissingViewModelElementException
 import org.gecko.exceptions.ModelException
+import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a variable in the domain model of a Gecko project. A [Variable] has a name, a type and a
@@ -22,7 +23,3 @@ data class Variable(
     }
 }
 
-val builtinTypes: List<String> = listOf(
-    "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "float",
-    "double", "short", "long", "bool"
-)

@@ -6,7 +6,7 @@ import javafx.geometry.Point2D
 
 import org.gecko.exceptions.MissingViewModelElementException
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
 import org.gecko.viewmodel.SystemViewModel
@@ -19,7 +19,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
     val pasteOffset: Point2D
 ) : ElementVisitor {
 
-    val pastedElements: MutableSet<PositionableViewModelElement<*>> = HashSet()
+    val pastedElements: MutableSet<PositionableViewModelElement> = HashSet()
     val clipboardToPasted: BiMap<Element, Element> =
         HashBiMap.create()
 

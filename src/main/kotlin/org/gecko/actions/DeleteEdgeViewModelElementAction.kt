@@ -1,7 +1,8 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.Automaton
+
+import org.gecko.viewmodel.AutomatonViewModel
 import org.gecko.viewmodel.EdgeViewModel
 import org.gecko.viewmodel.GeckoViewModel
 
@@ -13,13 +14,13 @@ import org.gecko.viewmodel.GeckoViewModel
 class DeleteEdgeViewModelElementAction(
     val geckoViewModel: GeckoViewModel,
     val edgeViewModel: EdgeViewModel,
-    val automaton: Automaton
+    val automaton: AutomatonViewModel
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        edgeViewModel.source.outgoingEdges.remove(edgeViewModel)
-        edgeViewModel.destination.incomingEdges.remove(edgeViewModel)
-        automaton.removeEdge(edgeViewModel.target)
+        edgeViewModel.source?.outgoingEdges?.remove(edgeViewModel)
+        edgeViewModel.destination?.incomingEdges?.remove(edgeViewModel)
+        automaton.removeEdge(edgeViewModel)
         geckoViewModel.deleteViewModelElement(edgeViewModel)
         return true
     }

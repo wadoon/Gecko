@@ -11,7 +11,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  * [PositionableViewModelElement]. Concrete visitors must implement this interface to define specific behavior for
  * each view element.
  */
-interface ViewElement<T : PositionableViewModelElement<*>?> {
+interface ViewElement<T : PositionableViewModelElement?> {
     /**
      * Draw the element and returns a javafx node representing the element.
      *

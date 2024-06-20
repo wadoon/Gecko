@@ -2,7 +2,7 @@ package org.gecko.actions
 
 import javafx.geometry.Point2D
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.*
+
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
 
@@ -10,7 +10,7 @@ class PastePositionableViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     center: Point2D
 ) : Action() {
-    val pastedElements: MutableSet<PositionableViewModelElement<*>> = HashSet()
+    val pastedElements: MutableSet<PositionableViewModelElement> = HashSet()
     val pasteOffset = center
 
     @Throws(GeckoException::class)
@@ -27,7 +27,7 @@ class PastePositionableViewModelElementAction internal constructor(
             element.accept(pasteVisitor)
         }
         while (!pasteVisitor.unsuccessfulPastes.isEmpty()) {
-            val unsuccessfulPastes: Set<Element> = HashSet(pasteVisitor.unsuccessfulPastes)
+            val unsuccessfulPastes = HashSet(pasteVisitor.unsuccessfulPastes)
             pasteVisitor.unsuccessfulPastes.clear()
             for (element in unsuccessfulPastes) {
                 element.accept(pasteVisitor)

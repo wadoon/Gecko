@@ -46,7 +46,7 @@ open class ViewContextMenuBuilder {
         // Data transfer commands:
         val cutMenuItem = MenuItem(ResourceHandler.cut)
         cutMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
+            //actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
             actionManager.run(actionManager.actionFactory.createDeletePositionableViewModelElementAction())
         }
         cutMenuItem.accelerator = Shortcuts.CUT.get()
@@ -61,8 +61,10 @@ open class ViewContextMenuBuilder {
         }
 
         val copyMenuItem = MenuItem(ResourceHandler.copy)
-        copyMenuItem.onAction =
-            EventHandler { e: ActionEvent? -> actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction()) }
+        copyMenuItem.onAction = EventHandler { e: ActionEvent? ->
+            TODO()
+            //    actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
+        }
         copyMenuItem.accelerator = Shortcuts.COPY.get()
         if (editorViewModel != null) {
             copyMenuItem.disableProperty()
@@ -77,7 +79,8 @@ open class ViewContextMenuBuilder {
         val pasteMenuItem = MenuItem(ResourceHandler.paste)
         pasteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             val center = editorView!!.viewElementPane.screenCenterWorldCoords()
-            actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
+            //actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
+            TODO()
         }
         pasteMenuItem.accelerator = Shortcuts.PASTE.get()
 

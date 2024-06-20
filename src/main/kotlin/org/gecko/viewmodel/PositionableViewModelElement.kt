@@ -5,7 +5,6 @@ import javafx.beans.property.Property
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Point2D
-import org.gecko.model.Element
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -14,12 +13,11 @@ import tornadofx.setValue
  * [PositionableViewModelElement] is described by a position- and a size-[Point2D]. Contains methods for
  * managing the different data.
  */
-abstract class PositionableViewModelElement<T : Element>(id: Int, target: T) : AbstractViewModelElement<T>(id, target) {
-
+abstract class PositionableViewModelElement() : Element() {
     val positionProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
     val sizeProperty: Property<Point2D> = SimpleObjectProperty(DEFAULT_SIZE)
     val isCurrentlyModified: BooleanProperty = SimpleBooleanProperty(false)
-    val observers: Set<PositionableViewModelElement<*>> = HashSet()
+    val observers: Set<PositionableViewModelElement> = HashSet()
 
     open var position: Point2D by positionProperty
     open var size: Point2D by sizeProperty

@@ -128,7 +128,7 @@ object GeckoIOManager {
      * @param file The file to export the automaton to.
      */
     fun exportAutomatonFile(file: File?) {
-        val fileSerializer: FileSerializer = AutomatonFileSerializer(geckoManager!!.gecko!!.model)
+        val fileSerializer: FileSerializer = AutomatonFileSerializer(geckoManager!!.gecko.viewModel)
         try {
             fileSerializer.writeToFile(file!!)
         } catch (e: IOException) {

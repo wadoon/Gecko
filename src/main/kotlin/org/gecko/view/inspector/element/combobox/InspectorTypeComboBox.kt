@@ -1,8 +1,9 @@
 package org.gecko.view.inspector.element.combobox
 
 import org.gecko.actions.*
-import org.gecko.model.*
+
 import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.builtinTypes
 
 /**
  * A concrete representation of an [InspectorComboBox] for a [PortViewModel], through which the type of the

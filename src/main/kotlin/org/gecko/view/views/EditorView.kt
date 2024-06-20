@@ -34,7 +34,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
     val currentView: Tab
     val currentViewPane: StackPane
 
-    val toolBar: ToolBar?
+    val toolBar = ToolBarBuilder(actionManager, this, viewModel).build()
     val inspectorFactory: InspectorFactory
     val emptyInspector: Inspector
     val searchWindow: Node?
@@ -52,7 +52,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
         set(value) {
             field = value
             currentViewPane.addEventHandler(KeyEvent.ANY, shortcutHandler)
-            toolBar!!.addEventHandler(KeyEvent.ANY, shortcutHandler)
+            toolBar.addEventHandler(KeyEvent.ANY, shortcutHandler)
             if (currentInspector.get() != null) {
                 currentInspector.get()!!
                     .addEventHandler(KeyEvent.ANY, shortcutHandler)
@@ -63,8 +63,6 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
     var contextMenu: ContextMenu?
 
     init {
-        val toolBarBuilder = ToolBarBuilder(actionManager, this, viewModel)
-        this.toolBar = toolBarBuilder.build()
         this.inspectorFactory = InspectorFactory(actionManager, viewModel)
 
         this.currentViewPane = StackPane()
@@ -156,7 +154,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
      * @return the toolbar
      */
     fun drawToolbar(): Node {
-        toolBar!!.addEventHandler(KeyEvent.ANY, shortcutHandler)
+        toolBar.addEventHandler(KeyEvent.ANY, shortcutHandler)
         return toolBar
     }
 
@@ -197,7 +195,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
         activateSearchWindow(!searchWindow!!.isVisible)
     }
 
-    fun onUpdateViewElements(change: SetChangeListener.Change<out PositionableViewModelElement<*>?>) {
+    fun onUpdateViewElements(change: SetChangeListener.Change<out PositionableViewModelElement?>) {
         if (change.wasAdded()) {
             addElement(change.elementAdded)
         } else if (change.wasRemoved()) {
@@ -219,7 +217,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
     }
 
     fun initializeViewElements() {
-        viewModel.containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement<*>? ->
+        viewModel.containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement? ->
             this.addElement(
                 element
             )
@@ -227,7 +225,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
         postUpdate()
     }
 
-    fun addElement(element: PositionableViewModelElement<*>?) {
+    fun addElement(element: PositionableViewModelElement?) {
         val visitor: PositionableViewModelElementVisitor<*> = ViewElementCreatorVisitor(viewFactory)
         val viewElement = element!!.accept(visitor) as ViewElement<*>
 
@@ -238,7 +236,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
         }
     }
 
-    fun findViewElement(element: PositionableViewModelElement<*>?): ViewElement<*>? {
+    fun findViewElement(element: PositionableViewModelElement?): ViewElement<*>? {
         return viewElementPane.findViewElement(element)
     }
 
@@ -252,7 +250,7 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
 
     }
 
-    fun focusedElementChanged(newValue: PositionableViewModelElement<*>?) {
+    fun focusedElementChanged(newValue: PositionableViewModelElement?) {
         val newInspector = inspectorFactory.createInspector(newValue)
         currentInspector.set(if ((newInspector != null)) newInspector else emptyInspector)
         if (shortcutHandler != null) {
@@ -262,31 +260,29 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
     }
 
     fun selectionChanged(
-        oldValue: MutableSet<PositionableViewModelElement<*>>?,
-        newValue: Set<PositionableViewModelElement<*>>?
+        oldValue: MutableSet<PositionableViewModelElement>?,
+        newValue: Set<PositionableViewModelElement>?
     ) {
-        val toRemove: MutableList<PositionableViewModelElement<*>> = ArrayList()
+        val toRemove: MutableList<PositionableViewModelElement> = ArrayList()
         for (element in oldValue!!) {
             val viewElement = findViewElement(element)
             if (viewElement == null) {
                 toRemove.add(element)
             }
         }
-        toRemove.forEach(Consumer { o: PositionableViewModelElement<*> -> oldValue.remove(o) })
+        toRemove.forEach(Consumer { o: PositionableViewModelElement -> oldValue.remove(o) })
 
         oldValue
             .map { this.findViewElement(it) }
             .forEach { viewElement -> viewElement!!.isSelected = false }
-        newValue!!
-            .map { this.findViewElement(it) }
-            .forEach { viewElement -> viewElement!!.isSelected = true }
+        newValue
+            ?.map { this.findViewElement(it) }
+            ?.forEach { viewElement -> viewElement!!.isSelected = true }
         viewElementPane.onSelectionChanged()
     }
 
     fun changeContextMenu(contextMenu: ContextMenu?) {
-        if (this.contextMenu != null) {
-            this.contextMenu!!.hide()
-        }
+        this.contextMenu?.hide()
         this.contextMenu = contextMenu
     }
 

@@ -111,7 +111,7 @@ class ViewElementPane(evm: EditorViewModel) {
         orderChildren()
     }
 
-    fun findViewElement(element: PositionableViewModelElement<*>?): ViewElement<*>? {
+    fun findViewElement(element: PositionableViewModelElement?): ViewElement<*>? {
         return elements.stream().filter { e -> e.target == element }.findFirst().orElse(null)
     }
 

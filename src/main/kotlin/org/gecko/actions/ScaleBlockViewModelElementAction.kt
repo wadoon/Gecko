@@ -12,14 +12,14 @@ import org.gecko.viewmodel.EditorViewModel
  */
 class ScaleBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
-    val element: BlockViewModelElement<*>
+    val element: BlockViewModelElement
     val elementScalerBlock: ElementScalerBlock?
     var size: Point2D? = null
     var position: Point2D? = null
     var isPreviousScale = false
 
     internal constructor(
-        editorViewModel: EditorViewModel, element: BlockViewModelElement<*>, elementScalerBlock: ElementScalerBlock?,
+        editorViewModel: EditorViewModel, element: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?,
         position: Point2D?, size: Point2D?, isPreviousScale: Boolean
     ) {
         this.editorViewModel = editorViewModel
@@ -32,7 +32,7 @@ class ScaleBlockViewModelElementAction : Action {
 
     internal constructor(
         editorViewModel: EditorViewModel,
-        element: BlockViewModelElement<*>,
+        element: BlockViewModelElement,
         elementScalerBlock: ElementScalerBlock?
     ) {
         this.editorViewModel = editorViewModel

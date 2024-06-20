@@ -3,12 +3,13 @@ package org.gecko.actions
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.SystemViewModel
 import org.gecko.viewmodel.ViewModelFactory
+import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.*
 
 internal class CreateViewModelElementActionTest {

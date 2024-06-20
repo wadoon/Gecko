@@ -1,28 +1,30 @@
 package org.gecko.view
 
-import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Platform
 import javafx.beans.Observable
-import javafx.beans.property.*
+import javafx.beans.property.ListProperty
+import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
 import javafx.collections.ObservableSet
 import javafx.event.EventHandler
+import javafx.geometry.Orientation
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.*
+import javafx.scene.control.Dialog
+import javafx.scene.control.SplitPane
+import javafx.scene.control.Tab
+import javafx.scene.control.TabPane
 import javafx.scene.control.TabPane.TabClosingPolicy
-import javafx.scene.input.*
+import javafx.scene.input.KeyCombination
+import javafx.scene.input.Mnemonic
 import javafx.scene.layout.BorderPane
-import org.gecko.actions.*
+import org.gecko.actions.Action
 import org.gecko.view.menubar.ToolbarBuilder
-import org.gecko.view.views.*
-import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.view.views.EditorView
+import org.gecko.view.views.ViewFactory
+import org.gecko.viewmodel.*
 import tornadofx.plus
-import java.util.*
 
 /**
  * Represents the View component of a Gecko project. Holds a [ViewFactory], a current [EditorView] and a
@@ -34,14 +36,14 @@ class GeckoView(var viewModel: GeckoViewModel) {
     val centerPane: TabPane
     val viewFactory: ViewFactory
 
-    val currentViewProperty: Property<EditorView?>
+    val currentViewProperty: Property<EditorView?> = nullableObjectProperty()
 
     val openedViews: MutableList<EditorView?>
 
-    val darkModeProperty = SimpleBooleanProperty(false)
+    val darkModeProperty = booleanProperty(false)
 
     var hasBeenFocused = false
-    val mnemonicsProperty = SimpleListProperty(FXCollections.observableArrayList<Mnemonic>())
+    val mnemonicsProperty = listProperty<Mnemonic>()
 
     init {
         this.viewModel = viewModel
@@ -49,21 +51,21 @@ class GeckoView(var viewModel: GeckoViewModel) {
         this.centerPane = TabPane()
         this.viewFactory = ViewFactory(viewModel.actionManager, this)
         this.openedViews = ArrayList()
-        this.currentViewProperty = SimpleObjectProperty()
 
-        mainPane.stylesheets
-            .add(Objects.requireNonNull(GeckoView::class.java.getResource(STYLE_SHEET_LIGHT)).toString())
+        val geckoCss = GeckoView::class.java.getResource(STYLE_SHEET_LIGHT)?.toString()
+            ?: error("Could not find $STYLE_SHEET_LIGHT in resources")
+        mainPane.stylesheets.add(geckoCss)
 
-        CSSFX.start(mainPane)
+        //CSSFX.start(mainPane)
 
         // Listener for current editor
         viewModel.currentEditorProperty.addListener { observable, oldValue, newValue ->
             this.onUpdateCurrentEditorFromViewModel(
-                observable, oldValue, newValue
+                newValue
             )
         }
         viewModel.openedEditorsProperty.addListener { observable, oldValue, newValue ->
-            this.onOpenedEditorChanged(observable, oldValue, newValue)
+            this.onOpenedEditorChanged(newValue)
         }
 
         centerPane.isPickOnBounds = false
@@ -77,7 +79,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
 
         // Menubar
         // MenuBar menuBar = new MenuBarBuilder(this, viewModel.getActionManager()).build();
-        val menuBar = ToolbarBuilder(this, viewModel.actionManager).build()
+        val menuBar = ToolbarBuilder(this, viewModel, viewModel.actionManager).build()
         mainPane.top = menuBar
         mainPane.center = centerPane
 
@@ -114,17 +116,12 @@ class GeckoView(var viewModel: GeckoViewModel) {
             }
     }
 
-    fun onUpdateCurrentEditorFromViewModel(
-        observable: ObservableValue<out EditorViewModel?>, oldValue: EditorViewModel?, newValue: EditorViewModel?
-    ) {
+    fun onUpdateCurrentEditorFromViewModel(newValue: EditorViewModel?) {
         currentViewProperty.setValue(openedViews.find { it!!.viewModel == newValue })
         refreshView()
     }
 
-    fun onOpenedEditorChanged(
-        observable: ObservableValue<out ObservableSet<EditorViewModel>?>, oldValue: ObservableSet<EditorViewModel>?,
-        newValue: ObservableSet<EditorViewModel>?
-    ) {
+    fun onOpenedEditorChanged(newValue: ObservableSet<EditorViewModel>?) {
         if (newValue != null) {
             for (editorViewModel in newValue) {
                 if (openedViews.stream()
@@ -192,7 +189,14 @@ class GeckoView(var viewModel: GeckoViewModel) {
     fun refreshView() {
         centerPane.selectionModel.select(currentViewProperty.value!!.currentView)
 
-        mainPane.left = currentViewProperty.value!!.drawToolbar()
+        val splitPane = SplitPane(
+            currentViewProperty.value!!.drawToolbar(),
+            OutlineView(viewModel).root
+        )
+        splitPane.orientation=Orientation.VERTICAL
+        splitPane.setDividerPositions(0.3)
+        mainPane.left = splitPane
+
         mainPane.right = currentViewProperty.value!!.drawInspector()
         currentViewProperty.value!!.currentInspector.addListener { observable: Observable? ->
             mainPane.right = currentViewProperty.value!!.drawInspector()
@@ -230,7 +234,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
         editorViewModel.pivot = center
     }
 
-    val allDisplayedElements: Set<PositionableViewModelElement<*>>
+    val allDisplayedElements: Set<PositionableViewModelElement>
         /**
          * Returns all displayed elements in the current view.
          *
@@ -251,10 +255,6 @@ class GeckoView(var viewModel: GeckoViewModel) {
         set(dark) {
             darkModeProperty.set(dark)
         }
-
-    fun darkModeProperty(): SimpleBooleanProperty {
-        return darkModeProperty
-    }
 
     fun getView(tab: Tab?): EditorView? {
         return openedViews.stream().filter { editorView: EditorView? -> editorView!!.currentView === tab }

@@ -18,7 +18,6 @@ class ChangeContractEdgeViewModelAction(
     override fun run(): Boolean {
         oldContract = edgeViewModel.contract
         edgeViewModel.contract = newContract
-        edgeViewModel.updateTarget()
         return true
     }
 

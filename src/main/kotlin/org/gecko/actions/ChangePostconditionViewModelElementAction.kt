@@ -12,15 +12,14 @@ class ChangePostconditionViewModelElementAction internal constructor(
     val contractViewModel: ContractViewModel,
     val newPostcondition: String
 ) : Action() {
-    val oldPostcondition: String = contractViewModel.postcondition
+    val oldPostcondition: String = contractViewModel.postCondition.value
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         if (newPostcondition.isEmpty()) {
             return false
         }
-        contractViewModel.postcondition = (newPostcondition)
-        contractViewModel.updateTarget()
+        contractViewModel.postCondition.value = newPostcondition
         return true
     }
 

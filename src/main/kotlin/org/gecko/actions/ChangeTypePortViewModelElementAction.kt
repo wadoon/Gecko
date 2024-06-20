@@ -19,7 +19,6 @@ class ChangeTypePortViewModelElementAction internal constructor(
             return false
         }
         portViewModel.type = (newType)
-        portViewModel.updateTarget()
         return true
     }
 

@@ -5,6 +5,7 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.control.*
+import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import org.gecko.actions.Action
@@ -17,6 +18,7 @@ import org.gecko.viewmodel.EditorViewModel
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignR
 import org.kordamp.ikonli.materialdesign2.MaterialDesignU
+import org.w3c.dom.Node
 
 /**
  * Represents a builder for the [ToolBar] displayed in the view, containing a [ToggleGroup] with
@@ -29,7 +31,7 @@ class ToolBarBuilder(
     val editorView: EditorView,
     editorViewModel: EditorViewModel
 ) {
-    val toolBar = ToolBar()
+    val toolBar = FlowPane() //ToolBar()
 
     init {
         toolBar.orientation = Orientation.VERTICAL
@@ -48,16 +50,16 @@ class ToolBarBuilder(
 
             // add separator
             if (i < editorViewModel.tools.size - 1) {
-                toolBar.items.add(Separator())
+                toolBar.children.add(Separator())
             }
         }
 
         // Undo and Redo buttons
-        toolBar.items.add(Separator())
+        toolBar.children.add(Separator())
         val spacer = VBox()
         VBox.setVgrow(spacer, Priority.ALWAYS)
 
-        toolBar.items.add(spacer)
+        toolBar.children.add(spacer)
 
         val undoButton = Button(
             ResourceHandler.Companion.undo,
@@ -80,7 +82,7 @@ class ToolBarBuilder(
         redoButton.onAction = EventHandler { event: ActionEvent? -> actionManager.redo() }
         redoButton.contentDisplay = ContentDisplay.GRAPHIC_ONLY
         undoButton.contentDisplay = ContentDisplay.GRAPHIC_ONLY
-        toolBar.items.addAll(undoButton, redoButton)
+        //toolBar.children.addAll(undoButton, redoButton)
     }
 
     fun addTools(actionManager: ActionManager, toggleGroup: ToggleGroup, toolList: List<Tool>) {
@@ -109,12 +111,12 @@ class ToolBarBuilder(
             //toolButton.getStyleClass().add(toolType.getIcon());
             val tooltip = Tooltip("%s (%s)".format(toolType.label, toolType.keyCodeCombination?.displayText))
             toolButton.tooltip = tooltip
-            toolBar.items.add(toolButton)
+            toolBar.children.add(toolButton)
             toggleGroup.toggles.add(toolButton)
         }
     }
 
-    fun build(): ToolBar {
+    fun build(): javafx.scene.Node {
         return toolBar
     }
 

@@ -4,9 +4,7 @@ import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import org.gecko.actions.*
-import org.gecko.exceptions.MissingViewModelElementException
 import org.gecko.exceptions.ModelException
-import org.gecko.model.*
 
 /**
  * Represents a factory for the view model elements of a Gecko project. Provides methods for the creation of each
@@ -17,7 +15,6 @@ import org.gecko.model.*
 class ViewModelFactory(
     val actionManager: ActionManager,
     val geckoViewModel: GeckoViewModel,
-    val modelFactory: ModelFactory
 ) {
     /**
      * The id of the next view model element to be created.
@@ -27,10 +24,7 @@ class ViewModelFactory(
     fun createEditorViewModel(
         systemViewModel: SystemViewModel, parentSystem: SystemViewModel?, isAutomatonEditor: Boolean
     ): EditorViewModel {
-        return EditorViewModel(
-            actionManager, systemViewModel, parentSystem, isAutomatonEditor,
-            newViewModelElementId
-        )
+        return EditorViewModel(actionManager, systemViewModel, parentSystem, isAutomatonEditor)
     }
 
     /**
@@ -38,15 +32,9 @@ class ViewModelFactory(
      */
     @Throws(ModelException::class)
     fun createStateViewModelIn(parentSystem: SystemViewModel): StateViewModel {
-        val state = modelFactory.createState(parentSystem.target!!.automaton!!)
-        val result = StateViewModel(newViewModelElementId, state)
+        val result = StateViewModel()
+        result.isStartState = true
         geckoViewModel.addViewModelElement(result)
-
-        if (parentSystem.startState == null) {
-            parentSystem.startState = result
-            parentSystem.updateTarget()
-        }
-
         return result
     }
 
@@ -54,26 +42,26 @@ class ViewModelFactory(
      * New ContractViewModels are created for the contracts of the state. If the state is the start state of a system,
      * the system's start state is set to the new state.
      */
-    fun createStateViewModelFrom(state: State): StateViewModel {
-        val result = StateViewModel(newViewModelElementId, state)
-        for (contract in state.contracts) {
-            val contractViewModel = createContractViewModelFrom(contract)
-            result.addContract(contractViewModel)
-        }
-        geckoViewModel.addViewModelElement(result)
-        updateStartState(state)
-        return result
-    }
+//    fun createStateViewModelFrom(): StateViewModel {
+//        val result = StateViewModel()
+//        for (contract in state.contracts) {
+//            val contractViewModel = createContractViewModelFrom(contract)
+//            result.addContract(contractViewModel)
+//        }
+//        geckoViewModel.addViewModelElement(result)
+//        updateStartState(state)
+//        return result
+//    }
 
     @Throws(ModelException::class)
     fun createEdgeViewModelIn(
         parentSystem: SystemViewModel, source: StateViewModel, destination: StateViewModel
     ): EdgeViewModel {
-        val edge = modelFactory.createEdge(
-            parentSystem.target!!.automaton!!, source.target!!,
-            destination.target!!
-        )
-        val result = EdgeViewModel(newViewModelElementId, edge, source, destination)
+        val result = EdgeViewModel().also {
+            it.source = source
+            it.destination = destination
+        }
+        // TODO? parentSystem.addEdge()
         geckoViewModel.addViewModelElement(result)
         return result
     }
@@ -81,84 +69,81 @@ class ViewModelFactory(
     /**
      * Expects the source and destination of the edge to be in the view model.
      */
-    @Throws(MissingViewModelElementException::class)
-    fun createEdgeViewModelFrom(edge: Edge): EdgeViewModel {
-        val source = geckoViewModel.getViewModelElement(edge.source!!) as StateViewModel
-        val destination = geckoViewModel.getViewModelElement(edge.destination!!) as StateViewModel
-        if (source == null || destination == null) {
-            throw MissingViewModelElementException("Missing source or destination for edge.")
-        }
-        val result = EdgeViewModel(newViewModelElementId, edge, source, destination)
-        if (edge.contract != null) {
-            //This should never be null because the Edge Model Element has a contract that should be coming
-            //from its source
-            val contract = source.contractsProperty
-                .stream()
-                .filter { contractViewModel: ContractViewModel -> contractViewModel.target == edge.contract }
-                .findFirst()
-                .orElse(null)
-            result.contract = contract
-        }
-        geckoViewModel.addViewModelElement(result)
-        return result
-    }
+//    @Throws(MissingViewModelElementException::class)
+//    fun createEdgeViewModelFrom(edge: Edge): EdgeViewModel {
+//        val source = geckoViewModel.getViewModelElement(edge.source!!) as StateViewModel
+//        val destination = geckoViewModel.getViewModelElement(edge.destination!!) as StateViewModel
+//        if (source == null || destination == null) {
+//            throw MissingViewModelElementException("Missing source or destination for edge.")
+//        }
+//        val result = EdgeViewModel(newViewModelElementId, edge, source, destination)
+//        if (edge.contract != null) {
+//            //This should never be null because the Edge Model Element has a contract that should be coming
+//            //from its source
+//            val contract = source.contractsProperty
+//                .stream()
+//                .filter { contractViewModel: ContractViewModel -> contractViewModel.target == edge.contract }
+//                .findFirst()
+//                .orElse(null)
+//            result.contract = contract
+//        }
+//        geckoViewModel.addViewModelElement(result)
+//        return result
+//    }
 
     @Throws(ModelException::class)
     fun createSystemConnectionViewModelIn(
         parentSystem: SystemViewModel, source: PortViewModel, destination: PortViewModel
     ): SystemConnectionViewModel {
-        val systemConnection =
-            modelFactory.createSystemConnection(parentSystem.target!!, source.target!!, destination.target!!)
-        val result =
-            SystemConnectionViewModel(newViewModelElementId, systemConnection, source, destination)
+        val result = SystemConnectionViewModel()
+        result.source = source
+        result.destination = destination
+
         geckoViewModel.addViewModelElement(result)
 
         setSystemConnectionEdgePoints(parentSystem, source, destination, result)
-        result.updateTarget()
         return result
     }
 
     /**
      * Expects the source and destination of the system connection to be in the view model.
      */
-    @Throws(MissingViewModelElementException::class)
-    fun createSystemConnectionViewModelFrom(
-        system: System?, systemConnection: SystemConnection
-    ): SystemConnectionViewModel {
-        val source = geckoViewModel.getViewModelElement(systemConnection.source!!) as PortViewModel
-        val destination =
-            geckoViewModel.getViewModelElement(systemConnection.destination!!) as PortViewModel
-        if (source == null || destination == null) {
-            throw MissingViewModelElementException("Missing source or destination for system connection.")
-        }
-        val result =
-            SystemConnectionViewModel(newViewModelElementId, systemConnection, source, destination)
-        geckoViewModel.addViewModelElement(result)
-        setSystemConnectionEdgePoints(
-            geckoViewModel.getViewModelElement(system!!) as SystemViewModel, source, destination,
-            result
-        )
-        // Since target is already up-to-date and we're building from target, we don't need to call updateTarget
-        return result
-    }
+//    @Throws(MissingViewModelElementException::class)
+//    fun createSystemConnectionViewModelFrom(
+//        system: System?, systemConnection: SystemConnection
+//    ): SystemConnectionViewModel {
+//        val source = geckoViewModel.getViewModelElement(systemConnection.source!!) as PortViewModel
+//        val destination =
+//            geckoViewModel.getViewModelElement(systemConnection.destination!!) as PortViewModel
+//        if (source == null || destination == null) {
+//            throw MissingViewModelElementException("Missing source or destination for system connection.")
+//        }
+//        val result =
+//            SystemConnectionViewModel(newViewModelElementId, systemConnection, source, destination)
+//        geckoViewModel.addViewModelElement(result)
+//        setSystemConnectionEdgePoints(
+//            geckoViewModel.getViewModelElement(system!!) as SystemViewModel, source, destination,
+//            result
+//        )
+//        // Since target is already up-to-date and we're building from target, we don't need to call updateTarget
+//        return result
+//    }
 
     /**
      * Expects the source and destination of the system connection to be in the view model.
      */
-    @Throws(MissingViewModelElementException::class)
-    fun createSystemConnectionViewModelFrom(
-        systemConnection: SystemConnection
-    ): SystemConnectionViewModel {
-        return createSystemConnectionViewModelFrom(
-            geckoViewModel.currentEditor!!.currentSystem.target,
-            systemConnection
-        )
-    }
+//    @Throws(MissingViewModelElementException::class)
+//    fun createSystemConnectionViewModelFrom(systemConnection: SystemConnection): SystemConnectionViewModel {
+//        return createSystemConnectionViewModelFrom(
+//            geckoViewModel.currentEditor!!.currentSystem.target,
+//            systemConnection
+//        )
+//    }
 
     @Throws(ModelException::class)
     fun createSystemViewModelIn(parentSystem: SystemViewModel): SystemViewModel {
-        val system = modelFactory.createSystem(parentSystem.target!!)
-        val result = SystemViewModel(newViewModelElementId, system)
+        val result = SystemViewModel()
+        parentSystem.subSystems.add(result)
         geckoViewModel.addViewModelElement(result)
         return result
     }
@@ -166,126 +151,83 @@ class ViewModelFactory(
     /**
      * Missing PortViewModels are created for the variables of the system.
      */
-    fun createSystemViewModelFrom(system: System): SystemViewModel {
-        val result = SystemViewModel(newViewModelElementId, system)
-        for (variable in system.variables) {
-            var portViewModel = geckoViewModel.getViewModelElement(variable!!) as PortViewModel
-            if (portViewModel == null) {
-                portViewModel = createPortViewModelFrom(variable)
-            }
-            result.addPort(portViewModel)
-        }
-        geckoViewModel.addViewModelElement(result)
-        return result
-    }
+//    fun createSystemViewModelFrom(system: System): SystemViewModel {
+//        val result = SystemViewModel()
+//        for (variable in system.variables) {
+//            var portViewModel = geckoViewModel.getViewModelElement(variable!!) as PortViewModel
+//            if (portViewModel == null) {
+//                portViewModel = createPortViewModelFrom(variable)
+//            }
+//            result.addPort(portViewModel)
+//        }
+//        geckoViewModel.addViewModelElement(result)
+//        return result
+//    }
 
-    fun createSystemViewModelForChildren(system: System) {
-        system.children.forEach { child ->
-            if (geckoViewModel.getViewModelElement(child) != null) {
-                return@forEach
-            }
-            val childViewModel = createSystemViewModelFrom(child)
-            geckoViewModel.addViewModelElement(childViewModel)
-            createSystemViewModelForChildren(child)
-        }
-
-        system.automaton!!.states.forEach { state ->
-            if (geckoViewModel.getViewModelElement(state!!) != null) {
-                return@forEach
-            }
-            val stateViewModel = createStateViewModelFrom(state)
-            geckoViewModel.addViewModelElement(stateViewModel)
-        }
-    }
+//    fun createSystemViewModelForChildren(system: System) {
+//        system.children.forEach { child ->
+//            if (geckoViewModel.getViewModelElement(child) != null) {
+//                return@forEach
+//            }
+//            val childViewModel = createSystemViewModelFrom(child)
+//            geckoViewModel.addViewModelElement(childViewModel)
+//            createSystemViewModelForChildren(child)
+//        }
+//
+//        system.automaton!!.states.forEach { state ->
+//            if (geckoViewModel.getViewModelElement(state!!) != null) {
+//                return@forEach
+//            }
+//            val stateViewModel = createStateViewModelFrom(state)
+//            geckoViewModel.addViewModelElement(stateViewModel)
+//        }
+//    }
 
     @Throws(ModelException::class)
     fun createRegionViewModelIn(parentSystem: SystemViewModel): RegionViewModel {
-        val region = modelFactory.createRegion(parentSystem.target!!.automaton!!)
-        val result = RegionViewModel(
-            newViewModelElementId, region,
-            createContractViewModelFrom(region.preAndPostCondition)
-        )
-
+        val result = RegionViewModel(ContractViewModel())
         // Check for states in the region
-        for (state in parentSystem.target!!.automaton!!.states) {
-            result.checkStateInRegion(geckoViewModel.getViewModelElement(state!!) as StateViewModel)
+        for (state in parentSystem.automaton.states) {
+            result.checkStateInRegion(state!!)
         }
 
-        geckoViewModel.addViewModelElement(result)
-        return result
-    }
-
-    /**
-     * Expects the states in the region to be in the view model.
-     */
-    @Throws(MissingViewModelElementException::class)
-    fun createRegionViewModelFrom(region: Region): RegionViewModel {
-        val result = RegionViewModel(
-            newViewModelElementId, region,
-            createContractViewModelFrom(region.preAndPostCondition)
-        )
-        for (state in region.states) {
-            val stateViewModel = geckoViewModel.getViewModelElement(state) as StateViewModel
-            result.addState(stateViewModel)
-        }
         geckoViewModel.addViewModelElement(result)
         return result
     }
 
     @Throws(ModelException::class)
     fun createPortViewModelIn(systemViewModel: SystemViewModel): PortViewModel {
-        val variable = modelFactory.createVariable(systemViewModel.target!!)
-        val result = PortViewModel(newViewModelElementId, variable)
+        val result = PortViewModel()
         systemViewModel.addPort(result)
-        geckoViewModel.addViewModelElement(result)
-        return result
-    }
-
-    /**
-     * New PortViewModel is not added to the SystemViewModel.
-     */
-    fun createPortViewModelFrom(variable: Variable?): PortViewModel {
-        if (geckoViewModel.getViewModelElement(variable!!) != null) {
-            return geckoViewModel.getViewModelElement(variable) as PortViewModel
-        }
-        val result = PortViewModel(newViewModelElementId, variable!!)
         geckoViewModel.addViewModelElement(result)
         return result
     }
 
     @Throws(ModelException::class)
     fun createContractViewModelIn(stateViewModel: StateViewModel): ContractViewModel {
-        val contract = modelFactory.createContract(stateViewModel.target!!)
-        val result = ContractViewModel(newViewModelElementId, contract)
+        val result = ContractViewModel()
         stateViewModel.addContract(result)
         return result
-    }
-
-    /**
-     * New ContractViewModel is not added to the StateViewModel.
-     */
-    fun createContractViewModelFrom(contract: Contract): ContractViewModel {
-        return ContractViewModel(newViewModelElementId, contract)
     }
 
     val newViewModelElementId: Int
         get() = viewModelElementId++
 
-    fun updateStartState(state: State) {
-        val root = geckoViewModel.geckoModel.root
+    fun updateStartState(state: StateViewModel) {
+        val root = geckoViewModel.root
         val parentSystem = findSystemWithState(root, state)
-        if (parentSystem != null && state == parentSystem.automaton!!.startState) {
-            val parentSystemViewModel = geckoViewModel.getViewModelElement(parentSystem) as SystemViewModel
-            parentSystemViewModel.startState = geckoViewModel.getViewModelElement(state) as StateViewModel
+        if (parentSystem != null && state == parentSystem.automaton.startState) {
+            val parentSystemViewModel = parentSystem
+            state.isStartState = true
         }
     }
 
-    fun findSystemWithState(parentSystem: System, state: State): System? {
+    fun findSystemWithState(parentSystem: SystemViewModel, state: StateViewModel): SystemViewModel? {
         if (parentSystem.automaton!!.states.contains(state)) {
             return parentSystem
         }
-        if (!parentSystem.children.isEmpty()) {
-            for (childSystem in parentSystem.children) {
+        if (!parentSystem.subSystems.isEmpty()) {
+            for (childSystem in parentSystem.subSystems) {
                 val result = findSystemWithState(childSystem, state)
                 if (result != null) {
                     return result
@@ -307,7 +249,7 @@ class ViewModelFactory(
     }
 
     fun isPort(systemViewModel: SystemViewModel, portViewModel: PortViewModel): Boolean {
-        return systemViewModel.target?.variables?.find { portViewModel.target == it } == null
+        return systemViewModel.ports.find { portViewModel == it } == null
     }
 
     fun setSystemConnectionEdgePoints(

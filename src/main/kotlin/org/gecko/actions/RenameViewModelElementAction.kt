@@ -1,7 +1,6 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.GeckoModel
 import org.gecko.viewmodel.*
 
 /**
@@ -9,20 +8,13 @@ import org.gecko.viewmodel.*
  * old and new [name][String]s of the element.
  */
 class RenameViewModelElementAction internal constructor(
-    val geckoModel: GeckoModel,
-    val renamable: Renamable,
-    val newName: String
+    val renamable: Renamable, val newName: String
 ) : Action() {
     val oldName: String = renamable.name
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        if (!geckoModel.isNameUnique(newName)) {
-            return false
-        }
         renamable.name = newName
-        val abstractViewModelElement = renamable as AbstractViewModelElement<*>
-        abstractViewModelElement.updateTarget()
         return true
     }
 

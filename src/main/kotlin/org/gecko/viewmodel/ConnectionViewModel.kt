@@ -16,5 +16,5 @@ interface ConnectionViewModel {
      */
     fun setEdgePoint(index: Int, newPosition: Point2D)
 
-    val edgePoints: ObservableList<Point2D?>?
+    val edgePoints: ObservableList<Point2D>
 }

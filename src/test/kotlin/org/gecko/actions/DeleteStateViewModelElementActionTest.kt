@@ -9,7 +9,7 @@ import org.gecko.viewmodel.SystemViewModel
 import org.junit.jupiter.api.*
 
 internal class DeleteStateViewModelElementActionTest {
-    private var elements: Set<PositionableViewModelElement<*>>? = null
+    private var elements: Set<PositionableViewModelElement>? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
     private var geckoViewModel: GeckoViewModel? = null
@@ -26,7 +26,7 @@ internal class DeleteStateViewModelElementActionTest {
 
         val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel!!)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel!!)
-        elements = java.util.Set.of<PositionableViewModelElement<*>>(stateViewModel1, stateViewModel2)
+        elements = java.util.Set.of<PositionableViewModelElement>(stateViewModel1, stateViewModel2)
         geckoViewModel!!.switchEditor(rootSystemViewModel!!, true)
     }
 

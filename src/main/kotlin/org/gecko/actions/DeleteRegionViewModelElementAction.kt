@@ -1,11 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.model.Automaton
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
-import org.gecko.viewmodel.RegionViewModel
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.*
 
 /**
  * A concrete representation of an [Action] that removes a [RegionViewModel] from the [GeckoViewModel]
@@ -14,11 +10,11 @@ import org.gecko.viewmodel.StateViewModel
 class DeleteRegionViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val regionViewModel: RegionViewModel,
-    val automaton: Automaton
+    val automaton: AutomatonViewModel
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        automaton.removeRegion(regionViewModel.target)
+        automaton.removeRegion(regionViewModel)
         val states: List<StateViewModel> = ArrayList(regionViewModel.statesProperty)
 
         for (state in states) {
@@ -34,6 +30,6 @@ class DeleteRegionViewModelElementAction internal constructor(
         return RestoreRegionViewModelElementAction(geckoViewModel, regionViewModel, automaton)
     }
 
-    override val target: PositionableViewModelElement<*>
+    override val target: PositionableViewModelElement
         get() = regionViewModel
 }

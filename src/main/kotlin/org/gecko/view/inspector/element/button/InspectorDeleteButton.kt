@@ -10,7 +10,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
 /**
  * Represents a type of [AbstractInspectorButton] used for deleting a [PositionableViewModelElement].
  */
-class InspectorDeleteButton(actionManager: ActionManager, elementToRemove: PositionableViewModelElement<*>?) :
+class InspectorDeleteButton(actionManager: ActionManager, elementToRemove: PositionableViewModelElement?) :
     AbstractInspectorButton() {
     init {
         onAction = EventHandler { event ->

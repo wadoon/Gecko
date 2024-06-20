@@ -16,7 +16,6 @@ class ModifyEdgeViewModelPriorityAction internal constructor(
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         edgeViewModel.priority = newPriority
-        edgeViewModel.updateTarget()
         return true
     }
 

@@ -27,6 +27,8 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty()
     val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty()
 
+    override var isSelected: Boolean = false
+
     init {
         bindViewModel()
         constructVisualization()
@@ -86,12 +88,12 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
 
         // Contracts
         val contracts: Labeled = Label(
-            ResourceHandler.Companion.contract_plural + ": " + target.contractsProperty
+            ResourceHandler.contract_plural + ": " + target.contractsProperty
                 .size
         )
         contracts.textProperty()
             .bind(Bindings.createStringBinding({
-                (ResourceHandler.Companion.contract_plural + ": "
+                (ResourceHandler.contract_plural + ": "
                         + target.contractsProperty.size)
             }, target.contractsProperty))
 
@@ -127,15 +129,15 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
             contractLabel.textProperty().bind(contract.nameProperty)
 
             val preconditionBox = HBox()
-            val preconditionLabel = Label(ResourceHandler.Companion.pre_condition_short + ": ")
-            val precondition = Label(contract.precondition)
-            precondition.textProperty().bind(contract.preConditionProperty)
+            val preconditionLabel = Label(ResourceHandler.pre_condition_short + ": ")
+            val precondition = Label(contract.preCondition.value)
+            precondition.textProperty().bind(contract.preCondition.valueProperty)
             preconditionBox.children.addAll(preconditionLabel, precondition)
 
             val postconditionBox = HBox()
-            val postconditionLabel = Label(ResourceHandler.Companion.post_condition_short + ": ")
-            val postcondition = Label(contract.postcondition)
-            postcondition.textProperty().bind(contract.postConditionProperty)
+            val postconditionLabel = Label(ResourceHandler.post_condition_short + ": ")
+            val postcondition = Label(contract.postCondition.value)
+            postcondition.textProperty().bind(contract.postCondition.valueProperty)
             postconditionBox.children.addAll(postconditionLabel, postcondition)
 
             contractBox.children.addAll(contractLabel, preconditionBox, postconditionBox)

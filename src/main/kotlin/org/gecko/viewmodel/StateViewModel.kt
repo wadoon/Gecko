@@ -7,8 +7,7 @@ import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
-import org.gecko.exceptions.ModelException
-import org.gecko.model.*
+
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -17,30 +16,19 @@ import tornadofx.setValue
  * [ContractViewModel]s and can target either a regular or a start-[State]. Contains methods for managing
  * the afferent data and updating the target-[State].
  */
-class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, target) {
-    val isStartStateProperty: BooleanProperty = SimpleBooleanProperty()
+data class StateViewModel(
+    val isStartStateProperty: BooleanProperty = SimpleBooleanProperty(false),
+    val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+    val incomingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+    val outgoingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+) : BlockViewModelElement() {
     var isStartState by isStartStateProperty
-
-    val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty(FXCollections.observableArrayList())
     var contracts by contractsProperty
-
-    val incomingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList())
     var incomingEdges by incomingEdgesProperty
-
-    val outgoingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList())
     var outgoingEdges: ObservableList<EdgeViewModel> by outgoingEdgesProperty
 
 
-    init {
-        addEdgeListeners()
-    }
-
-    @Throws(ModelException::class)
-    override fun updateTarget() {
-        super.updateTarget()
-        target.contracts.clear()
-        target!!.addContracts(contractsProperty.map { obj: ContractViewModel -> obj.target }.toSet())
-    }
+    init { addEdgeListeners() }
 
     fun addContract(contract: ContractViewModel) {
         contractsProperty.add(contract)
@@ -67,8 +55,8 @@ class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, 
     }
 
     fun notifyOtherState() {
-        outgoingEdges.forEach { edge: EdgeViewModel -> edge.destination.setEdgeOffsets() }
-        incomingEdges.forEach { edge: EdgeViewModel -> edge.source.setEdgeOffsets() }
+        outgoingEdges.forEach { edge: EdgeViewModel -> edge.destination?.setEdgeOffsets() }
+        incomingEdges.forEach { edge: EdgeViewModel -> edge.source?.setEdgeOffsets() }
     }
 
     fun setEdgeOffsets() {
@@ -117,23 +105,23 @@ class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, 
 
     fun getOtherEdgePoint(edge: EdgeViewModel): Point2D {
         if (edge.source == this) {
-            return edge.destination.center!!
+            return edge.destination?.center!!
         }
-        return edge.source.center!!
+        return edge.source?.center!!
     }
 
     fun compareEdges(e1: EdgeViewModel, e2: EdgeViewModel, orientation: Int): Int {
         val compare = when (orientation) {
-            0 -> java.lang.Double.compare(getOtherEdgePoint(e1).x, getOtherEdgePoint(e2).x)
-            1 -> java.lang.Double.compare(getOtherEdgePoint(e1).y, getOtherEdgePoint(e2).y)
-            2 -> java.lang.Double.compare(getOtherEdgePoint(e2).x, getOtherEdgePoint(e1).x)
-            3 -> java.lang.Double.compare(getOtherEdgePoint(e2).y, getOtherEdgePoint(e1).y)
+            0 -> getOtherEdgePoint(e1).x.compareTo(getOtherEdgePoint(e2).x)
+            1 -> getOtherEdgePoint(e1).y.compareTo(getOtherEdgePoint(e2).y)
+            2 -> getOtherEdgePoint(e2).x.compareTo(getOtherEdgePoint(e1).x)
+            3 -> getOtherEdgePoint(e2).y.compareTo(getOtherEdgePoint(e1).y)
             else -> 0
         }
-        if (compare == 0) {
-            val equalCompare = Integer.compare(e1.id, e2.id)
-            return if (orientation > 1) -equalCompare else equalCompare
-        }
+//        if (compare == 0) {
+//            val equalCompare = e1.compareTo(e2)
+//            return if (orientation > 1) -equalCompare else equalCompare
+//        }
         return compare
     }
 
@@ -172,8 +160,8 @@ class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, 
                     intersectionOrientationEdges[LOOPS]!!.add(edge)
                     continue
                 }
-                val p1 = edge.source.center
-                val p2 = edge.destination.center
+                val p1 = edge.source!!.center
+                val p2 = edge.destination!!.center
                 val orientation = getIntersectionOrientation(p1!!, p2!!)
                 if (orientation != -1) {
                     intersectionOrientationEdges[orientation]!!.add(edge)
@@ -184,7 +172,7 @@ class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, 
 
     fun getIntersectionOrientation(p1: Point2D, p2: Point2D): Int {
         val edgePoints: List<Point2D> = ArrayList(
-            java.util.List.of(
+            listOf(
                 position, position.add(size.x, 0.0), position.add(size),
                 position.add(0.0, size.y)
             )
@@ -197,16 +185,6 @@ class StateViewModel(id: Int, target: State) : BlockViewModelElement<State>(id, 
             }
         }
         return -1
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
-            return true
-        }
-        if (o !is StateViewModel) {
-            return false
-        }
-        return id == o.id
     }
 
     companion object {

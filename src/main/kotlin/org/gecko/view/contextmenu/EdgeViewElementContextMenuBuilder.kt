@@ -7,10 +7,10 @@ import javafx.scene.control.Menu
 import javafx.scene.control.MenuItem
 import javafx.scene.control.SeparatorMenuItem
 import org.gecko.actions.ActionManager
-import org.gecko.model.Kind
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Kind
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to an
@@ -41,7 +41,7 @@ class EdgeViewElementContextMenuBuilder(
         }
 
         val deleteMenuItem = MenuItem(ResourceHandler.delete)
-        deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
+        deleteMenuItem.onAction = EventHandler {
             actionManager.run(
                 actionManager.actionFactory.createDeletePositionableViewModelElementAction(edgeViewModel)
             )
@@ -53,7 +53,7 @@ class EdgeViewElementContextMenuBuilder(
 
     fun createKindMenuItem(kind: Kind): MenuItem {
         val kindMenuItem = MenuItem(kind.name)
-        kindMenuItem.onAction = EventHandler { e: ActionEvent? ->
+        kindMenuItem.onAction = EventHandler {
             actionManager.run(
                 actionManager.actionFactory.createChangeKindAction(
                     edgeViewModel, kind

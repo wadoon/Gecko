@@ -9,7 +9,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  */
 class FocusPositionableViewModelElementAction internal constructor(
     val editorViewModel: EditorViewModel,
-    positionableViewModelElement: PositionableViewModelElement<*>
+    positionableViewModelElement: PositionableViewModelElement
 ) : Action() {
     val element = positionableViewModelElement
 

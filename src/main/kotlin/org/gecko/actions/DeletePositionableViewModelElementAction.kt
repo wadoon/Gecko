@@ -10,16 +10,16 @@ import org.gecko.viewmodel.PositionableViewModelElement
  */
 class DeletePositionableViewModelElementAction : Action {
     val geckoViewModel: GeckoViewModel
-    val elementsToDelete: Set<PositionableViewModelElement<*>>
+    val elementsToDelete: Set<PositionableViewModelElement>
     var deleteActionGroup: ActionGroup? = null
-    var deletedElements: Set<PositionableViewModelElement<*>> = setOf()
+    var deletedElements: Set<PositionableViewModelElement> = setOf()
 
-    internal constructor(geckoViewModel: GeckoViewModel, element: PositionableViewModelElement<*>) {
+    internal constructor(geckoViewModel: GeckoViewModel, element: PositionableViewModelElement) {
         this.geckoViewModel = geckoViewModel
         this.elementsToDelete = java.util.Set.of(element)
     }
 
-    internal constructor(geckoViewModel: GeckoViewModel, elements: Set<PositionableViewModelElement<*>>?) {
+    internal constructor(geckoViewModel: GeckoViewModel, elements: Set<PositionableViewModelElement>?) {
         this.geckoViewModel = geckoViewModel
         this.elementsToDelete = HashSet(elements)
     }

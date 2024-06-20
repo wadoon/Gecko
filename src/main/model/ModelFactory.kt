@@ -3,6 +3,7 @@ package org.gecko.model
 import javafx.util.Pair
 
 import org.gecko.exceptions.ModelException
+import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a factory for the model elements of a Gecko project. Provides a method for the creation of each element.

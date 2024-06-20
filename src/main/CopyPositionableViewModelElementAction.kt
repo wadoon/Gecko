@@ -9,23 +9,22 @@ class CopyPositionableViewModelElementAction internal constructor(var geckoViewM
         val visitor = CopyPositionableViewModelElementVisitor(geckoViewModel)
 
         var copyQueue = geckoViewModel.currentEditor!!.selectionManager.currentSelection.toMutableSet()
-        val elementToCopy = copyQueue.map { it.target }
-        for (edge in geckoViewModel.currentEditor!!.currentSystem.target.automaton.edges) {
-            if (elementToCopy.contains(edge.source) && elementToCopy.contains(edge.destination)) {
-                copyQueue.add(geckoViewModel.getViewModelElement(edge))
+        val elementToCopy = copyQueue.toList()
+        for (edge in geckoViewModel.currentEditor!!.currentSystem.automaton.edges) {
+            if (elementToCopy.contains(edge.source!!) && elementToCopy.contains(edge.destination!!)) {
+                copyQueue.add(edge)
             }
         }
-        for (connection in geckoViewModel.currentEditor!!.currentSystem.target.connections) {
-            val element = geckoViewModel.geckoModel.getSystemWithVariable(connection.source)!!
+        for (connection in geckoViewModel.currentEditor!!.currentSystem.connections) {
+            val element = geckoViewModel.getSystemWithVariable(connection.source)!!
             val sourceSelected = elementToCopy.contains(element)
-                    || elementToCopy.contains(connection.source)
+                    || elementToCopy.contains(connection.source!!)
             val destinationSelected = (elementToCopy.contains(
-                geckoViewModel.geckoModel.getSystemWithVariable(connection.destination)!!
-            )
-                    || elementToCopy.contains(connection.destination))
+                geckoViewModel.getSystemWithVariable(connection.destination)!!
+            ) || elementToCopy.contains(connection.destination!!))
 
             if (sourceSelected && destinationSelected) {
-                copyQueue.add(geckoViewModel.getViewModelElement(connection))
+                copyQueue.add(connection)
             }
         }
         do {

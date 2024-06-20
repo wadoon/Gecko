@@ -6,7 +6,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  * An abstract representation of an [Action] that has a target-[PositionableViewModelElement].
  */
 abstract class AbstractPositionableViewModelElementAction : Action() {
-    abstract val target: PositionableViewModelElement<*>
+    abstract val target: PositionableViewModelElement
 
     override fun equals(o: Any?): Boolean {
         if (this === o) {

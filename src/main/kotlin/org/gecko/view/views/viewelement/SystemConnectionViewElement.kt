@@ -6,8 +6,8 @@ import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
 
-import org.gecko.model.*
 import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.Visibility
 import tornadofx.getValue
 import tornadofx.setValue
 

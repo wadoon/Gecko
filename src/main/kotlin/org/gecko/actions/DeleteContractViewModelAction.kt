@@ -16,10 +16,8 @@ class DeleteContractViewModelAction internal constructor(
         edgesWithContract = parent.outgoingEdges.filter { contractViewModel == it.contract }.toSet()
         for (edge in edgesWithContract) {
             edge.contract = null
-            edge.updateTarget()
         }
         parent.removeContract(contractViewModel!!)
-        parent.updateTarget()
         return true
     }
 
