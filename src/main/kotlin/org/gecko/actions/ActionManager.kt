@@ -69,9 +69,9 @@ class ActionManager(geckoViewModel: GeckoViewModel) {
      *
      * @param action The action to run.
      */
-    fun run(action: Action?) {
+    fun run(action: Action) {
         try {
-            if (!action!!.run()) {
+            if (!action.run()) {
                 return
             }
         } catch (e: GeckoException) {

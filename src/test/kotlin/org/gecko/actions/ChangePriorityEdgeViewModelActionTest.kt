@@ -19,7 +19,7 @@ class ChangePriorityEdgeViewModelActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
 
         val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
@@ -36,9 +36,8 @@ class ChangePriorityEdgeViewModelActionTest {
         Assertions.assertEquals(4, edge!!.priority)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
+    @Test
+    fun undoAction() {
             val changePriorityAction: Action = actionFactory!!.createModifyEdgeViewModelPriorityAction(
                 edge!!, 4
             )
@@ -46,6 +45,6 @@ class ChangePriorityEdgeViewModelActionTest {
             actionManager!!.run(changePriorityAction)
             actionManager!!.undo()
             Assertions.assertEquals(beforePriority, edge!!.priority)
-            Assertions.assertEquals(beforePriority, edge!!.target.priority)
+            Assertions.assertEquals(beforePriority, edge!!.priority)
         }
 }

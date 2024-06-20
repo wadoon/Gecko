@@ -32,7 +32,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
             geckoViewModel.geckoModel.modelFactory.copyState(stateFromClipboard)
         val stateToPaste = copyResult.key
         clipboardToPasted.putAll(copyResult.value)
-        val automaton = geckoViewModel.currentEditor!!.currentSystem.target.automaton
+        val automaton = geckoViewModel.currentEditor!!.currentSystem.automaton
         automaton.addState(stateToPaste)
         if (automaton.startState == null) {
             automaton.startState = stateToPaste
@@ -63,7 +63,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
         } catch (e: ModelException) {
             throw RuntimeException(e)
         }
-        geckoViewModel.currentEditor!!.currentSystem.target.addConnection(connectionToPaste)
+        geckoViewModel.currentEditor!!.currentSystem.addConnection(connectionToPaste)
         val systemConnectionViewModel =
             geckoViewModel.viewModelFactory.createSystemConnectionViewModelFrom(connectionToPaste)
         pastedElements.add(systemConnectionViewModel)
@@ -72,7 +72,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
     @Throws(ModelException::class)
     override fun visit(variableFromClipboard: Variable) {
         val variableToPaste = geckoViewModel.geckoModel.modelFactory.copyVariable(variableFromClipboard)
-        geckoViewModel.currentEditor!!.currentSystem.target.addVariable(variableToPaste)
+        geckoViewModel.currentEditor!!.currentSystem.addVariable(variableToPaste)
         val portViewModel = geckoViewModel.viewModelFactory.createPortViewModelFrom(variableToPaste)
         clipboardToPasted[variableFromClipboard] = variableToPaste
         pastedElements.add(portViewModel)
@@ -102,7 +102,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
             geckoViewModel.geckoModel.modelFactory.copySystem(systemFromClipboard)
         val systemToPaste = copyResult.key
         clipboardToPasted.putAll(copyResult.value)
-        geckoViewModel.currentEditor!!.currentSystem.target.addChild(systemToPaste)
+        geckoViewModel.currentEditor!!.currentSystem.addChild(systemToPaste)
         systemToPaste.parent = geckoViewModel.currentEditor!!.currentSystem.target
         createRecursiveSystemViewModels(systemToPaste)
         clipboardToPasted[systemFromClipboard] = systemToPaste
@@ -112,7 +112,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
     override fun visit(regionFromClipboard: Region) {
         val regionToPaste = geckoViewModel.geckoModel.modelFactory.copyRegion(regionFromClipboard)
         clipboardToPasted[regionFromClipboard] = regionToPaste
-        geckoViewModel.currentEditor!!.currentSystem.target.automaton.addRegion(regionToPaste)
+        geckoViewModel.currentEditor!!.currentSystem.automaton.addRegion(regionToPaste)
         val regionViewModel = geckoViewModel.viewModelFactory.createRegionViewModelFrom(regionToPaste)
         regionViewModel.position = (copyVisitor.elementToPosAndSize[regionFromClipboard]!!.key)
         regionViewModel.size = (copyVisitor.elementToPosAndSize[regionFromClipboard]!!.value)
@@ -129,7 +129,7 @@ class PastePositionableViewModelElementVisitor internal constructor(
             unsuccessfulPastes.add(edge)
             return
         }
-        geckoViewModel.currentEditor!!.currentSystem.target.automaton.addEdge(copy)
+        geckoViewModel.currentEditor!!.currentSystem.automaton.addEdge(copy)
         copy.source = (pastedSource)
         copy.destination = (pastedDestination)
         copy.contract = pastedContract!!

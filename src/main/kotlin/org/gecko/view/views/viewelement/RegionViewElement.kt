@@ -42,7 +42,7 @@ class RegionViewElement(override val target: RegionViewModel) : BlockViewElement
     }
 
     override val position: Point2D
-        get() = target.position
+        get() = position
 
     fun bindViewModel() {
         nameProperty.bind(target.nameProperty)
@@ -81,7 +81,7 @@ class RegionViewElement(override val target: RegionViewModel) : BlockViewElement
                             colorProperty.value.red, colorProperty.value.green,
                             colorProperty.value.blue, 0.5
                         )
-                    }, target.colorProperty
+                    }, colorProperty
                 )
             )
         background.arcHeight = BACKGROUND_ROUNDING.toDouble()

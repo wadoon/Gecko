@@ -33,15 +33,15 @@ class SystemConnectionViewElement(override val target: SystemConnectionViewModel
     }
 
     override val edgePoints: ObservableList<Point2D>
-        get() = target.edgePoints
+        get() = edgePoints
 
     override fun setEdgePoint(index: Int, point: Point2D): Boolean {
-        target.setEdgePoint(index, point)
+        setEdgePoint(index, point)
         return true
     }
 
     override val position: Point2D
-        get() = target.position
+        get() = position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

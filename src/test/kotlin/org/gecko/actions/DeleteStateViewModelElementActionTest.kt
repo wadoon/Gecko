@@ -22,11 +22,11 @@ internal class DeleteStateViewModelElementActionTest {
         actionManager = ActionManager(geckoViewModel!!)
         actionFactory = ActionFactory(geckoViewModel!!)
         val viewModelFactory = geckoViewModel!!.viewModelFactory
-        rootSystemViewModel = viewModelFactory.createSystemViewModelFrom(geckoViewModel!!.geckoModel.root)
+        rootSystemViewModel = geckoViewModel!!.root
 
         val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel!!)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel!!)
-        elements = java.util.Set.of<PositionableViewModelElement>(stateViewModel1, stateViewModel2)
+        elements = setOf<PositionableViewModelElement>(stateViewModel1, stateViewModel2)
         geckoViewModel!!.switchEditor(rootSystemViewModel!!, true)
     }
 
@@ -35,8 +35,8 @@ internal class DeleteStateViewModelElementActionTest {
     fun newStateBecomesStartStateAfterAllStatesAreDeleted() {
         val deleteAction: Action = actionFactory!!.createDeletePositionableViewModelElementAction(elements)
         actionManager!!.run(deleteAction)
-        Assertions.assertEquals(0, rootSystemViewModel!!.target.automaton.states.size)
+        Assertions.assertEquals(0, rootSystemViewModel!!.automaton.states.size)
         val newState = geckoViewModel!!.viewModelFactory.createStateViewModelIn(rootSystemViewModel!!)
-        Assertions.assertEquals(rootSystemViewModel!!.target.automaton.startState, newState.target)
+        Assertions.assertEquals(rootSystemViewModel!!.automaton.startState, newState)
     }
 }

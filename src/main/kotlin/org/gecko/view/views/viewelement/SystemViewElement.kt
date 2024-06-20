@@ -57,7 +57,7 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     override var isSelected: Boolean = false
 
     override val position: Point2D
-        get() = target.position
+        get() = position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

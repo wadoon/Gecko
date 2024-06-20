@@ -36,7 +36,7 @@ class VariableBlockViewElement(override val target: PortViewModel) : BlockViewEl
     }
 
     override val position: Point2D
-        get() = target.position
+        get() = position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

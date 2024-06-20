@@ -20,7 +20,7 @@ internal class ChangeColorRegionViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
         region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }

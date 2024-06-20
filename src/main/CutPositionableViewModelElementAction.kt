@@ -11,7 +11,7 @@ class CutPositionableViewModelElementAction internal constructor(var geckoViewMo
         actions.add(copy)
         delete = DeletePositionableViewModelElementAction(
             geckoViewModel,
-            geckoViewModel.currentEditor.selectionManager.currentSelection
+            geckoViewModel.currentEditor!!.selectionManager.currentSelection
         )
         actions.add(delete)
     }

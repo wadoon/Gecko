@@ -30,7 +30,7 @@ class ElementScalerBlock(
      */
     fun refreshListeners() {
         /*if (listener != null) {
-            decoratorTarget.getEdgePoints().get(index).removeListener(listener);
+            decoratorgetEdgePoints().get(index).removeListener(listener);
         }*/
         updatePosition()
 
@@ -40,7 +40,7 @@ class ElementScalerBlock(
                     updatePosition()
                 }
             }
-        //decoratorTarget.getEdgePoints().get(index).addListener(newListener);
+        //decoratorgetEdgePoints().get(index).addListener(newListener);
         //listener = newListener;
     }
 

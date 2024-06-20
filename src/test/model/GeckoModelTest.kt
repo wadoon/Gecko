@@ -8,9 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.ThrowingSupplier
 
 class GeckoModelTest {
-    @get:Test
-    val allSystems: Unit
-        get() {
+    @Test
+    fun allSystems() {
             Assertions.assertFalse(defaultModel!!.allSystems.isEmpty())
             Assertions.assertEquals(1, defaultModel!!.allSystems.size)
             Assertions.assertEquals("Element_0", defaultModel!!.allSystems.first!!.name)
@@ -22,9 +21,8 @@ class GeckoModelTest {
             defaultModel!!.root.removeChild(child!!)
         }
 
-    @get:Test
-    val systemWithVariable: Unit
-        get() {
+    @Test
+    fun systemWithVariable() {
             defaultModel!!.root.addChild(child!!)
             Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.getSystemWithVariable(null) }
             Assertions.assertEquals(
@@ -35,9 +33,8 @@ class GeckoModelTest {
             defaultModel!!.root.removeChild(child!!)
         }
 
-    @get:Test
-    val isNameUnique: Unit
-        get() {
+    @Test
+    fun isNameUnique() {
             Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.isNameUnique(null) }
 
             defaultModel!!.root.addChild(child!!)

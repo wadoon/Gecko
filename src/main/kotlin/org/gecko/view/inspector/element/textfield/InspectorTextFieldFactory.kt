@@ -46,7 +46,9 @@ abstract class InspectorAreaField(
             if ((text == null || text.isEmpty()) && !isEmptyAllowed) {
                 text = stringProperty.get()
             }
-            actionManager.run(action)
+            action?.let {
+                actionManager.run(it)
+            }
         }
     }
 
@@ -414,7 +416,7 @@ abstract class InspectorTextField protected constructor(
         if (text == stringProperty.get()) {
             return
         }
-        actionManager.run(action)
+        action?.let { actionManager.run(it) }
         text = stringProperty.get()
     }
 

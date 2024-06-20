@@ -21,7 +21,7 @@ class ChangeContractEdgeViewModelActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
 
         val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
@@ -35,7 +35,7 @@ class ChangeContractEdgeViewModelActionTest {
         val changeContractAction = actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
         actionManager!!.run(changeContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
-        Assertions.assertEquals(contractViewModel!!.target, edge!!.target.contract)
+        Assertions.assertEquals(contractViewModel!!, edge!!.contract)
     }
 
     @Test

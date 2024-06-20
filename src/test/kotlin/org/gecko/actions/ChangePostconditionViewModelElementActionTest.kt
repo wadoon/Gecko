@@ -1,65 +1,50 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.ModelException
-
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.RegionViewModel
-import org.gecko.viewmodel.StateViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 internal class ChangePostconditionViewModelElementActionTest {
-    private var region1: RegionViewModel? = null
-    private var actionManager: ActionManager? = null
-    private var actionFactory: ActionFactory? = null
+    val geckoViewModel = TestHelper.createGeckoViewModel()
+    val viewModelFactory = geckoViewModel.viewModelFactory
+    val rootSystemViewModel = geckoViewModel.root
+    private var actionManager = ActionManager(geckoViewModel)
+    private var actionFactory = ActionFactory(geckoViewModel)
+    private var region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
-        val geckoViewModel = TestHelper.createGeckoViewModel()
-        actionManager = ActionManager(geckoViewModel!!)
-        actionFactory = ActionFactory(geckoViewModel)
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
-        region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
-        var stateViewModel: StateViewModel? = null
-        try {
-            stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
-        } catch (e: Exception) {
-            Assertions.fail<Any>()
-        }
-        viewModelFactory.createContractViewModelIn(stateViewModel!!)
-        val preCondition = stateViewModel.contractsProperty.first().precondition
-        val postCondition = stateViewModel.contractsProperty.first().postcondition
-        region1!!.contract.precondition = (preCondition)
-        region1!!.contract.postcondition = (postCondition)
+    init {
+        val stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        viewModelFactory.createContractViewModelIn(stateViewModel)
+        val preCondition = stateViewModel.contractsProperty.first().preCondition
+        val postCondition = stateViewModel.contractsProperty.first().postCondition
+        region1.contract.preCondition = preCondition
+        region1.contract.postCondition = postCondition
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }
 
     @Test
     fun run() {
         val changePostconditionAction: Action =
-            actionFactory!!.createChangePostconditionViewModelElementAction(region1!!.contract, "newPostcondition")
-        actionManager!!.run(changePostconditionAction)
-        Assertions.assertEquals("newPostcondition", region1!!.contract.postcondition)
+            actionFactory.createChangePostconditionViewModelElementAction(region1.contract, "newPostcondition")
+        actionManager.run(changePostconditionAction)
+        Assertions.assertEquals("newPostcondition", region1.contract.postCondition)
         Assertions.assertEquals(
             "newPostcondition",
-            region1!!.target.preAndPostCondition.postCondition.condition
+            region1.contract.postCondition.value
         )
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
-            val changePostconditionAction: Action =
-                actionFactory!!.createChangePostconditionViewModelElementAction(region1!!.contract, "newPostcondition")
-            val beforeChangePostcondition = region1!!.contract.postcondition
-            actionManager!!.run(changePostconditionAction)
-            actionManager!!.undo()
-            Assertions.assertEquals(beforeChangePostcondition, region1!!.contract.postcondition)
-            Assertions.assertEquals(
-                beforeChangePostcondition,
-                region1!!.target.preAndPostCondition.postCondition.condition
-            )
-        }
+    @Test
+    fun undoAction() {
+        val changePostconditionAction: Action =
+            actionFactory.createChangePostconditionViewModelElementAction(region1.contract, "newPostcondition")
+        val beforeChangePostcondition = region1.contract.postCondition
+        actionManager.run(changePostconditionAction)
+        actionManager.undo()
+        Assertions.assertEquals(beforeChangePostcondition, region1.contract.preCondition)
+        Assertions.assertEquals(
+            beforeChangePostcondition,
+            region1.contract.postCondition.value
+        )
+    }
 }

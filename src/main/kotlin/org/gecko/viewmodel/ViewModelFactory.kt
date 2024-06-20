@@ -31,9 +31,11 @@ class ViewModelFactory(
      * If no start state is set in the parent system, the new state will be set as the start state.
      */
     @Throws(ModelException::class)
-    fun createStateViewModelIn(parentSystem: SystemViewModel): StateViewModel {
-        val result = StateViewModel()
-        result.isStartState = true
+    fun createStateViewModelIn(parentSystem: SystemViewModel): StateViewModel =
+        createStateViewModelIn(parentSystem.automaton)
+
+    fun createStateViewModelIn(parentSystem: AutomatonViewModel): StateViewModel {
+        val result = parentSystem.createState()
         geckoViewModel.addViewModelElement(result)
         return result
     }

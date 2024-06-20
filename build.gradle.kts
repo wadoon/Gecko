@@ -107,3 +107,5 @@ kotlin {
 }
 
 tasks.getByName("compileKotlin").dependsOn(generateGrammarSource)
+tasks.getByName("compileTestKotlin").dependsOn(generateGrammarSource)
+tasks.getByName("compileTestKotlin").dependsOn("generateTestGrammarSource")

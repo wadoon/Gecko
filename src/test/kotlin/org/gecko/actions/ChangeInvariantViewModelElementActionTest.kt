@@ -19,7 +19,7 @@ internal class ChangeInvariantViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
         region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }
@@ -30,18 +30,17 @@ internal class ChangeInvariantViewModelElementActionTest {
             actionFactory!!.createChangeInvariantViewModelElementAction(region1!!, "newInvariant")
         actionManager!!.run(changeInvariantAction)
         Assertions.assertEquals("newInvariant", region1!!.invariant)
-        Assertions.assertEquals("newInvariant", region1!!.target.invariant.condition)
+        Assertions.assertEquals("newInvariant", region1!!.invariant.value)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
+    @Test
+    fun undoAction() {
             val changeInvariantAction: Action =
                 actionFactory!!.createChangeInvariantViewModelElementAction(region1!!, "newInvariant")
             val beforeChangeInvariant = region1!!.invariant
             actionManager!!.run(changeInvariantAction)
             actionManager!!.undo()
             Assertions.assertEquals(beforeChangeInvariant, region1!!.invariant)
-            Assertions.assertEquals(beforeChangeInvariant, region1!!.target.invariant.condition)
+            Assertions.assertEquals(beforeChangeInvariant, region1!!.invariant.value)
         }
 }

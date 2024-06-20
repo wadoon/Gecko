@@ -19,7 +19,7 @@ internal class ChangeTypePortViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
         port = viewModelFactory.createPortViewModelIn(rootSystemViewModel)
     }
 
@@ -30,12 +30,11 @@ internal class ChangeTypePortViewModelElementActionTest {
         )
         actionManager!!.run(changeTypeAction)
         Assertions.assertEquals("newType", port!!.type)
-        Assertions.assertEquals("newType", port!!.target.type)
+        Assertions.assertEquals("newType", port!!.type)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
+    @Test
+    fun undoAction() {
             val changeTypeAction: Action = actionFactory!!.createChangeTypePortViewModelElementAction(
                 port!!, "newType"
             )
@@ -43,6 +42,6 @@ internal class ChangeTypePortViewModelElementActionTest {
             actionManager!!.run(changeTypeAction)
             actionManager!!.undo()
             Assertions.assertEquals(beforeChangeType, port!!.type)
-            Assertions.assertEquals(beforeChangeType, port!!.target.type)
+            Assertions.assertEquals(beforeChangeType, port!!.type)
         }
 }

@@ -149,9 +149,8 @@ class AutomatonTest {
         Assertions.assertThrows(NullPointerException::class.java) { defaultAutomaton!!.removeStates(null) }
     }
 
-    @get:Test
-    val stateWithContract: Unit
-        get() {
+    @Test
+    fun stateWithContract() {
             ordinaryState!!.addContract(contract!!)
             defaultAutomaton!!.addState(startState!!)
             defaultAutomaton!!.addState(ordinaryState!!)
@@ -170,9 +169,8 @@ class AutomatonTest {
             }
         }
 
-    @get:Test
-    val stateByName: Unit
-        get() {
+    @Test
+    fun stateByName() {
             defaultAutomaton!!.addState(startState!!)
             defaultAutomaton!!.addState(ordinaryState!!)
 
@@ -230,9 +228,8 @@ class AutomatonTest {
         Assertions.assertThrows(NullPointerException::class.java) { defaultAutomaton!!.removeEdges(null) }
     }
 
-    @get:Test
-    val outgoingEdges: Unit
-        get() {
+    @Test
+    fun outgoingEdges() {
             defaultAutomaton!!.addEdge(edge1!!)
             defaultAutomaton!!.addEdge(edge2!!)
             Assertions.assertEquals(
@@ -256,9 +253,8 @@ class AutomatonTest {
             )
         }
 
-    @get:Test
-    val isEmpty: Unit
-        get() {
+    @Test
+    fun isEmpty() {
             Assertions.assertTrue(defaultAutomaton!!.isEmpty)
             Assertions.assertFalse(automatonWithStartState!!.isEmpty)
 

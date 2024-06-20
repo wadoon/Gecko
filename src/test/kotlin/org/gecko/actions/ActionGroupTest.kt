@@ -15,12 +15,11 @@ internal class ActionGroupTest {
 
     @Throws(ModelException::class)
     fun setUp() {
-        val geckoModel = GeckoModel()
-        val geckoViewModel = GeckoViewModel(geckoModel)
+        val geckoViewModel = GeckoViewModel()
         actionManager = ActionManager(geckoViewModel)
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = viewModelFactory.createSystemViewModelFrom(geckoModel.root)
+        val rootSystemViewModel = geckoViewModel.root
         region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
         region2 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
         geckoViewModel.switchEditor(rootSystemViewModel, true)
@@ -71,7 +70,7 @@ internal class ActionGroupTest {
         Assertions.assertEquals(Color(0.0, 0.0, 0.0, 0.0), region1.color)
         val undoAction = actionGroup.getUndoAction(actionFactory)
         Assertions.assertNotEquals(undoAction, null)
-        actionManager.run(undoAction)
+        actionManager.run(undoAction!!)
         Assertions.assertEquals(beforeChange, region1.color)
     }
 }

@@ -5,6 +5,7 @@ import org.gecko.exceptions.ModelException
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Kind
 import org.junit.jupiter.api.*
 
 class ChangeKindEdgeViewModelActionTest {
@@ -20,7 +21,7 @@ class ChangeKindEdgeViewModelActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
 
         val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
@@ -33,17 +34,16 @@ class ChangeKindEdgeViewModelActionTest {
         val changeKindAction: Action = actionFactory!!.createChangeKindAction(edge!!, Kind.FAIL)
         actionManager!!.run(changeKindAction)
         Assertions.assertEquals(Kind.FAIL, edge!!.kind)
-        Assertions.assertEquals(Kind.FAIL, edge!!.target.kind)
+        Assertions.assertEquals(Kind.FAIL, edge!!.kind)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
+    @Test
+    fun undoAction() {
             val changeKindAction: Action = actionFactory!!.createChangeKindAction(edge!!, Kind.FAIL)
             val beforeChangeKind = edge!!.kind
             actionManager!!.run(changeKindAction)
             actionManager!!.undo()
             Assertions.assertEquals(beforeChangeKind, edge!!.kind)
-            Assertions.assertEquals(beforeChangeKind, edge!!.target.kind)
+            Assertions.assertEquals(beforeChangeKind, edge!!.kind)
         }
 }

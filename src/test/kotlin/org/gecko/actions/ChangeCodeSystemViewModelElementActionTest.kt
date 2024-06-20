@@ -9,7 +9,7 @@ class ChangeCodeSystemViewModelElementActionTest {
     val actionManager = ActionManager(geckoViewModel)
     val actionFactory = ActionFactory(geckoViewModel)
     val viewModelFactory = geckoViewModel.viewModelFactory
-    val systemViewModel = viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+    val systemViewModel = geckoViewModel.root
 
     @Test
     fun run() {

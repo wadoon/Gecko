@@ -1,7 +1,7 @@
 package org.gecko.io
 
-import org.gecko.viewmodel.GeckoViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.IOException
 
@@ -17,8 +17,7 @@ class AutomatonFileSerializerTest {
     @Test
     fun writeToFile() {
         val serializedParsedAEBFile = File("src/test/java/org/gecko/io/files/serializedParsedAEB.sys")
-        val automatonFileSerializer =
-            AutomatonFileSerializer(geckoViewModel.geckoModel)
+        val automatonFileSerializer = AutomatonFileSerializer(geckoViewModel)
         Assertions.assertDoesNotThrow { automatonFileSerializer.writeToFile(serializedParsedAEBFile) }
     }
 
@@ -26,16 +25,11 @@ class AutomatonFileSerializerTest {
     fun parseComplexGecko2() {
         val projectFileParser = ProjectFileParser()
         val complexGeckoFile = File("src/test/java/org/gecko/io/files/complexGecko.json")
-        var complexViewModel: GeckoViewModel? = null
-        try {
-            complexViewModel = projectFileParser.parse(complexGeckoFile)
-        } catch (e: IOException) {
-            Assertions.fail<Any>("Project file could not be parsed.")
-        }
+        val complexViewModel = projectFileParser.parse(complexGeckoFile)
 
         val serializedExportedComplexFile = File("src/test/java/org/gecko/io/files/exportedComplexGecko.sys")
         val automatonFileSerializer =
-            AutomatonFileSerializer(complexViewModel!!.geckoModel)
+            AutomatonFileSerializer(complexViewModel)
         Assertions.assertDoesNotThrow { automatonFileSerializer.writeToFile(serializedExportedComplexFile) }
     }
 

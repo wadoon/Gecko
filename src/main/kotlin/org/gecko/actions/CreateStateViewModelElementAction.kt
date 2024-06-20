@@ -17,20 +17,20 @@ class CreateStateViewModelElementAction internal constructor(
     val editorViewModel: EditorViewModel,
     val position: Point2D?
 ) : Action() {
-    var createdStateViewModel: StateViewModel? = null
+    lateinit var createdStateViewModel: StateViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
         createdStateViewModel = geckoViewModel.viewModelFactory.createStateViewModelIn(currentParentSystem)
-        createdStateViewModel!!.center = position!!
+        createdStateViewModel.center = position!!
         editorViewModel.updateRegions()
         val actionManager = geckoViewModel.actionManager
-        actionManager.run(actionManager.actionFactory.createSelectAction(createdStateViewModel!!, true))
+        actionManager.run(actionManager.actionFactory.createSelectAction(createdStateViewModel, true))
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdStateViewModel!!)
+        return actionFactory.createDeletePositionableViewModelElementAction(createdStateViewModel)
     }
 }

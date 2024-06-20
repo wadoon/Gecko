@@ -29,7 +29,7 @@ internal class CursorToolTest {
     private fun start(stage: Stage) {
         stage.show()
 
-        val geckoManager = GeckoManager(stage, null)
+        val geckoManager = GeckoManager(stage)
         GeckoIOManager.geckoManager = geckoManager
         GeckoIOManager.stage = stage
 
@@ -37,7 +37,7 @@ internal class CursorToolTest {
         geckoView = geckoManager.gecko.view
 
         viewModelFactory = geckoViewModel!!.viewModelFactory
-        rootSystemViewModel = geckoViewModel!!.currentEditor.currentSystem
+        rootSystemViewModel = geckoViewModel!!.currentEditor!!.currentSystem
         try {
             source = viewModelFactory!!.createStateViewModelIn(rootSystemViewModel!!)
             destination = viewModelFactory!!.createStateViewModelIn(rootSystemViewModel!!)

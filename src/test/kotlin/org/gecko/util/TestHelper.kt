@@ -8,7 +8,6 @@ import org.gecko.viewmodel.GeckoViewModel
 object TestHelper {
     @Throws(ModelException::class)
     fun createGeckoViewModel(): GeckoViewModel {
-        val geckoModel = GeckoModel()
-        return GeckoViewModel(geckoModel)
+        return GeckoViewModel()
     }
 }

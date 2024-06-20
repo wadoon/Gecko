@@ -39,7 +39,7 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
     }
 
     override val position: Point2D
-        get() = target.position
+        get() = position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)
@@ -88,14 +88,14 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
 
         // Contracts
         val contracts: Labeled = Label(
-            ResourceHandler.contract_plural + ": " + target.contractsProperty
+            ResourceHandler.contract_plural + ": " + contractsProperty
                 .size
         )
         contracts.textProperty()
             .bind(Bindings.createStringBinding({
                 (ResourceHandler.contract_plural + ": "
-                        + target.contractsProperty.size)
-            }, target.contractsProperty))
+                        + contractsProperty.size)
+            }, contractsProperty))
 
         contents.children.add(contracts)
 
@@ -117,11 +117,11 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
         contractsPane.spacing = SPACING.toDouble()
 
         for (i in 0 until MAX_CONTRACT_CNT) {
-            if (i >= target.contractsProperty.size) {
+            if (i >= contractsProperty.size) {
                 break
             }
 
-            val contract = target.contractsProperty[i]
+            val contract = contractsProperty[i]
             val contractBox = VBox()
             contractBox.styleClass.add(INNER_INNER_STYLE)
 

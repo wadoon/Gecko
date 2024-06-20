@@ -18,11 +18,11 @@ abstract class InspectorComboBox<T>(actionManager: ActionManager, items: List<T>
         getItems().setAll(items)
         value = property.value
         property.addListener { observable: ObservableValue<out T>?, oldValue: T, newValue: T -> setValue(newValue) }
-        onAction = EventHandler<ActionEvent> { event: ActionEvent? ->
+        onAction = EventHandler { event: ActionEvent? ->
             if (value == property.value) {
                 return@EventHandler
             }
-            actionManager.run(action)
+            action?.let { actionManager.run(it) }
         }
     }
 

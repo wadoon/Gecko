@@ -86,14 +86,14 @@ class CursorTool(
     override fun visit(connectionElementScalerViewElementDecorator: ConnectionElementScalerViewElementDecorator) {
         super.visit(connectionElementScalerViewElementDecorator)
 
-        for (scaler in connectionElementScalerViewElementDecorator.scalers!!) {
+        for (scaler in connectionElementScalerViewElementDecorator.scalers) {
             setConnectionScalerElementsHandlers(scaler)
         }
     }
 
     override fun visit(blockElementScalerViewElementDecorator: BlockElementScalerViewElementDecorator) {
         super.visit(blockElementScalerViewElementDecorator)
-        for (scaler in blockElementScalerViewElementDecorator.scalers!!) {
+        for (scaler in blockElementScalerViewElementDecorator.scalers) {
             setBlockScalerElementHandlers(scaler)
         }
     }
@@ -151,7 +151,7 @@ class CursorTool(
 
     fun runResizeAction(scaler: ElementScalerBlock) {
         scaler.isDragging = false
-        val target = scaler.decoratorTarget.target as BlockViewModelElement
+        val target = scaler.decoratorTarget as BlockViewModelElement
         val resizeAction: Action = actionManager.actionFactory
             .createScaleBlockViewModelElementAction(target, scaler, oldPosition, oldSize, true)
         actionManager.run(resizeAction)
@@ -164,7 +164,7 @@ class CursorTool(
             }
             startDraggingElementHandler(event)
             scaler.isDragging = true
-            scaler.decoratorTarget.target?.setCurrentlyModified(true)
+            scaler.decoratorTarget?.target?.setCurrentlyModified(true)
             event.consume()
         }
         scaler.onMouseDragged = EventHandler { event: MouseEvent ->
@@ -187,19 +187,19 @@ class CursorTool(
             val moveAction = if (editorViewModel.isAutomatonEditor) {
                 actionManager.actionFactory
                     .createMoveEdgeViewModelElementAction(
-                        scaler.decoratorTarget.target as EdgeViewModel,
+                        scaler.decoratorTarget as EdgeViewModel,
                         scaler, endWorldPos.subtract(startDragPosition)
                     )
             } else {
                 actionManager.actionFactory
                     .createMoveSystemConnectionViewModelElementAction(
-                        scaler.decoratorTarget.target as SystemConnectionViewModel, scaler,
+                        scaler.decoratorTarget as SystemConnectionViewModel, scaler,
                         endWorldPos.subtract(startDragPosition)
                     )
             }
 
             actionManager.run(moveAction)
-            scaler.decoratorTarget.target!!.setCurrentlyModified(false)
+            scaler.decoratorTarget.target?.setCurrentlyModified(false)
             cancelDrag(scaler)
             event.consume()
         }

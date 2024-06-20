@@ -47,7 +47,7 @@ class EditorViewModel(
     }
 
     fun updateRegions() {
-//        val automaton:  = currentSystem.target.automaton
+//        val automaton:  = currentSystem.automaton
 //        val regionViewModels = containedPositionableViewModelElementsProperty
 //            .filter { it.target in automaton.regions }
 //            .map { it as RegionViewModel }

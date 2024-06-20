@@ -153,9 +153,8 @@ class ModelFactoryTest {
         Assertions.assertDoesNotThrow<Condition> { factory!!.createCondition("true") }
     }
 
-    @get:Test
-    val defaultName: Unit
-        get() {
+    @Test
+    fun defaultName() {
             val children = arrayOfNulls<System>(2)
 
             try {

@@ -21,7 +21,7 @@ class ChangeVisibilityPortViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
 
         val systemViewModel1 = viewModelFactory.createSystemViewModelIn(rootSystemViewModel)
         port = viewModelFactory.createPortViewModelIn(systemViewModel1)
@@ -43,15 +43,14 @@ class ChangeVisibilityPortViewModelElementActionTest {
         Assertions.assertEquals(Visibility.INPUT, port!!.visibility)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
+    @Test
+    fun undoAction() {
             val changeVisibilityPortViewModelAction: Action =
                 actionFactory!!.createChangeVisibilityPortViewModelAction(port!!, Visibility.OUTPUT)
             val beforeChangeVisibility = port!!.visibility
             actionManager!!.run(changeVisibilityPortViewModelAction)
             actionManager!!.undo()
             Assertions.assertEquals(beforeChangeVisibility, port!!.visibility)
-            Assertions.assertEquals(beforeChangeVisibility, port!!.target.visibility)
+            Assertions.assertEquals(beforeChangeVisibility, port!!.visibility)
         }
 }

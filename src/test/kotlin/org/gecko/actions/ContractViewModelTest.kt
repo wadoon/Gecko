@@ -21,7 +21,7 @@ class ContractViewModelTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
-            viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            geckoViewModel.root
 
         stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
         val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
@@ -53,7 +53,7 @@ class ContractViewModelTest {
         val assignContractAction = actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
         actionManager!!.run(assignContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
-        Assertions.assertEquals(contractViewModel.target, edge!!.target.contract)
+        Assertions.assertEquals(contractViewModel, edge!!.contract)
     }
 
     @Test
@@ -74,7 +74,7 @@ class ContractViewModelTest {
         actionManager!!.run(deleteContractAction)
         Assertions.assertEquals(0, stateViewModel!!.contracts.size)
 
-        actionManager!!.run(deleteContractAction.getUndoAction(actionFactory!!))
+        actionManager!!.run(deleteContractAction.getUndoAction(actionFactory!!)!!)
         Assertions.assertEquals(1, stateViewModel!!.contracts.size)
         Assertions.assertEquals(edge!!.contract, contractViewModel)
     }

@@ -11,10 +11,10 @@ class SelectionActionTest {
             stateViewModel1, true
         )
         actionManager.run(selectAction)
-        Assertions.assertEquals(1, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(1, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
 
         actionManager.undo()
-        Assertions.assertEquals(1, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(1, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 
     @Test
@@ -22,7 +22,7 @@ class SelectionActionTest {
         selectBunch()
 
         actionManager.undo()
-        Assertions.assertEquals(4, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(4, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 
     @Test
@@ -31,10 +31,10 @@ class SelectionActionTest {
 
         val deselectAction: Action = actionFactory.createDeselectAction()
         actionManager.run(deselectAction)
-        Assertions.assertEquals(0, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(0, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
 
         actionManager.undo()
-        Assertions.assertEquals(0, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(0, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 
     @Test
@@ -43,30 +43,30 @@ class SelectionActionTest {
 
         val selectAction: Action = actionFactory.createSelectAction(setOf(), true)
         actionManager.run(selectAction)
-        Assertions.assertEquals(0, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(0, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 
     @Test
     fun selectionHistoryTest() {
         val selectNone: Action = actionFactory.createSelectAction(setOf(), true)
         actionManager.run(selectNone)
-        Assertions.assertEquals(0, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(0, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
         selectBunch()
 
         val previousSelectionAction: Action = actionFactory.createSelectionHistoryBackAction()
         actionManager.run(previousSelectionAction)
-        Assertions.assertEquals(2, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(2, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
 
         val nextSelectionAction: Action = actionFactory.createSelectionHistoryForwardAction()
         actionManager.run(nextSelectionAction)
-        Assertions.assertEquals(4, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(4, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 
     val geckoViewModel = TestHelper.createGeckoViewModel()
     val actionManager = ActionManager(geckoViewModel)
     val actionFactory = ActionFactory(geckoViewModel)
     val viewModelFactory = geckoViewModel.viewModelFactory
-    val systemViewModel = viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+    val systemViewModel = geckoViewModel.root
     val stateViewModel1 = viewModelFactory.createStateViewModelIn(systemViewModel)
     val stateViewModel2 = viewModelFactory.createStateViewModelIn(systemViewModel)
     val stateViewModel3 = viewModelFactory.createStateViewModelIn(systemViewModel)
@@ -84,6 +84,6 @@ class SelectionActionTest {
         val selectAction3: Action =
             actionFactory.createSelectAction(setOf(stateViewModel3, stateViewModel4), false)
         actionManager.run(selectAction3)
-        Assertions.assertEquals(4, geckoViewModel.currentEditor.selectionManager.currentSelection.size)
+        Assertions.assertEquals(4, geckoViewModel.currentEditor!!.selectionManager.currentSelection.size)
     }
 }

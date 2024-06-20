@@ -12,15 +12,14 @@ class CreateVariableActionTest {
     fun run() {
         val createVariableAction: Action = actionFactory!!.createCreateVariableAction(Point2D(0.0, 0.0))
         actionManager!!.run(createVariableAction)
-        Assertions.assertEquals(1, parent!!.target.variables.size)
+        Assertions.assertEquals(1, parent!!.ports.size)
     }
 
-    @get:Test
-    val undoAction: Unit
-        get() {
-            Assertions.assertEquals(1, parent!!.target.variables.size)
+    @Test
+    fun undoAction() {
+            Assertions.assertEquals(1, parent!!.ports.size)
             actionManager!!.undo()
-            Assertions.assertEquals(0, parent!!.target.variables.size)
+            Assertions.assertEquals(0, parent!!.ports.size)
         }
 
     companion object {
@@ -35,7 +34,7 @@ class CreateVariableActionTest {
             actionManager = ActionManager(geckoViewModel!!)
             actionFactory = ActionFactory(geckoViewModel)
             val viewModelFactory = geckoViewModel.viewModelFactory
-            parent = viewModelFactory.createSystemViewModelFrom(geckoViewModel.geckoModel.root)
+            parent = geckoViewModel.root
         }
     }
 }
