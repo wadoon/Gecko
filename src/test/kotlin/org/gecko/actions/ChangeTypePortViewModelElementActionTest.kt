@@ -1,21 +1,18 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.ModelException
-
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.PortViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 internal class ChangeTypePortViewModelElementActionTest {
     private var port: PortViewModel? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
+    init {
         val geckoViewModel = TestHelper.createGeckoViewModel()
-        actionManager = ActionManager(geckoViewModel!!)
+        actionManager = ActionManager(geckoViewModel)
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
@@ -35,13 +32,13 @@ internal class ChangeTypePortViewModelElementActionTest {
 
     @Test
     fun undoAction() {
-            val changeTypeAction: Action = actionFactory!!.createChangeTypePortViewModelElementAction(
-                port!!, "newType"
-            )
-            val beforeChangeType = port!!.type
-            actionManager!!.run(changeTypeAction)
-            actionManager!!.undo()
-            Assertions.assertEquals(beforeChangeType, port!!.type)
-            Assertions.assertEquals(beforeChangeType, port!!.type)
-        }
+        val changeTypeAction: Action = actionFactory!!.createChangeTypePortViewModelElementAction(
+            port!!, "newType"
+        )
+        val beforeChangeType = port!!.type
+        actionManager!!.run(changeTypeAction)
+        actionManager!!.undo()
+        Assertions.assertEquals(beforeChangeType, port!!.type)
+        Assertions.assertEquals(beforeChangeType, port!!.type)
+    }
 }

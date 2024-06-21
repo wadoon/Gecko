@@ -1,56 +1,47 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.ModelException
-
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.Visibility
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ChangeVisibilityPortViewModelElementActionTest {
-    private var port: PortViewModel? = null
-    private var actionManager: ActionManager? = null
-    private var actionFactory: ActionFactory? = null
+    val geckoViewModel = TestHelper.createGeckoViewModel()
+    private var port: PortViewModel
+    private var actionManager = ActionManager(geckoViewModel)
+    private var actionFactory = ActionFactory(geckoViewModel)
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
-        val geckoViewModel = TestHelper.createGeckoViewModel()
-        actionManager = ActionManager(geckoViewModel!!)
-        actionFactory = ActionFactory(geckoViewModel)
+    init {
         val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel =
-            geckoViewModel.root
-
+        val rootSystemViewModel = geckoViewModel.root
         val systemViewModel1 = viewModelFactory.createSystemViewModelIn(rootSystemViewModel)
         port = viewModelFactory.createPortViewModelIn(systemViewModel1)
     }
 
     @Test
     fun run() {
-        val changeKindAction: Action =
-            actionFactory!!.createChangeVisibilityPortViewModelAction(port!!, Visibility.OUTPUT)
-        actionManager!!.run(changeKindAction)
-        Assertions.assertEquals(Visibility.OUTPUT, port!!.visibility)
+        val changeKindAction = actionFactory.changeVisibility(port, Visibility.OUTPUT)
+        actionManager.run(changeKindAction)
+        Assertions.assertEquals(Visibility.OUTPUT, port.visibility)
     }
 
     @Test
     fun runSameVisibility() {
-        val changeKindAction: Action =
-            actionFactory!!.createChangeVisibilityPortViewModelAction(port!!, port!!.visibility)
-        actionManager!!.run(changeKindAction)
-        Assertions.assertEquals(Visibility.INPUT, port!!.visibility)
+        val changeKindAction = actionFactory.changeVisibility(port, port.visibility)
+        actionManager.run(changeKindAction)
+        Assertions.assertEquals(Visibility.STATE, port.visibility)
     }
 
     @Test
     fun undoAction() {
-            val changeVisibilityPortViewModelAction: Action =
-                actionFactory!!.createChangeVisibilityPortViewModelAction(port!!, Visibility.OUTPUT)
-            val beforeChangeVisibility = port!!.visibility
-            actionManager!!.run(changeVisibilityPortViewModelAction)
-            actionManager!!.undo()
-            Assertions.assertEquals(beforeChangeVisibility, port!!.visibility)
-            Assertions.assertEquals(beforeChangeVisibility, port!!.visibility)
-        }
+        val changeVisibilityPortViewModelAction: Action =
+            actionFactory.changeVisibility(port, Visibility.OUTPUT)
+        val beforeChangeVisibility = port.visibility
+        actionManager.run(changeVisibilityPortViewModelAction)
+        actionManager.undo()
+        Assertions.assertEquals(beforeChangeVisibility, port.visibility)
+        Assertions.assertEquals(beforeChangeVisibility, port.visibility)
+    }
 }

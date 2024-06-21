@@ -18,7 +18,6 @@ import org.gecko.viewmodel.EditorViewModel
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignR
 import org.kordamp.ikonli.materialdesign2.MaterialDesignU
-import org.w3c.dom.Node
 
 /**
  * Represents a builder for the [ToolBar] displayed in the view, containing a [ToggleGroup] with

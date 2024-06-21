@@ -12,13 +12,17 @@ import tornadofx.setValue
  */
 data class ContractViewModel(
     override val nameProperty: StringProperty = SimpleStringProperty(""),
-    val preConditionProperty: SimpleObjectProperty<Condition> = SimpleObjectProperty<Condition>(),
-    val postConditionProperty: SimpleObjectProperty<Condition> = SimpleObjectProperty<Condition>(),
+    val preConditionProperty: ObjectProperty<Condition> = objectProperty(Condition()),
+    val postConditionProperty: ObjectProperty<Condition> = objectProperty(Condition()),
 ) : Element(), Renamable {
     override var name: String by nameProperty
 
     var preCondition: Condition by preConditionProperty
     var postCondition: Condition by postConditionProperty
+
+    override val children: Sequence<Element>
+        get() = sequenceOf()
+
 
     constructor(name: String, pre: String, post: String) : this() {
         this.name = name
@@ -26,7 +30,7 @@ data class ContractViewModel(
         this.postCondition.value = post
     }
 
-    constructor(name: String, preCondition: Condition, postCondition: Condition) : this(){
+    constructor(name: String, preCondition: Condition, postCondition: Condition) : this() {
         this.name = name
         this.preCondition = preCondition
         this.postCondition = postCondition

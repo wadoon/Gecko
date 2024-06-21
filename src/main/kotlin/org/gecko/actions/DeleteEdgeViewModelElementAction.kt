@@ -18,8 +18,8 @@ class DeleteEdgeViewModelElementAction(
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        edgeViewModel.source?.outgoingEdges?.remove(edgeViewModel)
-        edgeViewModel.destination?.incomingEdges?.remove(edgeViewModel)
+        edgeViewModel.source.outgoingEdges.remove(edgeViewModel)
+        edgeViewModel.destination.incomingEdges?.remove(edgeViewModel)
         automaton.removeEdge(edgeViewModel)
         geckoViewModel.deleteViewModelElement(edgeViewModel)
         return true

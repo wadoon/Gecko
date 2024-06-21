@@ -1,5 +1,3 @@
-//import net.ltgt.gradle.errorprone.errorprone
-
 plugins {
     jacoco
     id("checkstyle")
@@ -8,9 +6,8 @@ plugins {
     id("application")
     id("antlr")
     id("org.openjfx.javafxplugin") version "0.1.0"
-    id("pmd")
     kotlin("jvm")
-    //kotlin("plugin.serialization") version "2.0.0"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 group = "org.gecko"
@@ -28,9 +25,6 @@ repositories {
 
 
 dependencies {
-    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    //implementation("fr.brouillard.oss:cssfx:11.4.0")
-
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.testfx:testfx-junit5:4.0.18")
@@ -44,11 +38,9 @@ dependencies {
     implementation("org.eclipse.elk:org.eclipse.elk.alg.layered:0.8.1")
 
     implementation("org.fxmisc.richtext:richtextfx:0.11.2")
-    //implementation("com.pixelduke:fxribbon:1.2.2")
     implementation("com.miglayout:miglayout-javafx:11.3")
     implementation("org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.1")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
-    //implementation("org.jfxtras:jmetro:11.6.15")
     implementation("io.github.mkpaz:atlantafx-base:2.0.1")
 
     implementation("no.tornado:tornadofx:1.7.20")
@@ -92,7 +84,13 @@ tasks.jacocoTestReport {
     }))
 }
 
-pmd { isIgnoreFailures = true }
+sonar {
+    properties {
+        property("sonar.projectKey", "wadoon_Gecko")
+        property("sonar.organization", "wadoon")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 
 application { mainClass.set("org.gecko.application.Main") }
 

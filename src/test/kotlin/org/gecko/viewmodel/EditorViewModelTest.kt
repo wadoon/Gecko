@@ -54,7 +54,7 @@ internal class EditorViewModelTest {
         )
         Assertions.assertTrue(regionViewModels.contains(regionViewModel))
 
-        stateViewModel.center = regionViewModel.center!!.add(1000.0, 1000.0)
+        stateViewModel.center = regionViewModel.center.add(1000.0, 1000.0)
         editorViewModel.updateRegions()
         Assertions.assertFalse(regionViewModels.contains(regionViewModel))
 

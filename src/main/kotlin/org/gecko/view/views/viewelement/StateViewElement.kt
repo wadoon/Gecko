@@ -7,11 +7,12 @@ import javafx.collections.ObservableList
 import javafx.geometry.Insets
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Label
+import javafx.scene.control.Labeled
+import javafx.scene.control.Separator
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
-
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.ContractViewModel
 import org.gecko.viewmodel.StateViewModel

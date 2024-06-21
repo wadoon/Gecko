@@ -1,15 +1,21 @@
 package org.gecko.viewmodel
 
 import javafx.beans.property.*
-import javafx.collections.*
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
+import javafx.collections.ObservableSet
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
-import org.gecko.actions.*
+import org.gecko.actions.ActionManager
 import org.gecko.tools.*
-import org.gecko.view.views.ViewElementSearchVisitor
-import java.util.*
-import java.util.function.Consumer
+import org.gecko.view.GeckoView
+import org.gecko.view.views.EditorView
+import org.gecko.view.views.shortcuts.AutomatonEditorViewShortcutHandler
+import org.gecko.view.views.shortcuts.SystemEditorViewShortcutHandler
+import tornadofx.getValue
+import tornadofx.setValue
 import java.util.stream.Collectors
 import kotlin.math.max
 import kotlin.math.min
@@ -26,8 +32,9 @@ class EditorViewModel(
     val currentSystem: SystemViewModel,
     val parentSystem: SystemViewModel?,
     val isAutomatonEditor: Boolean,
-) {
-    val containedPositionableViewModelElementsProperty: ObservableSet<PositionableViewModelElement> = FXCollections.observableSet()
+) : Openable {
+    val containedPositionableViewModelElementsProperty: ObservableSet<PositionableViewModelElement> =
+        FXCollections.observableSet()
     val tools: MutableList<List<Tool>> = FXCollections.observableArrayList()
     val selectionManager = SelectionManager()
     val pivotProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
@@ -95,23 +102,16 @@ class EditorViewModel(
         return regionViewModels
     }
 
-    val currentToolType: ToolType?
-        get() = currentToolProperty.value.toolType
-
-    val currentTool: Tool
-        get() = currentToolProperty.value
+    var currentTool: Tool by currentToolProperty
+    val currentToolType: ToolType
+        get() = currentTool.toolType
 
     fun setCurrentTool(currentToolType: ToolType) {
-        val tool = getTool(currentToolType)
-        if (tool != null) {
-            currentToolProperty.value = tool
-        }
+        getTool(currentToolType)?.let { currentTool = it }
     }
 
     fun getTool(toolType: ToolType): Tool? {
-        return tools
-            .flatten()
-            .find { it.toolType == toolType }
+        return tools.flatten().find { it.toolType == toolType }
     }
 
     var focusedElement: PositionableViewModelElement?
@@ -169,7 +169,7 @@ class EditorViewModel(
 
     fun moveToFocusedElement() {
         if (focusedElementProperty.value != null) {
-            pivot = focusedElementProperty.value!!.center!!
+            pivot = focusedElementProperty.value!!.center
         }
     }
 
@@ -206,13 +206,13 @@ class EditorViewModel(
 
     fun getElementsByName(name: String): List<PositionableViewModelElement> {
         val matches: MutableList<PositionableViewModelElement> = ArrayList()
-        val visitor: PositionableViewModelElementVisitor<*> = ViewElementSearchVisitor(name)
-        containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement ->
+        //val visitor: PositionableViewModelElementVisitor<*> = ViewElementSearchVisitor(name)
+        /*containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement ->
             val searchResult = element.accept(visitor) as PositionableViewModelElement?
             if (searchResult != null) {
                 matches.add(searchResult)
             }
-        })
+        })*/
         return matches
     }
 
@@ -263,4 +263,13 @@ class EditorViewModel(
         val defaultZoomStep: Double
             get() = DEFAULT_ZOOM_STEP
     }
+
+    override fun editor(actionManager: ActionManager, geckoView: GeckoView): EditorView {
+        val editorView = EditorView(actionManager, this)
+        editorView.shortcutHandler =
+            if (isAutomatonEditor) AutomatonEditorViewShortcutHandler(actionManager, editorView)
+            else SystemEditorViewShortcutHandler(actionManager, editorView)
+        return editorView
+    }
 }
+

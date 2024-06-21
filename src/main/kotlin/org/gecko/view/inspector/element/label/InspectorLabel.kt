@@ -1,6 +1,6 @@
 package org.gecko.view.inspector.element.label
 
-import javafx.scene.control.*
+import javafx.scene.control.Label
 import org.gecko.view.inspector.element.InspectorElement
 
 /**

@@ -22,7 +22,7 @@ class VariableBlockCreatorTool(actionManager: ActionManager) :
                 return@EventHandler
             }
             val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
-            val createVariableBlockAction: Action = actionManager.actionFactory.createCreateVariableAction(position)
+            val createVariableBlockAction: Action = actionManager.actionFactory.createVariable(position)
             actionManager.run(createVariableBlockAction)
         }
     }

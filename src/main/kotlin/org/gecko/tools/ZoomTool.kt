@@ -2,8 +2,8 @@ package org.gecko.tools
 
 import javafx.event.EventHandler
 import javafx.scene.Cursor
-import javafx.scene.input.*
-import org.gecko.actions.*
+import javafx.scene.input.MouseEvent
+import org.gecko.actions.ActionManager
 import org.gecko.view.views.ViewElementPane
 import org.gecko.viewmodel.EditorViewModel
 

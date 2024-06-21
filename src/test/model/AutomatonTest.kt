@@ -151,50 +151,50 @@ class AutomatonTest {
 
     @Test
     fun stateWithContract() {
-            ordinaryState!!.addContract(contract!!)
-            defaultAutomaton!!.addState(startState!!)
-            defaultAutomaton!!.addState(ordinaryState!!)
+        ordinaryState!!.addContract(contract!!)
+        defaultAutomaton!!.addState(startState!!)
+        defaultAutomaton!!.addState(ordinaryState!!)
 
-            Assertions.assertEquals(ordinaryState, defaultAutomaton!!.getStateWithContract(contract))
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeState(
-                    ordinaryState!!
-                )
-            }
-            Assertions.assertNull(defaultAutomaton!!.getStateWithContract(contract))
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeState(
-                    startState!!
-                )
-            }
+        Assertions.assertEquals(ordinaryState, defaultAutomaton!!.getStateWithContract(contract))
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeState(
+                ordinaryState!!
+            )
         }
+        Assertions.assertNull(defaultAutomaton!!.getStateWithContract(contract))
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeState(
+                startState!!
+            )
+        }
+    }
 
     @Test
     fun stateByName() {
-            defaultAutomaton!!.addState(startState!!)
-            defaultAutomaton!!.addState(ordinaryState!!)
+        defaultAutomaton!!.addState(startState!!)
+        defaultAutomaton!!.addState(ordinaryState!!)
 
-            Assertions.assertEquals(
-                ordinaryState, defaultAutomaton!!.getStateByName(
-                    ordinaryState!!.name!!
-                )
+        Assertions.assertEquals(
+            ordinaryState, defaultAutomaton!!.getStateByName(
+                ordinaryState!!.name!!
             )
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeState(
-                    ordinaryState!!
-                )
-            }
-            Assertions.assertNull(
-                defaultAutomaton!!.getStateByName(
-                    ordinaryState!!.name!!
-                )
+        )
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeState(
+                ordinaryState!!
             )
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeState(
-                    startState!!
-                )
-            }
         }
+        Assertions.assertNull(
+            defaultAutomaton!!.getStateByName(
+                ordinaryState!!.name!!
+            )
+        )
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeState(
+                startState!!
+            )
+        }
+    }
 
     @Test
     fun testManagingEdges() {
@@ -230,58 +230,58 @@ class AutomatonTest {
 
     @Test
     fun outgoingEdges() {
-            defaultAutomaton!!.addEdge(edge1!!)
-            defaultAutomaton!!.addEdge(edge2!!)
-            Assertions.assertEquals(
-                2, defaultAutomaton!!.getOutgoingEdges(
-                    startState!!
-                ).size
-            )
+        defaultAutomaton!!.addEdge(edge1!!)
+        defaultAutomaton!!.addEdge(edge2!!)
+        Assertions.assertEquals(
+            2, defaultAutomaton!!.getOutgoingEdges(
+                startState!!
+            ).size
+        )
 
-            defaultAutomaton!!.removeEdge(edge2!!)
-            Assertions.assertEquals(
-                1, defaultAutomaton!!.getOutgoingEdges(
-                    startState!!
-                ).size
-            )
+        defaultAutomaton!!.removeEdge(edge2!!)
+        Assertions.assertEquals(
+            1, defaultAutomaton!!.getOutgoingEdges(
+                startState!!
+            ).size
+        )
 
-            defaultAutomaton!!.removeEdge(edge1!!)
-            Assertions.assertTrue(
-                defaultAutomaton!!.getOutgoingEdges(
-                    startState!!
-                ).isEmpty()
-            )
-        }
+        defaultAutomaton!!.removeEdge(edge1!!)
+        Assertions.assertTrue(
+            defaultAutomaton!!.getOutgoingEdges(
+                startState!!
+            ).isEmpty()
+        )
+    }
 
     @Test
     fun isEmpty() {
-            Assertions.assertTrue(defaultAutomaton!!.isEmpty)
-            Assertions.assertFalse(automatonWithStartState!!.isEmpty)
+        Assertions.assertTrue(defaultAutomaton!!.isEmpty)
+        Assertions.assertFalse(automatonWithStartState!!.isEmpty)
 
-            defaultAutomaton!!.addState(startState!!)
-            Assertions.assertFalse(defaultAutomaton!!.isEmpty)
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeState(
-                    startState!!
-                )
-            }
-
-            defaultAutomaton!!.addEdge(edge1!!)
-            Assertions.assertFalse(defaultAutomaton!!.isEmpty)
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeEdge(
-                    edge1!!
-                )
-            }
-
-            defaultAutomaton!!.addRegion(region1!!)
-            Assertions.assertFalse(defaultAutomaton!!.isEmpty)
-            Assertions.assertDoesNotThrow {
-                defaultAutomaton!!.removeRegion(
-                    region1!!
-                )
-            }
+        defaultAutomaton!!.addState(startState!!)
+        Assertions.assertFalse(defaultAutomaton!!.isEmpty)
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeState(
+                startState!!
+            )
         }
+
+        defaultAutomaton!!.addEdge(edge1!!)
+        Assertions.assertFalse(defaultAutomaton!!.isEmpty)
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeEdge(
+                edge1!!
+            )
+        }
+
+        defaultAutomaton!!.addRegion(region1!!)
+        Assertions.assertFalse(defaultAutomaton!!.isEmpty)
+        Assertions.assertDoesNotThrow {
+            defaultAutomaton!!.removeRegion(
+                region1!!
+            )
+        }
+    }
 
     @Test
     fun allElements() {

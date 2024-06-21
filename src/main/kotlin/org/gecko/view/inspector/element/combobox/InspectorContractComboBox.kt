@@ -10,7 +10,7 @@ class InspectorContractComboBox(actionManager: ActionManager, edge: EdgeViewMode
     InspectorElement<ComboBox<String>> {
     init {
         prefWidth = PREF_WIDTH.toDouble()
-        val source = edge.source!!
+        val source = edge.source
         items.setAll(source.contracts.map { it.name })
         source.contractsProperty.addListener { _, _, _ ->
             items.setAll(source.contracts.map { it.name })

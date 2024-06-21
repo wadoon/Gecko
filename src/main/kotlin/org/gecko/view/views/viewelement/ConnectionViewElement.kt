@@ -1,8 +1,10 @@
 package org.gecko.view.views.viewelement
 
-import javafx.beans.property.*
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.IntegerProperty
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Group

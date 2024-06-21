@@ -1,12 +1,13 @@
 package org.gecko.view.contextmenu
 
+
 import javafx.beans.binding.Bindings
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.control.*
-
-
-import org.gecko.actions.*
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.MenuItem
+import javafx.scene.control.SeparatorMenuItem
+import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.EditorView

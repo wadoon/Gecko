@@ -3,9 +3,9 @@ package org.gecko.view.inspector.element.container
 import javafx.beans.property.StringProperty
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.control.*
+import javafx.scene.control.Button
 import javafx.scene.layout.VBox
-import org.gecko.actions.*
+import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.inspector.element.InspectorElement
 import org.gecko.view.inspector.element.label.InspectorLabel

@@ -16,9 +16,6 @@ class ChangePostconditionViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        if (newPostcondition.isEmpty()) {
-            return false
-        }
         contractViewModel.postCondition.value = newPostcondition
         return true
     }

@@ -22,9 +22,9 @@ class CreateVariableAction internal constructor(
     override fun run(): Boolean {
         createdPortViewModel = geckoViewModel.viewModelFactory
             .createPortViewModelIn(geckoViewModel.currentEditor!!.currentSystem)
-        createdPortViewModel!!.center = (position!!)
+        createdPortViewModel.center = (position!!)
         val actionManager = geckoViewModel.actionManager
-        actionManager.run(actionManager.actionFactory.createSelectAction(createdPortViewModel!!, true))
+        actionManager.run(actionManager.actionFactory.createSelectAction(createdPortViewModel, true))
         return true
     }
 

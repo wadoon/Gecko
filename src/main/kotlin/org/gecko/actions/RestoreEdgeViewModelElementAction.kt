@@ -18,8 +18,8 @@ class RestoreEdgeViewModelElementAction internal constructor(
     override fun run(): Boolean {
         automaton.addEdge(edgeViewModel)
         geckoViewModel.addViewModelElement(edgeViewModel)
-        edgeViewModel.source!!.outgoingEdges.add(edgeViewModel)
-        edgeViewModel.destination!!.incomingEdges.add(edgeViewModel)
+        edgeViewModel.source.outgoingEdges.add(edgeViewModel)
+        edgeViewModel.destination.incomingEdges.add(edgeViewModel)
         return true
     }
 

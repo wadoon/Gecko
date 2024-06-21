@@ -2,12 +2,19 @@ package org.gecko.viewmodel
 
 
 import javafx.beans.property.*
-import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.scene.paint.Color
-
+import org.gecko.actions.ActionManager
+import org.gecko.view.GeckoView
+import org.gecko.view.contextmenu.RegionViewElementContextMenuBuilder
+import org.gecko.view.contextmenu.ViewContextMenuBuilder
+import org.gecko.view.inspector.builder.RegionInspectorBuilder
+import org.gecko.view.views.viewelement.RegionViewElement
+import org.gecko.view.views.viewelement.decorator.BlockElementScalerViewElementDecorator
+import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
+import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
 import java.util.*
@@ -17,7 +24,7 @@ import java.util.*
  * [Color], a set of [StateViewModel]s, a [ContractViewModel] and an invariant. Contains methods for
  * managing the afferent data and updating the target-[Region].
  */
-data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElement() {
+data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElement(), Inspectable {
     val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
     var color: Color by colorProperty
 
@@ -47,8 +54,15 @@ data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElem
         statesProperty.clear()
     }
 
-    override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
-        return visitor.visit(this)
+    override val children: Sequence<Element>
+        get() = sequenceOf()
+
+    override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
+        val newRegionViewElement = RegionViewElement(this)
+        val contextMenuBuilder: ViewContextMenuBuilder =
+            RegionViewElementContextMenuBuilder(actionManager, this, geckoView)
+        //setContextMenu(newRegionViewElement, contextMenuBuilder)
+        return BlockElementScalerViewElementDecorator(SelectableViewElementDecorator(newRegionViewElement))
     }
 
     /**
@@ -77,4 +91,7 @@ data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElem
     companion object {
         const val MAXIMUM_RGB_COLOR_VALUE = 255
     }
+
+    override fun inspector(actionManager: ActionManager) =
+        RegionInspectorBuilder(actionManager, this)
 }

@@ -133,21 +133,26 @@
     -fx-fill: purple;
     -fx-font-weight: bold;
 }
+
 .semicolon {
     -fx-font-weight: bold;
 }
+
 .paren {
     -fx-fill: firebrick;
     -fx-font-weight: bold;
 }
+
 .bracket {
     -fx-fill: darkgreen;
     -fx-font-weight: bold;
 }
+
 .brace {
     -fx-fill: teal;
     -fx-font-weight: bold;
 }
+
 .string {
     -fx-fill: blue;
 }
@@ -159,4 +164,5 @@
 .paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
 }
+
 /*end region*/

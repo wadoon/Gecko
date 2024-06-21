@@ -1,8 +1,10 @@
 package org.gecko.view.inspector.element.container
 
-import javafx.scene.layout.*
-
-import org.gecko.actions.*
+import javafx.scene.layout.GridPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
+import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.inspector.element.InspectorElement
 import org.gecko.view.inspector.element.button.InspectorCollapseContractButton

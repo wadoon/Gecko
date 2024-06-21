@@ -23,7 +23,7 @@ class ChangeCodeSystemViewModelElementActionTest {
             systemViewModel, ""
         )
         actionManager.run(changeCodeAction2)
-        Assertions.assertNull(systemViewModel.code)
+        Assertions.assertEquals("", systemViewModel.code)
     }
 
     @Test

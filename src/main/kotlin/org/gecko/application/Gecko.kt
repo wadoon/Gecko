@@ -1,7 +1,6 @@
 package org.gecko.application
 
 
-
 import org.gecko.view.GeckoView
 import org.gecko.viewmodel.GeckoViewModel
 

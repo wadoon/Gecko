@@ -93,14 +93,14 @@ class CopyPositionableViewModelElementVisitor(val geckoViewModel: GeckoViewModel
         val selection =
             geckoViewModel.currentEditor!!.selectionManager.currentSelection
         val sourceSystemViewModel = (
-            geckoViewModel.currentEditor!!.currentSystem
-                .getChildSystemWithVariable(systemConnectionViewModel.source)!!
-        ) as SystemViewModel
+                geckoViewModel.currentEditor!!.currentSystem
+                    .getChildSystemWithVariable(systemConnectionViewModel.source)!!
+                ) as SystemViewModel
 
         val destinationSystemViewModel = (
-            geckoViewModel.currentEditor!!.currentSystem
-                .getChildSystemWithVariable(systemConnectionViewModel.destination)!!
-        ) as SystemViewModel
+                geckoViewModel.currentEditor!!.currentSystem
+                    .getChildSystemWithVariable(systemConnectionViewModel.destination)!!
+                ) as SystemViewModel
 
         val original = systemConnectionViewModel
 

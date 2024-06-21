@@ -155,24 +155,24 @@ class ModelFactoryTest {
 
     @Test
     fun defaultName() {
-            val children = arrayOfNulls<System>(2)
+        val children = arrayOfNulls<System>(2)
 
-            try {
-                children[0] = System(1, "Element_1", null, Automaton())
-            } catch (e: ModelException) {
-                Assertions.fail<Any>("Could not initialize system for testing purposes of getting the right default name.")
-            }
-            model!!.root.addChild(children[0]!!)
-
-            Assertions.assertDoesNotThrow(ThrowingSupplier<System> {
-                children[1] = factory!!.createSystem(
-                    model!!.root
-                )
-            })
-            Assertions.assertNotEquals("Element_1", children[1]!!.name)
-            Assertions.assertEquals("Element_2", children[1]!!.name)
-            Assertions.assertTrue(model!!.root.children.contains(children[1]))
+        try {
+            children[0] = System(1, "Element_1", null, Automaton())
+        } catch (e: ModelException) {
+            Assertions.fail<Any>("Could not initialize system for testing purposes of getting the right default name.")
         }
+        model!!.root.addChild(children[0]!!)
+
+        Assertions.assertDoesNotThrow(ThrowingSupplier<System> {
+            children[1] = factory!!.createSystem(
+                model!!.root
+            )
+        })
+        Assertions.assertNotEquals("Element_1", children[1]!!.name)
+        Assertions.assertEquals("Element_2", children[1]!!.name)
+        Assertions.assertTrue(model!!.root.children.contains(children[1]))
+    }
 
     @Test
     fun createEdgeBetweenInvalidStates() {

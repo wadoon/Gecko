@@ -1,7 +1,8 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ViewSwitchActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()

@@ -164,7 +164,7 @@ class CursorTool(
             }
             startDraggingElementHandler(event)
             scaler.isDragging = true
-            scaler.decoratorTarget?.target?.setCurrentlyModified(true)
+            scaler.decoratorTarget.target?.setCurrentlyModified(true)
             event.consume()
         }
         scaler.onMouseDragged = EventHandler { event: MouseEvent ->

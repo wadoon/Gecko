@@ -1,11 +1,11 @@
 package org.gecko.view.inspector.element.container
 
 import org.gecko.actions.ActionManager
-import org.gecko.viewmodel.Visibility
 import org.gecko.view.ResourceHandler
 import org.gecko.view.inspector.element.button.InspectorAddVariableButton
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an

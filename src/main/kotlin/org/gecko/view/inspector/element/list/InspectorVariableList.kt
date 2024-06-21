@@ -7,10 +7,10 @@ import javafx.scene.control.TableView
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import org.gecko.actions.ActionManager
-import org.gecko.viewmodel.Visibility
 import org.gecko.view.inspector.element.InspectorElement
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Visibility
 
 /**
  * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorVariableField].

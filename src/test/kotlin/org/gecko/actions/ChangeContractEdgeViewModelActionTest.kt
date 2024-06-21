@@ -1,24 +1,19 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.ModelException
-
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.ContractViewModel
 import org.gecko.viewmodel.EdgeViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ChangeContractEdgeViewModelActionTest {
-    private var edge: EdgeViewModel? = null
-    private var actionManager: ActionManager? = null
-    private var actionFactory: ActionFactory? = null
-    private var contractViewModel: ContractViewModel? = null
+    val geckoViewModel = TestHelper.createGeckoViewModel()
+    val actionManager: ActionManager = ActionManager(geckoViewModel)
+    val actionFactory: ActionFactory = ActionFactory(geckoViewModel)
+    val edge: EdgeViewModel
+    val contractViewModel: ContractViewModel
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
-        val geckoViewModel = TestHelper.createGeckoViewModel()
-        actionManager = ActionManager(geckoViewModel)
-        actionFactory = ActionFactory(geckoViewModel)
+    init {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
             geckoViewModel.root
@@ -32,18 +27,17 @@ class ChangeContractEdgeViewModelActionTest {
 
     @Test
     fun run() {
-        val changeContractAction = actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
-        actionManager!!.run(changeContractAction)
-        Assertions.assertEquals(contractViewModel, edge!!.contract)
-        Assertions.assertEquals(contractViewModel!!, edge!!.contract)
+        val changeContractAction = actionFactory.createChangeContractEdgeViewModelAction(edge, contractViewModel)
+        actionManager.run(changeContractAction)
+        Assertions.assertEquals(contractViewModel, edge.contract)
+        Assertions.assertEquals(contractViewModel, edge.contract)
     }
 
     @Test
     fun undoAction() {
-        val changeContractAction =
-            actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
-        actionManager!!.run(changeContractAction)
-        actionManager!!.undo()
-        Assertions.assertNull(edge!!.contract)
+        val changeContractAction = actionFactory.createChangeContractEdgeViewModelAction(edge, contractViewModel)
+        actionManager.run(changeContractAction)
+        actionManager.undo()
+        Assertions.assertNull(edge.contract)
     }
 }

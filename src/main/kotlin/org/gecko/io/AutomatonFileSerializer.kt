@@ -186,7 +186,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
 
     fun serializeTransition(edge: EdgeViewModel): String {
         return INDENT + SERIALIZED_TRANSITION.format(
-            edge.source?.name, edge.destination?.name,
+            edge.source.name, edge.destination.name,
             getContractName(edge)
         )
     }

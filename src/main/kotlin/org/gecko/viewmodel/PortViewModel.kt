@@ -2,9 +2,15 @@ package org.gecko.viewmodel
 
 
 import javafx.beans.property.*
-import javafx.collections.FXCollections
 import javafx.geometry.Point2D
-import javafx.scene.paint.Color
+import org.gecko.actions.ActionManager
+import org.gecko.view.GeckoView
+import org.gecko.view.contextmenu.VariableBlockViewElementContextMenuBuilder
+import org.gecko.view.inspector.builder.AbstractInspectorBuilder
+import org.gecko.view.inspector.builder.VariableBlockInspectorBuilder
+import org.gecko.view.views.viewelement.VariableBlockViewElement
+import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
+import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -17,7 +23,7 @@ data class PortViewModel(
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty(Visibility.STATE),
     val typeProperty: StringProperty = SimpleStringProperty("int"),
     val valueProperty: StringProperty = SimpleStringProperty("")
-) : BlockViewModelElement() {
+) : BlockViewModelElement(), Inspectable {
     val systemPortPositionProperty = SimpleObjectProperty(Point2D.ZERO)
     val systemPortSizeProperty = SimpleObjectProperty(Point2D.ZERO)
 
@@ -62,11 +68,21 @@ data class PortViewModel(
         outgoingConnections.remove(connection)
     }
 
-    override fun <T> accept(visitor: PositionableViewModelElementVisitor<T>): T {
-        return visitor.visit(this)
+    override val children: Sequence<Element>
+        get() = sequenceOf()
+
+    override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
+        val newVariableBlockViewElement = VariableBlockViewElement(this)
+        val contextMenuBuilder = VariableBlockViewElementContextMenuBuilder(actionManager, this, geckoView)
+        //setContextMenu(newVariableBlockViewElement, contextMenuBuilder)
+        return SelectableViewElementDecorator(newVariableBlockViewElement)
     }
+
+    override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
+        VariableBlockInspectorBuilder(actionManager, this)
 
     companion object {
         val DEFAULT_PORT_SIZE = Point2D(100.0, 50.0)
     }
+
 }

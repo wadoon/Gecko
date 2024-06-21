@@ -45,7 +45,7 @@ object GeckoIOManager {
             try {
                 newGecko = Gecko()
             } catch (e: ModelException) {
-                geckoManager!!.gecko!!.viewModel!!.actionManager.showExceptionAlert(e.message)
+                geckoManager!!.gecko.viewModel.actionManager.showExceptionAlert(e.message)
                 return
             }
             geckoManager!!.gecko = newGecko
@@ -109,7 +109,7 @@ object GeckoIOManager {
      * @param file The file to save the project to.
      */
     fun saveGeckoProject(file: File) {
-        val projectFileSerializer = ProjectFileSerializer(geckoManager!!.gecko!!.viewModel!!)
+        val projectFileSerializer = ProjectFileSerializer(geckoManager!!.gecko.viewModel)
         try {
             projectFileSerializer.writeToFile(file)
         } catch (e: IOException) {

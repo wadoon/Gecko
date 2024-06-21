@@ -1,20 +1,17 @@
 package org.gecko.actions
 
 import javafx.scene.paint.Color
-import org.gecko.exceptions.ModelException
-
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.RegionViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 internal class ChangeColorRegionViewModelElementActionTest {
     lateinit var region1: RegionViewModel
     lateinit var actionManager: ActionManager
     lateinit var actionFactory: ActionFactory
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
+    init {
         val geckoViewModel = TestHelper.createGeckoViewModel()
         actionManager = ActionManager(geckoViewModel)
         actionFactory = ActionFactory(geckoViewModel)

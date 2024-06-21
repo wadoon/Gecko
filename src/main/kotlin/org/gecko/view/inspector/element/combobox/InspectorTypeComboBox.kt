@@ -1,7 +1,7 @@
 package org.gecko.view.inspector.element.combobox
 
-import org.gecko.actions.*
-
+import org.gecko.actions.Action
+import org.gecko.actions.ActionManager
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.builtinTypes
 

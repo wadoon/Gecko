@@ -8,7 +8,7 @@ import org.gecko.viewmodel.ContractViewModel
  * holds a reference to. Additionally, holds the old and new [precondition][String]s of the contract for undo/redo
  * purposes.
  */
-class ChangePreconditionViewModelElementAction internal constructor(
+data class ChangePreconditionViewModelElementAction(
     val contractViewModel: ContractViewModel,
     val newPrecondition: String
 ) : Action() {
@@ -16,14 +16,10 @@ class ChangePreconditionViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        if (newPrecondition.isEmpty()) {
-            return false
-        }
         contractViewModel.preCondition.value = newPrecondition
         return true
     }
 
-    override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangePreconditionViewModelElementAction(contractViewModel, oldPrecondition)
-    }
+    override fun getUndoAction(actionFactory: ActionFactory) =
+        actionFactory.createChangePreconditionViewModelElementAction(contractViewModel, oldPrecondition)
 }

@@ -1,11 +1,10 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.ModelException
-
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.EdgeViewModel
 import org.gecko.viewmodel.StateViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class ContractViewModelTest {
     private var stateViewModel: StateViewModel? = null
@@ -13,9 +12,7 @@ class ContractViewModelTest {
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 
-    @BeforeEach
-    @Throws(ModelException::class)
-    fun setUp() {
+    init {
         val geckoViewModel = TestHelper.createGeckoViewModel()
         actionManager = ActionManager(geckoViewModel)
         actionFactory = ActionFactory(geckoViewModel)

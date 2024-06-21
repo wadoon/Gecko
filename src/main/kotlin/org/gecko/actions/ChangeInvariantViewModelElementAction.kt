@@ -16,9 +16,6 @@ class ChangeInvariantViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        if (newInvariant.isEmpty()) {
-            return false
-        }
         regionViewModel.invariant.value = newInvariant
         return true
     }

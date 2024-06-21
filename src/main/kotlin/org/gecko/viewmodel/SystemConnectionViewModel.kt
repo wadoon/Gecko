@@ -2,9 +2,13 @@ package org.gecko.viewmodel
 
 
 import javafx.beans.property.*
-import javafx.collections.FXCollections
 import javafx.geometry.Point2D
-
+import org.gecko.actions.ActionManager
+import org.gecko.view.GeckoView
+import org.gecko.view.contextmenu.SystemConnectionViewElementContextMenuBuilder
+import org.gecko.view.views.viewelement.SystemConnectionViewElement
+import org.gecko.view.views.viewelement.decorator.ConnectionElementScalerViewElementDecorator
+import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -17,9 +21,12 @@ import tornadofx.setValue
 
 data class SystemConnectionViewModel(
     val sourceProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>(),
-    val destinationProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>()
+    val destinationProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>(),
 ) : PositionableViewModelElement(), ConnectionViewModel {
     override val edgePoints = listProperty<Point2D>()
+
+    override val children: Sequence<Element>
+        get() = sequenceOf()
 
     var source: PortViewModel? by sourceProperty
     var destination: PortViewModel? by destinationProperty
@@ -40,8 +47,11 @@ data class SystemConnectionViewModel(
         }
     }
 
-    override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
-        return visitor.visit(this)
+    override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
+        val newSystemConnectionViewElement = SystemConnectionViewElement(this)
+        val contextMenuBuilder = SystemConnectionViewElementContextMenuBuilder(actionManager, this, geckoView)
+        //setContextMenu(newSystemConnectionViewElement.pane, contextMenuBuilder)
+        return ConnectionElementScalerViewElementDecorator(newSystemConnectionViewElement)
     }
 
     override fun setEdgePoint(index: Int, newPosition: Point2D) {

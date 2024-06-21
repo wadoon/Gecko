@@ -35,7 +35,7 @@ class CreateRegionViewModelElementAction internal constructor(
         return true
     }
 
-    override fun getUndoAction(actionFactory: ActionFactory): Action? {
+    override fun getUndoAction(actionFactory: ActionFactory): Action {
         return actionFactory.createDeletePositionableViewModelElementAction(createdRegionViewModel)
     }
 }

@@ -32,7 +32,7 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
             createElkNode(root, child)
         }
         for (edge in getAutomatonEdges(system)) {
-            ElkGraphUtil.createSimpleEdge(findNode(root, edge.source!!), findNode(root, edge.destination!!))
+            ElkGraphUtil.createSimpleEdge(findNode(root, edge.source), findNode(root, edge.destination))
         }
         return root
     }

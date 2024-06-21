@@ -62,7 +62,7 @@ class ElementScalerBlock(
     fun setCenter(point: Point2D): Boolean {
         var point = point
         if (decoratorTarget.setEdgePoint(index, point)) {
-            point = point!! - decoratorTarget.position
+            point = point - decoratorTarget.position
             val center = point - Point2D(width / 2, height / 2)
             layoutX = center.x
             layoutY = center.y

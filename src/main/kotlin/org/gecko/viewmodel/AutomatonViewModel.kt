@@ -4,6 +4,11 @@ import javafx.beans.property.ListProperty
 import javafx.beans.property.SimpleListProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Point2D
+import org.gecko.actions.ActionManager
+import org.gecko.view.GeckoView
+import org.gecko.view.views.EditorView
+import org.gecko.view.views.shortcuts.AutomatonEditorViewShortcutHandler
+import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -17,13 +22,18 @@ data class AutomatonViewModel(
     val statesProperty: ListProperty<StateViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
     val edgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
     val regionsProperty: ListProperty<RegionViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-) : BlockViewModelElement() {
-    val allElements: MutableList<PositionableViewModelElement> = arrayListOf()//(TODO
-
+) : BlockViewModelElement(), Openable {
     val edges by edgesProperty
+
     //var ports by portsProperty
     var states by statesProperty
     var regions by regionsProperty
+
+    val allElements: MutableList<PositionableViewModelElement>
+        get() = (states + edges + regions).toMutableList()
+
+    override val children: Sequence<Element>
+        get() = states.asSequence() + edges.asSequence() + regions.asSequence()
 
     var startState: StateViewModel? = null
         /**
@@ -51,10 +61,6 @@ data class AutomatonViewModel(
         port.systemPositionProperty.unbind()
     }*/
 
-    override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
-        return visitor.visit(this)
-    }
-
     fun removeEdge(target: EdgeViewModel) = edges.remove(target)
     fun removeRegion(target: RegionViewModel) = regions.remove(target)
     fun removeState(s: StateViewModel) = states.remove(s)
@@ -74,5 +80,15 @@ data class AutomatonViewModel(
 
     companion object {
         val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)
+    }
+
+    override fun editor(actionManager: ActionManager, geckoView: GeckoView): EditorView {
+        TODO("Not yet implemented")
+    }
+
+    override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
+        val v = EditorView(actionManager, this, geckoView)
+        v.shortcutHandler = AutomatonEditorViewShortcutHandler(actionManager, geckoView)
+        return v
     }
 }

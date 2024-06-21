@@ -24,27 +24,21 @@ internal class ChangePostconditionViewModelElementActionTest {
 
     @Test
     fun run() {
-        val changePostconditionAction: Action =
+        val changePostconditionAction =
             actionFactory.createChangePostconditionViewModelElementAction(region1.contract, "newPostcondition")
         actionManager.run(changePostconditionAction)
-        Assertions.assertEquals("newPostcondition", region1.contract.postCondition)
-        Assertions.assertEquals(
-            "newPostcondition",
-            region1.contract.postCondition.value
-        )
+        Assertions.assertEquals("newPostcondition", region1.contract.postCondition.value)
     }
 
     @Test
     fun undoAction() {
-        val changePostconditionAction: Action =
-            actionFactory.createChangePostconditionViewModelElementAction(region1.contract, "newPostcondition")
-        val beforeChangePostcondition = region1.contract.postCondition
+        val changePostconditionAction = actionFactory.createChangePostconditionViewModelElementAction(
+            region1.contract, "newPostcondition"
+        )
+
+        val beforeChangePostcondition = region1.contract.postCondition.value
         actionManager.run(changePostconditionAction)
         actionManager.undo()
-        Assertions.assertEquals(beforeChangePostcondition, region1.contract.preCondition)
-        Assertions.assertEquals(
-            beforeChangePostcondition,
-            region1.contract.postCondition.value
-        )
+        Assertions.assertEquals(beforeChangePostcondition, region1.contract.postCondition.value)
     }
 }

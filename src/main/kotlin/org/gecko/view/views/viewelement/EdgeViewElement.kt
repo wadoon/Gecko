@@ -163,10 +163,10 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
 
     override fun setEdgePoint(index: Int, point: Point2D): Boolean {
         if (index == 0) {
-            target.startPoint = point
+            //target.startPoint = point
             return true
         } else if (index == 1) {
-            target.endPoint = point
+            //target.endPoint = point
             return true
         }
         return false

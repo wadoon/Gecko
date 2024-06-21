@@ -10,58 +10,58 @@ import org.junit.jupiter.api.function.ThrowingSupplier
 class GeckoModelTest {
     @Test
     fun allSystems() {
-            Assertions.assertFalse(defaultModel!!.allSystems.isEmpty())
-            Assertions.assertEquals(1, defaultModel!!.allSystems.size)
-            Assertions.assertEquals("Element_0", defaultModel!!.allSystems.first!!.name)
+        Assertions.assertFalse(defaultModel!!.allSystems.isEmpty())
+        Assertions.assertEquals(1, defaultModel!!.allSystems.size)
+        Assertions.assertEquals("Element_0", defaultModel!!.allSystems.first!!.name)
 
-            defaultModel!!.root.addChild(child!!)
-            Assertions.assertNotEquals(1, defaultModel!!.allSystems.size)
-            Assertions.assertTrue(defaultModel!!.allSystems.contains(childOfChild))
+        defaultModel!!.root.addChild(child!!)
+        Assertions.assertNotEquals(1, defaultModel!!.allSystems.size)
+        Assertions.assertTrue(defaultModel!!.allSystems.contains(childOfChild))
 
-            defaultModel!!.root.removeChild(child!!)
-        }
+        defaultModel!!.root.removeChild(child!!)
+    }
 
     @Test
     fun systemWithVariable() {
-            defaultModel!!.root.addChild(child!!)
-            Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.getSystemWithVariable(null) }
-            Assertions.assertEquals(
-                childOfChild, defaultModel!!.getSystemWithVariable(
-                    variable!!
-                )
+        defaultModel!!.root.addChild(child!!)
+        Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.getSystemWithVariable(null) }
+        Assertions.assertEquals(
+            childOfChild, defaultModel!!.getSystemWithVariable(
+                variable!!
             )
-            defaultModel!!.root.removeChild(child!!)
-        }
+        )
+        defaultModel!!.root.removeChild(child!!)
+    }
 
     @Test
     fun isNameUnique() {
-            Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.isNameUnique(null) }
+        Assertions.assertThrows(NullPointerException::class.java) { defaultModel!!.isNameUnique(null) }
 
-            defaultModel!!.root.addChild(child!!)
-            Assertions.assertFalse(defaultModel!!.isNameUnique("childOfChild"))
+        defaultModel!!.root.addChild(child!!)
+        Assertions.assertFalse(defaultModel!!.isNameUnique("childOfChild"))
 
-            defaultModel!!.root.addVariable(variable!!)
-            Assertions.assertFalse { defaultModel!!.isNameUnique("variable") }
+        defaultModel!!.root.addVariable(variable!!)
+        Assertions.assertFalse { defaultModel!!.isNameUnique("variable") }
 
-            try {
-                val condition = Condition("true")
-                val contract1 = Contract(4, "contract1", condition, condition)
-                val contract2 = Contract(5, "contract2", condition, condition)
+        try {
+            val condition = Condition("true")
+            val contract1 = Contract(4, "contract1", condition, condition)
+            val contract2 = Contract(5, "contract2", condition, condition)
 
-                val state = State(6, "state")
-                state.addContract(contract2)
+            val state = State(6, "state")
+            state.addContract(contract2)
 
-                defaultModel!!.root.automaton.addRegion(Region(7, "region", condition, contract1))
-                defaultModel!!.root.automaton.addState(state)
-            } catch (e: ModelException) {
-                Assertions.fail<Any>("Could not initialize region or state for testing purposes of the model.")
-            }
-
-            Assertions.assertFalse { defaultModel!!.isNameUnique("region") }
-            Assertions.assertFalse { defaultModel!!.isNameUnique("state") }
-            Assertions.assertFalse { defaultModel!!.isNameUnique("contract1") }
-            Assertions.assertFalse { defaultModel!!.isNameUnique("contract2") }
+            defaultModel!!.root.automaton.addRegion(Region(7, "region", condition, contract1))
+            defaultModel!!.root.automaton.addState(state)
+        } catch (e: ModelException) {
+            Assertions.fail<Any>("Could not initialize region or state for testing purposes of the model.")
         }
+
+        Assertions.assertFalse { defaultModel!!.isNameUnique("region") }
+        Assertions.assertFalse { defaultModel!!.isNameUnique("state") }
+        Assertions.assertFalse { defaultModel!!.isNameUnique("contract1") }
+        Assertions.assertFalse { defaultModel!!.isNameUnique("contract2") }
+    }
 
     @Test
     fun testConsiderationOfPreAndPostConditionNamesOfRegionsInUniqueNameCheck() {

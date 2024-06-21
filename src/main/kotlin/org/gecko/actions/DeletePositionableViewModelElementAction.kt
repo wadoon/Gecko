@@ -3,6 +3,7 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.SystemViewModel
 
 /**
  * A concrete representation of an [Action] that deletes a set of [PositionableViewModelElement]s and their
@@ -28,15 +29,10 @@ class DeletePositionableViewModelElementAction : Action {
     override fun run(): Boolean {
         val allDeleteActions: MutableSet<AbstractPositionableViewModelElementAction> = HashSet()
         for (element in elementsToDelete) {
-            val visitor =
-                DeleteActionsCreatorVisitor(geckoViewModel, geckoViewModel.currentEditor!!.currentSystem)
-            var foundDeleteActions: Set<AbstractPositionableViewModelElementAction>?
-            try {
-                foundDeleteActions = element.accept(visitor)
-            } catch (e: ClassCastException) {
-                throw GeckoException("Error while deleting element")
-            }
-            allDeleteActions.addAll(foundDeleteActions)
+            val visitor = DeleteActionsHelper(geckoViewModel, geckoViewModel.currentEditor!!.currentSystem)
+                            .visit(element)
+
+            allDeleteActions.addAll(visitor)
         }
 
         deletedElements = allDeleteActions.map { it.target }.toSet()

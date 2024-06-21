@@ -110,79 +110,79 @@ internal class ViewModelFactoryTest {
         Assertions.assertEquals(stateViewModel1, edgeViewModel1.source)
         Assertions.assertEquals(stateViewModel1, edgeViewModel2.source)
     }
-/*
-    @Test
-    @Throws(ModelException::class)
-    fun testCreateStateFromModelWithContracts() {
-        val state = modelFactory!!.createState(systemViewModel1.automaton)
-        val contract1 = modelFactory!!.createContract(state)
-        contract1.name = "contract1"
-        val contract2 = modelFactory!!.createContract(state)
-        val stateViewModel = viewModelFactory.createStateViewModelFrom(state)
-        Assertions.assertTrue(stateViewModel.contracts.contains(contract1))
-        Assertions.assertTrue(stateViewModel.contracts.contains(contract2))
-        Assertions.assertEquals(2, stateViewModel.contractsProperty.size)
-        Assertions.assertEquals("contract1", stateViewModel.contractsProperty.first().name)
-    }
+    /*
+        @Test
+        @Throws(ModelException::class)
+        fun testCreateStateFromModelWithContracts() {
+            val state = modelFactory!!.createState(systemViewModel1.automaton)
+            val contract1 = modelFactory!!.createContract(state)
+            contract1.name = "contract1"
+            val contract2 = modelFactory!!.createContract(state)
+            val stateViewModel = viewModelFactory.createStateViewModelFrom(state)
+            Assertions.assertTrue(stateViewModel.contracts.contains(contract1))
+            Assertions.assertTrue(stateViewModel.contracts.contains(contract2))
+            Assertions.assertEquals(2, stateViewModel.contractsProperty.size)
+            Assertions.assertEquals("contract1", stateViewModel.contractsProperty.first().name)
+        }
 
-    @Test
-    @Throws(ModelException::class)
-    fun testCreateEdgeFromModelFail() {
-        val source = modelFactory!!.createState(systemViewModel1.automaton)
-        val destination = modelFactory!!.createState(systemViewModel1.automaton)
-        val edge = modelFactory!!.createEdge(systemViewModel1.automaton, source, destination)
-        Assertions.assertThrows(MissingViewModelElementException::class.java) {
-            viewModelFactory.createEdgeViewModelFrom(
-                edge
+        @Test
+        @Throws(ModelException::class)
+        fun testCreateEdgeFromModelFail() {
+            val source = modelFactory!!.createState(systemViewModel1.automaton)
+            val destination = modelFactory!!.createState(systemViewModel1.automaton)
+            val edge = modelFactory!!.createEdge(systemViewModel1.automaton, source, destination)
+            Assertions.assertThrows(MissingViewModelElementException::class.java) {
+                viewModelFactory.createEdgeViewModelFrom(
+                    edge
+                )
+            }
+        }
+
+        @Test
+        @Throws(ModelException::class)
+        fun testCreateEdgeFromModel() {
+            val edge = modelFactory!!.createEdge(
+                systemViewModel1.automaton, stateViewModel1,
+                stateViewModel2
             )
+            try {
+                val edgeViewModel = viewModelFactory.createEdgeViewModelFrom(edge)
+                Assertions.assertEquals(edge, edgeViewModel)
+                Assertions.assertEquals(stateViewModel1, edgeViewModel.source)
+                Assertions.assertEquals(stateViewModel2, edgeViewModel.destination)
+            } catch (e: MissingViewModelElementException) {
+                Assertions.fail<Any>()
+            }
         }
-    }
 
-    @Test
-    @Throws(ModelException::class)
-    fun testCreateEdgeFromModel() {
-        val edge = modelFactory!!.createEdge(
-            systemViewModel1.automaton, stateViewModel1,
-            stateViewModel2
-        )
-        try {
-            val edgeViewModel = viewModelFactory.createEdgeViewModelFrom(edge)
-            Assertions.assertEquals(edge, edgeViewModel)
-            Assertions.assertEquals(stateViewModel1, edgeViewModel.source)
-            Assertions.assertEquals(stateViewModel2, edgeViewModel.destination)
-        } catch (e: MissingViewModelElementException) {
-            Assertions.fail<Any>()
+        @Test
+        @Throws(ModelException::class)
+        fun testCreateRegionFromModel() {
+            val region = modelFactory!!.createRegion(systemViewModel1.automaton)
+            region.addState(stateViewModel1)
+            region.addState(stateViewModel2)
+            try {
+                val regionViewModel = viewModelFactory.createRegionViewModelFrom(region)
+                Assertions.assertEquals(region, regionViewModel)
+                Assertions.assertEquals(2, regionViewModel.statesProperty.size)
+                Assertions.assertTrue(regionViewModel.statesProperty.contains(stateViewModel1))
+                Assertions.assertTrue(regionViewModel.statesProperty.contains(stateViewModel2))
+            } catch (e: MissingViewModelElementException) {
+                Assertions.fail<Any>()
+            }
         }
-    }
 
-    @Test
-    @Throws(ModelException::class)
-    fun testCreateRegionFromModel() {
-        val region = modelFactory!!.createRegion(systemViewModel1.automaton)
-        region.addState(stateViewModel1)
-        region.addState(stateViewModel2)
-        try {
-            val regionViewModel = viewModelFactory.createRegionViewModelFrom(region)
-            Assertions.assertEquals(region, regionViewModel)
-            Assertions.assertEquals(2, regionViewModel.statesProperty.size)
-            Assertions.assertTrue(regionViewModel.statesProperty.contains(stateViewModel1))
-            Assertions.assertTrue(regionViewModel.statesProperty.contains(stateViewModel2))
-        } catch (e: MissingViewModelElementException) {
-            Assertions.fail<Any>()
+        @Test
+        @Throws(ModelException::class)
+        fun testCreateSystemFromModel() {
+            val system = modelFactory!!.createSystem(root)
+            val variable1 = modelFactory!!.createVariable(system)
+            val variable2 = modelFactory!!.createVariable(system)
+            // system.addVariables(Set.of(variable1, variable2));
+            val systemViewModel = viewModelFactory.createSystemViewModelFrom(system)
+            Assertions.assertNotNull(geckoViewModel.getViewModelElement(variable1))
+            Assertions.assertNotNull(geckoViewModel.getViewModelElement(variable2))
+            Assertions.assertEquals(2, systemViewModel.portsProperty.size)
         }
-    }
-
-    @Test
-    @Throws(ModelException::class)
-    fun testCreateSystemFromModel() {
-        val system = modelFactory!!.createSystem(root)
-        val variable1 = modelFactory!!.createVariable(system)
-        val variable2 = modelFactory!!.createVariable(system)
-        // system.addVariables(Set.of(variable1, variable2));
-        val systemViewModel = viewModelFactory.createSystemViewModelFrom(system)
-        Assertions.assertNotNull(geckoViewModel.getViewModelElement(variable1))
-        Assertions.assertNotNull(geckoViewModel.getViewModelElement(variable2))
-        Assertions.assertEquals(2, systemViewModel.portsProperty.size)
-    }
-    */
+        */
 }

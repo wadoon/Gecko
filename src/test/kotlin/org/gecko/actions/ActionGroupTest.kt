@@ -1,27 +1,21 @@
 package org.gecko.actions
 
 import javafx.scene.paint.Color
-import org.gecko.exceptions.ModelException
-
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.RegionViewModel
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 internal class ActionGroupTest {
-    lateinit var region1: RegionViewModel
-    lateinit var region2: RegionViewModel
-    lateinit var actionManager: ActionManager
-    lateinit var actionFactory: ActionFactory
+    val geckoViewModel = GeckoViewModel()
+    var actionManager: ActionManager = ActionManager(geckoViewModel)
+    var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
+    val viewModelFactory = geckoViewModel.viewModelFactory
+    val rootSystemViewModel = geckoViewModel.root
+    var region1: RegionViewModel = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+    var region2: RegionViewModel = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
 
-    @Throws(ModelException::class)
-    fun setUp() {
-        val geckoViewModel = GeckoViewModel()
-        actionManager = ActionManager(geckoViewModel)
-        actionFactory = ActionFactory(geckoViewModel)
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = geckoViewModel.root
-        region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
-        region2 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+    init {
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }
 

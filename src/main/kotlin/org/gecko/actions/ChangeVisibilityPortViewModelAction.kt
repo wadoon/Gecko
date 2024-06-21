@@ -50,7 +50,7 @@ class ChangeVisibilityPortViewModelAction : Action {
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeVisibilityPortViewModelAction(
+        return actionFactory.changeVisibility(
             portViewModel, oldVisibility,
             systemConnectionDeleteActionGroup!!.getUndoAction(geckoViewModel.actionManager.actionFactory)
         )

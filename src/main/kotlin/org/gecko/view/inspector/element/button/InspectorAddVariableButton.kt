@@ -3,9 +3,9 @@ package org.gecko.view.inspector.element.button
 import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
-import org.gecko.viewmodel.Visibility
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a type of [AbstractInspectorButton] used for adding a [PortViewModel] to a given

@@ -1,15 +1,17 @@
 package org.gecko.view.views.viewelement
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.*
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.collections.ListChangeListener
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import javafx.scene.paint.Color
-import javafx.scene.shape.*
-
+import javafx.scene.shape.Rectangle
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.RegionViewModel
 import org.gecko.viewmodel.StateViewModel

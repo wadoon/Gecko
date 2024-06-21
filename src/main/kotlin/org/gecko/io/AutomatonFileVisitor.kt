@@ -127,7 +127,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
         val startStateCandidates = currentSystem.automaton
             .states
-            .filter { state: StateViewModel -> state.name!!.matches(START_STATE_REGEX.toRegex()) }
+            .filter { state: StateViewModel -> state.name.matches(START_STATE_REGEX.toRegex()) }
         if (startStateCandidates.size > 1) {
             throw RuntimeException(String.format("Multiple start states found in automaton %s", ctx.ident().text))
         } else if (startStateCandidates.size == 1) {

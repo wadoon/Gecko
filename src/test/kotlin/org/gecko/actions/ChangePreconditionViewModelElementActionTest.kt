@@ -30,18 +30,16 @@ internal class ChangePreconditionViewModelElementActionTest {
         val changePreconditionAction: Action =
             actionFactory.createChangePreconditionViewModelElementAction(region1.contract, "newPrecondition")
         actionManager.run(changePreconditionAction)
-        Assertions.assertEquals("newPrecondition", region1.contract.preCondition)
         Assertions.assertEquals("newPrecondition", region1.contract.preCondition.value)
     }
 
     @Test
     fun undoAction() {
-        val changePreconditionAction: Action =
+        val changePreconditionAction=
             actionFactory.createChangePreconditionViewModelElementAction(region1.contract, "newPrecondition")
-        val beforeChangePrecondition = region1.contract.preCondition
+        val beforeChangePrecondition = region1.contract.preCondition.value
         actionManager.run(changePreconditionAction)
         actionManager.undo()
-        Assertions.assertEquals(beforeChangePrecondition, region1.contract.preCondition)
         Assertions.assertEquals(beforeChangePrecondition, region1.contract.preCondition.value)
     }
 }

@@ -103,7 +103,7 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
 
     fun updatePortViewModels() {
         for (portViewElement in portViewElements) {
-            portViewElement.viewModel!!.setSystemPortSize(portViewElement.viewSize)
+            portViewElement.viewModel.setSystemPortSize(portViewElement.viewSize)
 
             val portViewElementPositionInScene = portViewElement.localToScene(portViewElement.viewPosition)
 
@@ -245,14 +245,14 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     }
 
     fun compare(p1: PortViewElement, p2: PortViewElement): Int {
-        return getOtherPortY(p1.viewModel!!).compareTo(getOtherPortY(p2.viewModel!!))
+        return getOtherPortY(p1.viewModel).compareTo(getOtherPortY(p2.viewModel))
     }
 
     fun getSortPosition(portViewModel: PortViewModel?): Point2D {
         if (portViewModel == null) return Point2D.ZERO
 
         if (isVariableBlock(portViewModel)) {
-            return portViewModel.center!!
+            return portViewModel.center
         }
         return portViewModel.systemPositionProperty
             .value

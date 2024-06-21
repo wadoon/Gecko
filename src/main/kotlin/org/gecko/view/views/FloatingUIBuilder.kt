@@ -9,7 +9,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import org.gecko.actions.*
+import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel

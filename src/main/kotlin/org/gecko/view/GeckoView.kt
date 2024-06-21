@@ -46,7 +46,6 @@ class GeckoView(var viewModel: GeckoViewModel) {
     val mnemonicsProperty = listProperty<Mnemonic>()
 
     init {
-        this.viewModel = viewModel
         this.mainPane = BorderPane()
         this.centerPane = TabPane()
         this.viewFactory = ViewFactory(viewModel.actionManager, this)
@@ -84,10 +83,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
         mainPane.center = centerPane
 
         // Initial view
-        currentViewProperty.value = viewFactory.createEditorView(
-            viewModel.currentEditor!!,
-            viewModel.currentEditor!!.isAutomatonEditor
-        )
+        currentViewProperty.value = viewModel.currentEditor!!.editor(viewFactory.actionManager, viewFactory.geckoView)
         constructTab(currentViewProperty.value, viewModel.currentEditor!!)
         centerPane.tabClosingPolicy = TabClosingPolicy.UNAVAILABLE
 
@@ -95,7 +91,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
         refreshView()
 
         centerPane.focusedProperty()
-            .addListener { observable: ObservableValue<out Boolean>?, oldValue: Boolean?, newValue: Boolean ->
+            .addListener { observable: ObservableValue<out Boolean>?, _: Boolean?, newValue: Boolean ->
                 if (newValue) {
                     currentViewProperty.value!!.focus()
                 }
@@ -117,7 +113,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
     }
 
     fun onUpdateCurrentEditorFromViewModel(newValue: EditorViewModel?) {
-        currentViewProperty.setValue(openedViews.find { it!!.viewModel == newValue })
+        currentViewProperty.value = openedViews.find { it!!.viewModel == newValue }
         refreshView()
     }
 
@@ -130,8 +126,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
                     continue
                 }
 
-                val newEditorView =
-                    viewFactory.createEditorView(editorViewModel, editorViewModel.isAutomatonEditor)
+                val newEditorView = editorViewModel.editor(viewFactory.actionManager, this)
 
                 if (!openedViews.contains(newEditorView)) {
                     handleUserTabChange(constructTab(newEditorView, editorViewModel))
@@ -193,7 +188,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
             currentViewProperty.value!!.drawToolbar(),
             OutlineView(viewModel).root
         )
-        splitPane.orientation=Orientation.VERTICAL
+        splitPane.orientation = Orientation.VERTICAL
         splitPane.setDividerPositions(0.3)
         mainPane.left = splitPane
 
@@ -227,7 +222,7 @@ class GeckoView(var viewModel: GeckoViewModel) {
         }
 
         val center = editorViewModel.positionableViewModelElements
-            .mapNotNull { it.center }
+            .map { it.center }
             .reduce { a, b -> a + b }
             .multiply(1.0 / editorViewModel.positionableViewModelElements.size)
 

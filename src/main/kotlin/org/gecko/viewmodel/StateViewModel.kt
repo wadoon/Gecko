@@ -7,7 +7,15 @@ import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
-
+import org.gecko.actions.ActionManager
+import org.gecko.view.GeckoView
+import org.gecko.view.contextmenu.StateViewElementContextMenuBuilder
+import org.gecko.view.contextmenu.ViewContextMenuBuilder
+import org.gecko.view.inspector.builder.AbstractInspectorBuilder
+import org.gecko.view.inspector.builder.StateInspectorBuilder
+import org.gecko.view.views.viewelement.StateViewElement
+import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
+import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -21,14 +29,16 @@ data class StateViewModel(
     val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
     val incomingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
     val outgoingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-) : BlockViewModelElement() {
+) : BlockViewModelElement(), Inspectable {
     var isStartState by isStartStateProperty
     var contracts by contractsProperty
     var incomingEdges by incomingEdgesProperty
     var outgoingEdges: ObservableList<EdgeViewModel> by outgoingEdgesProperty
 
 
-    init { addEdgeListeners() }
+    init {
+        addEdgeListeners()
+    }
 
     fun addContract(contract: ContractViewModel) {
         contractsProperty.add(contract)
@@ -38,8 +48,16 @@ data class StateViewModel(
         contractsProperty.remove(contract)
     }
 
-    override fun <S> accept(visitor: PositionableViewModelElementVisitor<S>): S {
-        return visitor.visit(this)
+    override val children: Sequence<Element>
+        get() = contracts.asSequence()
+
+    override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
+        val newStateViewElement = StateViewElement(this)
+
+        val contextMenuBuilder: ViewContextMenuBuilder =
+            StateViewElementContextMenuBuilder(actionManager, this, geckoView)
+        //setContextMenu(newStateViewElement, contextMenuBuilder)
+        return SelectableViewElementDecorator(newStateViewElement)
     }
 
     fun addEdgeListeners() {
@@ -55,8 +73,8 @@ data class StateViewModel(
     }
 
     fun notifyOtherState() {
-        outgoingEdges.forEach { edge: EdgeViewModel -> edge.destination?.setEdgeOffsets() }
-        incomingEdges.forEach { edge: EdgeViewModel -> edge.source?.setEdgeOffsets() }
+        outgoingEdges.forEach { edge: EdgeViewModel -> edge.destination.setEdgeOffsets() }
+        incomingEdges.forEach { edge: EdgeViewModel -> edge.source.setEdgeOffsets() }
     }
 
     fun setEdgeOffsets() {
@@ -75,8 +93,7 @@ data class StateViewModel(
 
         for (edge in intersectionOrientationEdges[LOOPS]!!) {
             intersectionOrientationEdges[loopOrientation]!!.addLast(edge)
-            intersectionOrientationEdges[(loopOrientation + 1) % ORIENTATIONS]!!
-                .addFirst(edge)
+            intersectionOrientationEdges[(loopOrientation + 1) % ORIENTATIONS]!!.addFirst(edge)
             edge.setOrientation(loopOrientation)
         }
 
@@ -105,9 +122,9 @@ data class StateViewModel(
 
     fun getOtherEdgePoint(edge: EdgeViewModel): Point2D {
         if (edge.source == this) {
-            return edge.destination?.center!!
+            return edge.destination.center
         }
-        return edge.source?.center!!
+        return edge.source.center
     }
 
     fun compareEdges(e1: EdgeViewModel, e2: EdgeViewModel, orientation: Int): Int {
@@ -128,14 +145,11 @@ data class StateViewModel(
     fun sortEdges(intersectionOrientationEdges: Map<Int, MutableList<EdgeViewModel>>) {
         for (orientation in 0 until ORIENTATIONS) {
             val finalOrientation = orientation
-            intersectionOrientationEdges[orientation]!!
-                .sortWith { e1: EdgeViewModel, e2: EdgeViewModel ->
-                    compareEdges(
-                        e1,
-                        e2,
-                        finalOrientation
-                    )
-                }
+            intersectionOrientationEdges[orientation]!!.sortWith { e1: EdgeViewModel, e2: EdgeViewModel ->
+                compareEdges(
+                    e1, e2, finalOrientation
+                )
+            }
         }
     }
 
@@ -160,9 +174,9 @@ data class StateViewModel(
                     intersectionOrientationEdges[LOOPS]!!.add(edge)
                     continue
                 }
-                val p1 = edge.source!!.center
-                val p2 = edge.destination!!.center
-                val orientation = getIntersectionOrientation(p1!!, p2!!)
+                val p1 = edge.source.center
+                val p2 = edge.destination.center
+                val orientation = getIntersectionOrientation(p1, p2)
                 if (orientation != -1) {
                     intersectionOrientationEdges[orientation]!!.add(edge)
                 }
@@ -173,8 +187,7 @@ data class StateViewModel(
     fun getIntersectionOrientation(p1: Point2D, p2: Point2D): Int {
         val edgePoints: List<Point2D> = ArrayList(
             listOf(
-                position, position.add(size.x, 0.0), position.add(size),
-                position.add(0.0, size.y)
+                position, position.add(size.x, 0.0), position.add(size), position.add(0.0, size.y)
             )
         )
         for (i in edgePoints.indices) {
@@ -203,4 +216,7 @@ data class StateViewModel(
             return s in 0.0..1.0 && t >= 0 && t <= 1
         }
     }
+
+    override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
+        StateInspectorBuilder(actionManager, null, this)
 }

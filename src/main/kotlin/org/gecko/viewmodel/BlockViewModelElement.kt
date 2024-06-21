@@ -16,7 +16,7 @@ import kotlin.math.min
  * [BlockViewModelElement] has a name. Contains methods for moving and scaling the element.
  */
 
-abstract class BlockViewModelElement() : PositionableViewModelElement(), Renamable {
+abstract class BlockViewModelElement : PositionableViewModelElement(), Renamable {
     override val nameProperty: StringProperty = SimpleStringProperty("")
     override var name: String by nameProperty
 
@@ -50,7 +50,7 @@ abstract class BlockViewModelElement() : PositionableViewModelElement(), Renamab
     }
 
 
-    override var center: Point2D?
+    override var center: Point2D
         get() = positionProperty.value + sizeProperty.value * 0.5
         set(value) {}
 

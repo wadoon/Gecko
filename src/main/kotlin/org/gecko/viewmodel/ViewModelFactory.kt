@@ -56,14 +56,10 @@ class ViewModelFactory(
 //    }
 
     @Throws(ModelException::class)
-    fun createEdgeViewModelIn(
-        parentSystem: SystemViewModel, source: StateViewModel, destination: StateViewModel
-    ): EdgeViewModel {
-        val result = EdgeViewModel().also {
-            it.source = source
-            it.destination = destination
-        }
-        // TODO? parentSystem.addEdge()
+    fun createEdgeViewModelIn(parentSystem: SystemViewModel, source: StateViewModel, destination: StateViewModel)
+            : EdgeViewModel {
+        val result = EdgeViewModel(source, destination)
+        parentSystem.automaton.edges.add(result)
         geckoViewModel.addViewModelElement(result)
         return result
     }
@@ -225,7 +221,7 @@ class ViewModelFactory(
     }
 
     fun findSystemWithState(parentSystem: SystemViewModel, state: StateViewModel): SystemViewModel? {
-        if (parentSystem.automaton!!.states.contains(state)) {
+        if (parentSystem.automaton.states.contains(state)) {
             return parentSystem
         }
         if (!parentSystem.subSystems.isEmpty()) {

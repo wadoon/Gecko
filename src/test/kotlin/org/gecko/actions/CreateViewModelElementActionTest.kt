@@ -27,9 +27,7 @@ internal class CreateViewModelElementActionTest {
     @Test
     @Throws(ModelException::class)
     fun createContractAction() {
-        val stateViewModel = viewModelFactory.createStateViewModelIn(
-            rootSystemViewModel
-        )
+        val stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
         val createContractAction: Action = actionFactory.createCreateContractViewModelElementAction(stateViewModel)
         actionManager.run(createContractAction)
         Assertions.assertEquals(stateViewModel.contracts.size, 1)

@@ -7,8 +7,6 @@ import org.gecko.actions.ActionManager
 import org.gecko.tools.ToolType
 import org.gecko.view.GeckoView
 import org.gecko.view.contextmenu.*
-import org.gecko.view.views.shortcuts.AutomatonEditorViewShortcutHandler
-import org.gecko.view.views.shortcuts.SystemEditorViewShortcutHandler
 import org.gecko.view.views.viewelement.*
 import org.gecko.view.views.viewelement.decorator.BlockElementScalerViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ConnectionElementScalerViewElementDecorator
@@ -19,11 +17,11 @@ import org.gecko.viewmodel.*
  * Represents a factory for the view elements of a Gecko project. Provides a method for the creation of each element.
  */
 class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
-    fun createEditorView(editorViewModel: EditorViewModel, isAutomatonEditor: Boolean): EditorView {
+    /*fun createEditorView(editorViewModel: EditorViewModel, isAutomatonEditor: Boolean): EditorView {
         return if (isAutomatonEditor) createAutomatonEditorView(editorViewModel) else createSystemEditorView(
             editorViewModel
         )
-    }
+    }*/
 
     fun createViewElementFrom(stateViewModel: StateViewModel): ViewElement<*> {
         val newStateViewElement = StateViewElement(stateViewModel)
@@ -92,7 +90,7 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
             event.consume()
         }
     }
-
+    /*
     fun createAutomatonEditorView(editorViewModel: EditorViewModel): EditorView {
         val editorView = EditorView(this, actionManager, editorViewModel)
         editorView.shortcutHandler = AutomatonEditorViewShortcutHandler(actionManager, editorView)
@@ -103,5 +101,5 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         val editorView = EditorView(this, actionManager, editorViewModel)
         editorView.shortcutHandler = SystemEditorViewShortcutHandler(actionManager, editorView)
         return editorView
-    }
+    }*/
 }

@@ -1,7 +1,6 @@
 package org.gecko.io
 
 import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.SystemViewModel
 
 
 /**

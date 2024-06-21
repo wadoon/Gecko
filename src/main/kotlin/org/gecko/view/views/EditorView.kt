@@ -10,9 +10,9 @@ import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.*
 import javafx.scene.layout.*
-
 import org.gecko.actions.*
 import org.gecko.tools.*
+import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
 import org.gecko.view.contextmenu.ViewContextMenuBuilder
 import org.gecko.view.inspector.Inspector
@@ -22,7 +22,6 @@ import org.gecko.view.views.shortcuts.ShortcutHandler
 import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
-import org.gecko.viewmodel.PositionableViewModelElementVisitor
 import org.gecko.viewmodel.onChange
 import java.util.function.Consumer
 
@@ -30,7 +29,7 @@ import java.util.function.Consumer
  * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed [ViewElement]s and
  * other items specific to their visualisation.
  */
-class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val viewModel: EditorViewModel) {
+class EditorView(val actionManager: ActionManager, val viewModel: EditorViewModel, val geckoView: GeckoView) {
     val currentView: Tab
     val currentViewPane: StackPane
 
@@ -226,13 +225,12 @@ class EditorView(val viewFactory: ViewFactory, actionManager: ActionManager, val
     }
 
     fun addElement(element: PositionableViewModelElement?) {
-        val visitor: PositionableViewModelElementVisitor<*> = ViewElementCreatorVisitor(viewFactory)
-        val viewElement = element!!.accept(visitor) as ViewElement<*>
-
-        // Add view element to current view elements
-        viewElementPane.addElement(viewElement)
-        if (viewModel.currentToolType != null) {
-            viewElement.accept(viewModel.currentTool)
+        element?.view(actionManager, geckoView)?.let { viewElement ->
+            // Add view element to current view elements
+            viewElementPane.addElement(viewElement)
+            if (viewModel.currentToolType != null) {
+                viewElement.accept(viewModel.currentTool)
+            }
         }
     }
 

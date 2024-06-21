@@ -1,8 +1,100 @@
 package org.gecko.io
 
+import org.gecko.exceptions.ModelException
+import org.gecko.viewmodel.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import java.io.File
+
 class ProjectFileSerializerTest {
-    /*
     val projectFileParser = ProjectFileParser()
+    val projectFileSerializerForEmpty: ProjectFileSerializer
+    val projectFileSerializerForOneLevel: ProjectFileSerializer
+    val projectFileSerializerForTree: ProjectFileSerializer
+    val oneLevelGeckoViewModel = GeckoViewModel()
+    val oneLevelRoot = oneLevelGeckoViewModel.root
+    val oneLevelFactory = oneLevelGeckoViewModel.viewModelFactory
+
+    val emptyGeckoViewModel = GeckoViewModel()
+    val treeGeckoViewModel = GeckoViewModel()
+
+    var EMPTY_GECKO_JSON: String =
+        ("{\"model\":{\"id\":0,\"name\":\"Element_0\",\"code\":null,\"automaton\":{\"startState\":null,\"regions\""
+                + ":[],\"states\":[],\"edges\":[]},\"children\":[],\"connections\":[],\"variables\":[]},\"startStates"
+                + "\":[],\"viewModelProperties\":[]}")
+
+    var NON_NULL_AUTOMATON_JSON: String = "\"automaton\":{"
+    var NON_NULL_START_STATE_JSON: String = "\"startState\":{"
+    var NON_NULL_REGIONS_JSON: String = "\"regions\":[{"
+    var NON_NULL_REGION_STATES_JSON: String = "},\"states\":[{"
+    var NO_CHILDREN: String = "\"children\":[]"
+    var PRESENT_CHILDREN: String = "\"children\":[{\"id\":"
+
+    init {
+        Assertions.assertDoesNotThrow {
+            val port1 = oneLevelFactory.createPortViewModelIn(oneLevelRoot)
+            port1.visibility = Visibility.INPUT
+            port1.name = "emptyPort1"
+
+            val port2 = oneLevelFactory.createPortViewModelIn(oneLevelRoot)
+            port2.visibility = (Visibility.OUTPUT)
+            port2.name = "emptyPort2"
+        }
+
+        Assertions.assertThrows<ModelException>(ModelException::class.java) {
+            oneLevelFactory.createSystemConnectionViewModelIn(
+                oneLevelRoot,
+                oneLevelRoot.getVariableByName("emptyPort1")!!,
+                oneLevelRoot.getVariableByName("emptyPort2")!!
+            )
+        }
+
+        Assertions.assertDoesNotThrow {
+            oneLevelFactory.createRegionViewModelIn(oneLevelRoot)
+            val regionWithStates = oneLevelFactory.createRegionViewModelIn(oneLevelRoot)
+            regionWithStates.addState(oneLevelFactory.createStateViewModelIn(oneLevelRoot))
+        }
+
+        Assertions.assertDoesNotThrow {
+            val state1 = oneLevelFactory.createStateViewModelIn(oneLevelRoot)
+            val state2 = oneLevelFactory.createStateViewModelIn(oneLevelRoot)
+            oneLevelFactory.createContractViewModelIn(state2)
+
+            oneLevelFactory.createEdgeViewModelIn(oneLevelRoot, state1, state2)
+        }
+
+
+        val treeRoot = treeGeckoViewModel.root
+        val treeFactory = treeGeckoViewModel.viewModelFactory
+
+        Assertions.assertDoesNotThrow {
+            val child1 = treeFactory.createSystemViewModelIn(treeRoot)
+            child1.name = "child1"
+            val port1 = treeFactory.createPortViewModelIn(child1)
+            port1.visibility = (Visibility.OUTPUT)
+            port1.name = "treeVar1"
+            val region1 = treeFactory.createRegionViewModelIn(child1)
+            region1.addState(treeFactory.createStateViewModelIn(child1))
+
+            val child2 = treeFactory.createSystemViewModelIn(treeRoot)
+            child1.name = "child2"
+            val port2 = treeFactory.createPortViewModelIn(child2)
+            port2.visibility = (Visibility.INPUT)
+            port2.name = "treeVar2"
+            val region2 = treeFactory.createRegionViewModelIn(child2)
+            region2.addState(treeFactory.createStateViewModelIn(child2))
+
+            treeFactory.createSystemConnectionViewModelIn(treeRoot, port1, port2)
+
+            val child3 = treeFactory.createSystemViewModelIn(child2)
+            child1.name = "child3"
+        }
+
+        projectFileSerializerForEmpty = ProjectFileSerializer(emptyGeckoViewModel)
+        projectFileSerializerForOneLevel = ProjectFileSerializer(oneLevelGeckoViewModel)
+        projectFileSerializerForTree = ProjectFileSerializer(treeGeckoViewModel)
+    }
+
 
     @Test
     fun writeToFileEmpty() {
@@ -10,11 +102,13 @@ class ProjectFileSerializerTest {
         Assertions.assertDoesNotThrow { projectFileSerializerForEmpty!!.writeToFile(fileForEmpty) }
     }
 
+    /*
+
         @Test
         fun writeToFileOneLevel() {
             val fileForOneLevel = File("src/test/java/org/gecko/io/files/oneLevelGecko.json")
             Assertions.assertDoesNotThrow { projectFileSerializerForOneLevel!!.writeToFile(fileForOneLevel) }
-            var oneLevel: JsonNode? = null
+            var oneLevel: JsonNode
             try {
                 oneLevel = Companion.mapper.readTree(fileForOneLevel)
             } catch (e: IOException) {
@@ -35,7 +129,7 @@ class ProjectFileSerializerTest {
             val fileForTree = File("src/test/java/org/gecko/io/files/treeGecko.json")
             Assertions.assertDoesNotThrow { projectFileSerializerForTree!!.writeToFile(fileForTree) }
 
-            var tree: JsonNode? = null
+            var tree: JsonNode
             try {
                 tree = Companion.mapper.readTree(fileForTree)
             } catch (e: IOException) {
@@ -51,118 +145,11 @@ class ProjectFileSerializerTest {
             )
         }
 
-        var projectFileSerializerForEmpty: ProjectFileSerializer? = null
-        var projectFileSerializerForOneLevel: ProjectFileSerializer? = null
-        var projectFileSerializerForTree: ProjectFileSerializer? = null
-        val oneLevelGeckoViewModel = GeckoViewModel(GeckoModel())
-        val oneLevelRoot: SystemViewModel =
-            oneLevelGeckoViewModel.getViewModelElement(oneLevelGeckoViewModel.geckoModel.root) as SystemViewModel
-        val oneLevelFactory: ViewModelFactory = oneLevelGeckoViewModel.viewModelFactory
-        private var emptyGeckoViewModel: GeckoViewModel = GeckoViewModel(GeckoModel())
-        private var treeGeckoViewModel: GeckoViewModel? = null
-
-        var EMPTY_GECKO_JSON: String =
-            ("{\"model\":{\"id\":0,\"name\":\"Element_0\",\"code\":null,\"automaton\":{\"startState\":null,\"regions\""
-                    + ":[],\"states\":[],\"edges\":[]},\"children\":[],\"connections\":[],\"variables\":[]},\"startStates"
-                    + "\":[],\"viewModelProperties\":[]}")
-
-        var NON_NULL_AUTOMATON_JSON: String = "\"automaton\":{"
-        var NON_NULL_START_STATE_JSON: String = "\"startState\":{"
-        var NON_NULL_REGIONS_JSON: String = "\"regions\":[{"
-        var NON_NULL_REGION_STATES_JSON: String = "},\"states\":[{"
-        var NO_CHILDREN: String = "\"children\":[]"
-        var PRESENT_CHILDREN: String = "\"children\":[{\"id\":"
-        fun setUp() {
-            Assertions.assertDoesNotThrow {
-                val port1: PortViewModel = oneLevelFactory.createPortViewModelIn(oneLevelRoot)
-                port1.visibility = (Visibility.INPUT)
-                port1.name = "emptyPort1"
-                port1.updateTarget()
-
-                val port2: PortViewModel = oneLevelFactory.createPortViewModelIn(oneLevelRoot)
-                port2.visibility = (Visibility.OUTPUT)
-                port2.name = "emptyPort2"
-                port2.updateTarget()
-            }
-
-            Assertions.assertThrows<ModelException>(ModelException::class.java) {
-                oneLevelFactory.createSystemConnectionViewModelIn(
-                    oneLevelRoot,
-                    oneLevelGeckoViewModel.getViewModelElement(
-                        oneLevelRoot.getVariableByName("emptyPort1")
-                    ) as PortViewModel,
-                    oneLevelGeckoViewModel.getViewModelElement(
-                        oneLevelRoot.getVariableByName("emptyPort2")
-                    ) as PortViewModel
-                )
-            }
-
-            Assertions.assertDoesNotThrow {
-                oneLevelFactory.createRegionViewModelIn(oneLevelRoot)
-                val regionWithStates: RegionViewModel = oneLevelFactory.createRegionViewModelIn(oneLevelRoot)
-                regionWithStates.addState(oneLevelFactory.createStateViewModelIn(oneLevelRoot))
-                regionWithStates.updateTarget()
-            }
-
-            Assertions.assertDoesNotThrow {
-                val state1: StateViewModel = oneLevelFactory.createStateViewModelIn(oneLevelRoot)
-                val state2: StateViewModel = oneLevelFactory.createStateViewModelIn(oneLevelRoot)
-                oneLevelFactory.createContractViewModelIn(state2)
-
-                oneLevelFactory.createEdgeViewModelIn(oneLevelRoot, state1, state2)
-                state1.updateTarget()
-                state2.updateTarget()
-            }
-
-            try {
-                treeGeckoViewModel = GeckoViewModel(GeckoModel())
-            } catch (e: ModelException) {
-                Assertions.fail<Any>()
-            }
-
-            val treeRoot: SystemViewModel =
-                treeGeckoViewModel.getViewModelElement(treeGeckoViewModel.geckoModel.root) as SystemViewModel
-            val treeFactory: ViewModelFactory = treeGeckoViewModel.viewModelFactory
-
-            Assertions.assertDoesNotThrow {
-                val child1: SystemViewModel = treeFactory.createSystemViewModelIn(treeRoot)
-                child1.name = "child1"
-                val port1: PortViewModel = treeFactory.createPortViewModelIn(child1)
-                port1.visibility = (Visibility.OUTPUT)
-                port1.name = "treeVar1"
-                val region1: RegionViewModel = treeFactory.createRegionViewModelIn(child1)
-                region1.addState(treeFactory.createStateViewModelIn(child1))
-                child1.updateTarget()
-                port1.updateTarget()
-                region1.updateTarget()
-
-                val child2: SystemViewModel = treeFactory.createSystemViewModelIn(treeRoot)
-                child1.name = "child2"
-                val port2: PortViewModel = treeFactory.createPortViewModelIn(child2)
-                port2.visibility = (Visibility.INPUT)
-                port2.name = "treeVar2"
-                val region2: RegionViewModel = treeFactory.createRegionViewModelIn(child2)
-                region2.addState(treeFactory.createStateViewModelIn(child2))
-                child2.updateTarget()
-                port2.updateTarget()
-                region2.updateTarget()
-
-                treeFactory.createSystemConnectionViewModelIn(treeRoot, port1, port2)
-
-                val child3: SystemViewModel = treeFactory.createSystemViewModelIn(child2)
-                child1.name = "child3"
-                child3.updateTarget()
-            }
-
-            projectFileSerializerForEmpty = ProjectFileSerializer(emptyGeckoViewModel)
-            projectFileSerializerForOneLevel = ProjectFileSerializer(oneLevelGeckoViewModel)
-            projectFileSerializerForTree = ProjectFileSerializer(treeGeckoViewModel)
-        }
 
 
         @Test
         fun parse() {
-            var parsedEmptyGeckoViewModel: GeckoViewModel? = null
+            var parsedEmptyGeckoViewModel: GeckoViewModel
             val fileForEmpty = File("src/test/java/org/gecko/io/files/emptyGecko.json")
             val serializedParsedEmpty = File("src/test/java/org/gecko/io/files/serializedParsedEmptyGecko.json")
 
@@ -185,7 +172,7 @@ class ProjectFileSerializerTest {
 
         @Test
         fun parseOneLevel() {
-            var parsedOneLevelGeckoViewModel: GeckoViewModel? = null
+            var parsedOneLevelGeckoViewModel: GeckoViewModel
             val fileForOneLevel = File("src/test/java/org/gecko/io/files/oneLevelGecko.json")
             val serializedParsedOneLevel =
                 File("src/test/java/org/gecko/io/files/serializedParsedOneLevelGecko.json")
@@ -199,8 +186,8 @@ class ProjectFileSerializerTest {
             val serializer = ProjectFileSerializer(parsedOneLevelGeckoViewModel)
             Assertions.assertDoesNotThrow { serializer.writeToFile(serializedParsedOneLevel) }
 
-            var scanner1: Scanner? = null
-            var scanner2: Scanner? = null
+            var scanner1: Scanner
+            var scanner2: Scanner
             try {
                 scanner1 = Scanner(fileForOneLevel)
                 scanner1.useDelimiter("\"viewModelProperties\"")
@@ -218,7 +205,7 @@ class ProjectFileSerializerTest {
 
         @Test
         fun parseTree() {
-            var parsedTreeGeckoViewModel: GeckoViewModel? = null
+            var parsedTreeGeckoViewModel: GeckoViewModel
             val fileForTree = File("src/test/java/org/gecko/io/files/treeGecko.json")
             val serializedParsedTree = File("src/test/java/org/gecko/io/files/serializedParsedTreeGecko.json")
             try {
@@ -231,8 +218,8 @@ class ProjectFileSerializerTest {
             val serializer = ProjectFileSerializer(parsedTreeGeckoViewModel)
             Assertions.assertDoesNotThrow { serializer.writeToFile(serializedParsedTree) }
 
-            var scanner1: Scanner? = null
-            var scanner2: Scanner? = null
+            var scanner1: Scanner
+            var scanner2: Scanner
             try {
                 scanner1 = Scanner(fileForTree)
                 scanner1.useDelimiter("\"viewModelProperties\"")

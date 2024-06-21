@@ -1,6 +1,6 @@
 package org.gecko.view.inspector.element
 
-import javafx.scene.control.*
+import javafx.scene.control.Separator
 
 /**
  * Represents a type of [Separator], implementing the [InspectorElement] interface. Serves as delimiter
