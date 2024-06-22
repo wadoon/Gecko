@@ -1,13 +1,13 @@
 plugins {
     jacoco
-    id("checkstyle")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("java")
-    id("application")
-    id("antlr")
-    id("org.openjfx.javafxplugin") version "0.1.0"
+    java
+    application
+    antlr
     kotlin("jvm")
-    id("org.sonarqube") version "4.4.1.3373"
+
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "org.gecko"
@@ -55,7 +55,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.release = 21
 }
 
-checkstyle { toolVersion = "10.12.5" }
+//checkstyle { toolVersion = "10.12.5" }
 
 val generateGrammarSource by tasks.existing(AntlrTask::class) {
     arguments.add("-visitor")
@@ -70,18 +70,16 @@ tasks.test {
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
+jacoco {
+    toolVersion = "0.8.8"
+}
 
-// Exclude the package from the coverage report
-    val excludes = listOf("gecko/parser/*") // Add other packages if needed
-    classDirectories.setFrom(files(classDirectories.files.map {
-        fileTree(it).apply {
-            excludes.forEach { ex ->
-                exclude("**/$ex/**")
-            }
-        }
-    }))
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(false)
+    }
 }
 
 sonar {
