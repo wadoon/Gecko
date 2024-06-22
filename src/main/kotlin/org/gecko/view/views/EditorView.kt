@@ -216,11 +216,11 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     }
 
     fun initializeViewElements() {
-        viewModel.containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement? ->
+        viewModel.containedPositionableViewModelElementsProperty.forEach { element: PositionableViewModelElement? ->
             this.addElement(
                 element
             )
-        })
+        }
         postUpdate()
     }
 
@@ -268,7 +268,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
                 toRemove.add(element)
             }
         }
-        toRemove.forEach(Consumer { o: PositionableViewModelElement -> oldValue.remove(o) })
+        toRemove.forEach { o: PositionableViewModelElement -> oldValue.remove(o) }
 
         oldValue
             .map { this.findViewElement(it) }

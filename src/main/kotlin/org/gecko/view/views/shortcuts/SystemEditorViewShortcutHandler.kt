@@ -27,9 +27,9 @@ class SystemEditorViewShortcutHandler(actionManager: ActionManager, editorView: 
 
     fun addCreatorShortcuts() {
         val creatorTools = listOf(ToolType.SYSTEM_CREATOR, ToolType.CONNECTION_CREATOR, ToolType.VARIABLE_BLOCK_CREATOR)
-        creatorTools.forEach(Consumer { tool: ToolType ->
+        creatorTools.forEach { tool: ToolType ->
             shortcuts[tool.keyCodeCombination] = { actionManager.run(actionFactory.createSelectToolAction(tool)) }
-        })
+        }
     }
 }
 

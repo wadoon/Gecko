@@ -17,7 +17,7 @@ class InspectorCollapseContractButton(fields: List<InspectorAreaField>) : Abstra
         setPrefSize(DEFAULT_SIZE.toDouble(), DEFAULT_SIZE.toDouble())
 
         onAction = EventHandler { event: ActionEvent? ->
-            fields.forEach(Consumer { obj: InspectorAreaField -> obj.toggleExpand() })
+            fields.forEach { obj: InspectorAreaField -> obj.toggleExpand() }
             expanded = !expanded
             if (expanded) {
                 styleClass.remove(ICON_STYLE_NAME)

@@ -37,6 +37,7 @@ data class StateViewModel(
 
 
     init {
+        name = AutoNaming.name("State_")
         addEdgeListeners()
     }
 
@@ -121,9 +122,8 @@ data class StateViewModel(
     }
 
     fun getOtherEdgePoint(edge: EdgeViewModel): Point2D {
-        if (edge.source == this) {
+        if (edge.source == this)
             return edge.destination.center
-        }
         return edge.source.center
     }
 
@@ -218,5 +218,5 @@ data class StateViewModel(
     }
 
     override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
-        StateInspectorBuilder(actionManager, null, this)
+        StateInspectorBuilder(actionManager, this)
 }

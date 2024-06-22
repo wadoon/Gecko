@@ -16,7 +16,6 @@ import org.gecko.view.inspector.element.combobox.InspectorContractComboBox
 import org.gecko.view.inspector.element.container.*
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.view.inspector.element.list.InspectorContractList
-import org.gecko.view.inspector.element.list.InspectorRegionList
 import org.gecko.view.inspector.element.list.InspectorVariableList
 import org.gecko.view.inspector.element.textfield.InspectorRenameField
 import org.gecko.view.inspector.element.textfield.InspectorVariableValueField
@@ -165,13 +164,14 @@ class RegionInspectorBuilder(actionManager: ActionManager, viewModel: RegionView
  * [RegionViewModel] of the [StateViewModel], an [InspectorSetStartStateButton] and an
  * [InspectorContractList].
  */
-class StateInspectorBuilder(actionManager: ActionManager, editorViewModel: EditorViewModel, viewModel: StateViewModel) :
+class StateInspectorBuilder(actionManager: ActionManager, viewModel: StateViewModel) :
     AbstractInspectorBuilder<StateViewModel>(actionManager, viewModel) {
     init {
         // Region label
         addInspectorElement(InspectorLabel(ResourceHandler.region_plural))
-        val regionViewModelList = editorViewModel.getRegionViewModels(viewModel)
-        addInspectorElement(InspectorRegionList(regionViewModelList))
+
+        //val regionViewModelList = editorViewModel.getRegionViewModels(viewModel)
+        //addInspectorElement(InspectorRegionList(regionViewModelList))
 
         addInspectorElement(InspectorSeparator())
 

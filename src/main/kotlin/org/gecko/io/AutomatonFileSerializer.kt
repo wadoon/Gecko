@@ -2,76 +2,69 @@ package org.gecko.io
 
 import org.gecko.exceptions.ModelException
 import org.gecko.viewmodel.*
-import java.io.File
-import java.io.IOException
-import java.nio.file.Files
+import java.io.PrintWriter
+import java.io.Writer
 import java.util.*
-import java.util.function.BiFunction
-import java.util.function.Function
 
 /**
  * The AutomatonFileSerializer is used to export a project to a sys file. When exporting, it transforms features unique
  * to Gecko, such as regions, kinds and priorities, to be compatible with the sys file format.
  */
 class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
-    @Throws(IOException::class)
-    override fun writeToFile(file: File) {
-        val joiner = StringJoiner(System.lineSeparator())
-        if (model.globalDefines != null) {
-            joiner.add(model.globalDefines)
-            joiner.add("")
+    lateinit var out: PrintWriter
+
+    override fun writeToStream(w: Writer) {
+        out = PrintWriter(w)
+
+        if (model.globalDefines.isNotEmpty()) {
+            out.write("defines {")
+            model.globalDefines.forEach {
+                out.format("\t%s : %s := %s\n", it.name, it.type, it.value)
+            }
+            out.write("}\n\n")
         }
-        if (model.globalCode != null) {
-            joiner.add(serializeCode(model.globalCode!!))
-            joiner.add("")
+
+        model.globalCode?.let {
+            if (it.isNotBlank()) {
+                serializeCode(it)
+                out.write("\n")
+            }
         }
-        joiner.add(serializeAutomata(model))
-        joiner.add(serializeSystems(model))
-        Files.writeString(file.toPath(), joiner.toString())
+
+        serializeAutomata(model)
+        serializeSystems(model)
     }
 
-    fun serializeAutomata(model: GeckoViewModel): String {
-        val relevantSystems = model.allSystems
-        return serializeCollectionWithMapping(relevantSystems) { this.serializeAutomaton(it) }
-    }
 
-    fun serializeSystems(model: GeckoViewModel): String {
-        return serializeCollectionWithMapping(model.allSystems) { system: SystemViewModel? ->
-            this.serializeSystem(
-                system
-            )
-        }
-    }
+    private fun serializeAutomata(model: GeckoViewModel) =
+        model.allSystems.forEach { serializeAutomaton(it) }
 
-    fun serializeAutomaton(system: SystemViewModel): String {
+    private fun serializeSystems(model: GeckoViewModel) =
+        model.allSystems.forEach { serializeSystem(it) }
+
+    private fun serializeAutomaton(system: SystemViewModel) {
         val automaton = system.automaton
-        val joiner = StringJoiner(System.lineSeparator())
-        joiner.add(AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT.format(system.name))
+
+        out.format(AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT, system.name)
+
         if (system.ports.isNotEmpty()) {
-            joiner.add(serializeIo(system))
-            joiner.add("")
+            serializeIo(system)
+            out.write("\n")
         }
-        joiner.add(
-            serializeCollectionWithMapping(
-                automaton.states,
-                { state, automaton -> this.serializeStateContracts(state, automaton) },
-                automaton
-            )
-        )
-        joiner.add("")
+        automaton.states.forEach { state -> this.serializeStateContracts(state, automaton) }
+        out.write("\n")
         val relevantEdges = automaton.edges.filter { edge: EdgeViewModel -> edge.contract != null }
-        joiner.add(serializeCollectionWithMapping(relevantEdges) { edge: EdgeViewModel -> this.serializeTransition(edge) })
-        joiner.add("}")
-        joiner.add("")
-        return joiner.toString()
+        relevantEdges.forEach { edge -> this.serializeTransition(edge) }
+        out.write("}")
+        out.write("\n")
     }
 
-    fun serializeStateContracts(state: StateViewModel, automaton: AutomatonViewModel): String {
+    private fun serializeStateContracts(state: StateViewModel, automaton: AutomatonViewModel) {
         //Edges are used so much here because contracts don't have priorities or kinds and only states can be in regions
         val relevantRegions = automaton.getRegionsWithState(state)
         val edges = automaton.getOutgoingEdges(state).filter { it.contract != null }
         if (edges.isEmpty()) {
-            return ""
+            return
         }
         //Creating new contracts to not alter the model
         val newContracts: MutableMap<EdgeViewModel, ContractViewModel> = HashMap()
@@ -105,8 +98,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         }
 
         //applying priorites
-        var prioIndex = 0
-        for (edgeGroup in groupedEdges) {
+        for ((prioIndex, edgeGroup) in groupedEdges.withIndex()) {
             for (edge in edgeGroup) {
                 if (prioIndex == 0) {
                     continue  //Highest prio doesn't need to be altered
@@ -116,11 +108,8 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
                     contractWithPrio.preCondition.and(allLowerPrioPreConditions[prioIndex - 1].not()).value
                 newContracts[edge] = contractWithPrio
             }
-            prioIndex++
         }
-        return serializeCollectionWithMapping(newContracts.values) { contract: ContractViewModel ->
-            this.serializeContract(contract)
-        }
+        newContracts.values.forEach { this.serializeContract(it) }
     }
 
     @Throws(ModelException::class)
@@ -136,7 +125,10 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         }
     }
 
-    fun applyRegionsToContract(relevantRegions: List<RegionViewModel>, contract: ContractViewModel): ContractViewModel {
+    private fun applyRegionsToContract(
+        relevantRegions: List<RegionViewModel>,
+        contract: ContractViewModel
+    ): ContractViewModel {
         val newContract: ContractViewModel
         try {
             newContract = ContractViewModel(contract.name, contract.preCondition, contract.postCondition)
@@ -152,7 +144,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         return newContract
     }
 
-    fun andConditions(regions: List<RegionViewModel>): Pair<Condition, Condition> {
+    private fun andConditions(regions: List<RegionViewModel>): Pair<Condition, Condition> {
         val c = regions.first()
         val first = c.contract
 
@@ -169,77 +161,61 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
 
         for (i in 1 until regions.size) {
             val region = regions[i]
-            val c = region.contract
-            newPre = newPre.and(c.preCondition)
+            val con = region.contract
+            newPre = newPre.and(con.preCondition)
             newPre = newPre.and(region.invariant)
-            newPost = newPost.and(c.postCondition)
+            newPost = newPost.and(con.postCondition)
             newPost = newPost.and(region.invariant)
         }
         return newPre to newPost
     }
 
-    fun serializeContract(contract: ContractViewModel?): String {
-        return INDENT + SERIALIZED_CONTRACT.format(
-            contract?.name, contract!!.preCondition, contract.postCondition
-        )
+    private fun serializeContract(contract: ContractViewModel) {
+        out.write(INDENT)
+        out.format(SERIALIZED_CONTRACT, contract.name, contract.preCondition, contract.postCondition)
     }
 
-    fun serializeTransition(edge: EdgeViewModel): String {
-        return INDENT + SERIALIZED_TRANSITION.format(
-            edge.source.name, edge.destination.name,
-            getContractName(edge)
-        )
+    private fun serializeTransition(edge: EdgeViewModel) {
+        out.write(INDENT)
+        out.format(SERIALIZED_TRANSITION, edge.source.name, edge.destination.name, getContractName(edge))
     }
 
-    fun serializeSystem(system: SystemViewModel?): String {
-        val joiner = StringJoiner(System.lineSeparator())
-        joiner.add(SERIALIZED_SYSTEM.format(system!!.name))
+    private fun serializeSystem(system: SystemViewModel) {
+        out.format(SERIALIZED_SYSTEM, system.name)
 
         if (system.ports.isNotEmpty()) {
-            joiner.add(serializeIo(system))
-            joiner.add("")
+            serializeIo(system)
+            out.write("\n")
         }
         if (system.subSystems.isNotEmpty()) {
-            joiner.add(serializeChildren(system))
-            joiner.add("")
+            serializeChildren(system)
+            out.write("\n")
         }
-        if (system.automaton != null && system.automaton != null) {
-            joiner.add(INDENT + SERIALIZED_CONTRACT_NAME.format(system.name))
-            joiner.add("")
-        }
+        out.write(INDENT)
+        out.format(SERIALIZED_CONTRACT_NAME, system.name)
+        out.write("\n")
         if (system.connections.isNotEmpty()) {
-            joiner.add(serializeConnections(system))
-            joiner.add("")
+            serializeConnections(system)
+            out.write("\n")
         }
-        if (system.code != null) {
-            joiner.add(serializeCode(system.code))
-        }
-        joiner.add("}")
-        joiner.add("")
-        return joiner.toString()
+        serializeCode(system.code)
+        out.write("}")
+        out.write("\n")
     }
 
-    fun serializeConnections(system: SystemViewModel?): String {
-        return serializeCollectionWithMapping(
-            system!!.connections, { connection, parent ->
-                this.serializeConnection(
-                    connection,
-                    parent
-                )
-            },
-            system
-        )
-    }
+    private fun serializeConnections(system: SystemViewModel) =
+        system.connections.forEach { this.serializeConnection(it, system) }
 
-    fun serializeConnection(connection: SystemConnectionViewModel, parent: SystemViewModel?): String {
+    private fun serializeConnection(connection: SystemConnectionViewModel, parent: SystemViewModel) {
         val startSystem = serializeSystemReference(parent, connection.source!!)
         val startPort = connection.source?.name
         val endSystem = serializeSystemReference(parent, connection.destination!!)
         val endPort = connection.destination?.name
-        return String.format(INDENT + SERIALIZED_CONNECTION, startSystem, startPort, endSystem, endPort)
+        out.write(INDENT)
+        out.format(SERIALIZED_CONNECTION, startSystem, startPort, endSystem, endPort)
     }
 
-    fun serializeSystemReference(parent: SystemViewModel?, v: PortViewModel): String {
+    private fun serializeSystemReference(parent: SystemViewModel?, v: PortViewModel): String {
         return if (parent!!.ports.contains(v)) {
             AutomatonFileVisitor.SELF_REFERENCE_TOKEN
         } else {
@@ -247,20 +223,18 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         }
     }
 
-    fun serializeIo(system: SystemViewModel): String {
+    private fun serializeIo(system: SystemViewModel) {
         val orderedVariables = system.ports.sorted(Comparator.comparing { it.visibility })
-        return serializeCollectionWithMapping(orderedVariables) { this.serializeVariable(it) }
+        orderedVariables.forEach { this.serializeVariable(it) }
     }
 
-    fun serializeChildren(system: SystemViewModel): String {
-        return serializeCollectionWithMapping(system.subSystems) { this.serializeChild(it) }
-    }
+    private fun serializeChildren(system: SystemViewModel) =
+        system.subSystems.forEach { this.serializeChild(it) }
 
-    fun serializeChild(system: SystemViewModel): String {
-        return String.format(INDENT + SERIALIZED_STATE, system.name, system.name)
-    }
+    private fun serializeChild(system: SystemViewModel): String =
+        String.format(INDENT + SERIALIZED_STATE, system.name, system.name)
 
-    fun serializeVariable(variable: PortViewModel): String {
+    private fun serializeVariable(variable: PortViewModel): String {
         var output = ""
         output += INDENT + when (variable.visibility) {
             Visibility.INPUT -> SERIALIZED_INPUT
@@ -274,37 +248,10 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         return output
     }
 
-    fun serializeCode(code: String): String {
-        return INDENT + AutomatonFileVisitor.CODE_BEGIN + code + AutomatonFileVisitor.CODE_END
-    }
+    private fun serializeCode(code: String) =
+        out.write(INDENT + AutomatonFileVisitor.CODE_BEGIN + code + AutomatonFileVisitor.CODE_END)
 
-    fun <T> serializeCollectionWithMapping(collection: Collection<T>?, mapping: Function<T, String>): String {
-        val joiner = StringJoiner(System.lineSeparator())
-        for (item in collection!!) {
-            val result = mapping.apply(item)
-            if (result == null || result.isBlank()) {
-                continue
-            }
-            joiner.add(result)
-        }
-        return joiner.toString()
-    }
-
-    fun <T, S> serializeCollectionWithMapping(
-        collection: Collection<T>, mapping: BiFunction<T, S, String>, additionalArg: S
-    ): String {
-        val joiner = StringJoiner(System.lineSeparator())
-        for (item in collection) {
-            val result = mapping.apply(item, additionalArg)
-            if (result == null || result.isBlank()) {
-                continue
-            }
-            joiner.add(result)
-        }
-        return joiner.toString()
-    }
-
-    fun getContractName(edge: EdgeViewModel): String {
+    private fun getContractName(edge: EdgeViewModel): String {
         val name = edge.contract?.name
         if (edge.kind == Kind.HIT) {
             return name!!
@@ -312,15 +259,13 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         return makeNameUnique("%s %s".format(name, edge.kind.name))
     }
 
-    fun makeNameUnique(baseName: String): String {
-        return baseName
-    }
+    private fun makeNameUnique(baseName: String): String = baseName
 
     companion object {
         const val INDENT = "    "
         const val SERIALIZED_CONTRACT_NAME = "contract %s"
-        const val AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT = SERIALIZED_CONTRACT_NAME + " {"
-        const val SERIALIZED_CONTRACT = SERIALIZED_CONTRACT_NAME + " := %s ==> %s"
+        const val AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT = "$SERIALIZED_CONTRACT_NAME {"
+        const val SERIALIZED_CONTRACT = "$SERIALIZED_CONTRACT_NAME := %s ==> %s"
         const val SERIALIZED_TRANSITION = "%s -> %s :: %s"
         const val SERIALIZED_SYSTEM = "reactor %s {"
         const val SERIALIZED_CONNECTION = "%s.%s -> %s.%s"

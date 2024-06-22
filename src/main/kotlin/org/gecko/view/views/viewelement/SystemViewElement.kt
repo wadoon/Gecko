@@ -57,11 +57,11 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
     override var isSelected: Boolean = false
 
     override val position: Point2D
-        get() = position
+        get() = target.position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)
-        portViewElements.forEach(Consumer { portViewElement: PortViewElement -> visitor.visit(portViewElement) })
+        portViewElements.forEach { portViewElement: PortViewElement -> visitor.visit(portViewElement) }
     }
 
     fun bindViewModel() {
@@ -85,7 +85,7 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
         val portContainers = setupPortContainers()
         container.children.addAll(portContainers.first(), centeredNameLabel, portContainers.last())
         children.addAll(backgroundRectangle, container)
-        portsProperty.forEach(Consumer { portViewModel: PortViewModel? -> this.addPort(portViewModel) })
+        portsProperty.forEach { portViewModel: PortViewModel? -> this.addPort(portViewModel) }
         portsProperty.addListener { change: ListChangeListener.Change<out PortViewModel> ->
             this.onPortsChanged(change)
         }

@@ -21,11 +21,11 @@ class DeleteStateViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        wasStartState = stateViewModel == automaton.startState
+        /*wasStartState = stateViewModel == automaton.startState
         if (wasStartState && automaton.states.size > 1) {
             val states = automaton.states
             val newStartState = states.find { it != stateViewModel }
-        }
+        }*/
 
         // remove from region if it is in one
         val regionViewModels = editorViewModel.containedPositionableViewModelElementsProperty
@@ -34,11 +34,11 @@ class DeleteStateViewModelElementAction internal constructor(
             .map { element: PositionableViewModelElement -> element as RegionViewModel }
             .collect(Collectors.toSet())
 
-        regionViewModels.forEach(Consumer { regionViewModel: RegionViewModel ->
+        regionViewModels.forEach { regionViewModel: RegionViewModel ->
             regionViewModel.removeState(
                 stateViewModel
             )
-        })
+        }
 
         automaton.removeState(stateViewModel)
         geckoViewModel.deleteViewModelElement(stateViewModel)

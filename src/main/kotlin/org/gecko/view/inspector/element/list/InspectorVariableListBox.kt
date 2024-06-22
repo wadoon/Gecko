@@ -7,7 +7,6 @@ import org.gecko.view.inspector.element.container.InspectorVariableField
 import org.gecko.viewmodel.PortViewModel
 import org.gecko.viewmodel.SystemViewModel
 import org.gecko.viewmodel.Visibility
-import java.util.function.Consumer
 
 /**
  * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorVariableField].
@@ -26,11 +25,11 @@ class InspectorVariableListBox(
 
         viewModel.ports.stream().filter { port: PortViewModel -> port.visibility == visibility }
             .forEach { port: PortViewModel -> this.addPortItem(port) }
-        viewModel.ports.forEach(Consumer<PortViewModel> { port: PortViewModel ->
+        viewModel.ports.forEach { port: PortViewModel ->
             port.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
                 this.onVisibilityChanged(observable)
             }
-        })
+        }
     }
 
     fun onPortsListChanged(change: ListChangeListener.Change<out PortViewModel>) {

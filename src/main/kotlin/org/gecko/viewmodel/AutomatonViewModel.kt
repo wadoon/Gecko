@@ -7,10 +7,12 @@ import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.views.EditorView
-import org.gecko.view.views.shortcuts.AutomatonEditorViewShortcutHandler
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
+
+
+val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)
 
 /**
  * Represents an abstraction of a [System] model element. A [AutomatonViewModel] is described by a code snippet
@@ -29,23 +31,15 @@ data class AutomatonViewModel(
     var states by statesProperty
     var regions by regionsProperty
 
+    init {
+        name = AutoNaming.name("Automaton_")
+    }
+
     val allElements: MutableList<PositionableViewModelElement>
         get() = (states + edges + regions).toMutableList()
 
     override val children: Sequence<Element>
         get() = states.asSequence() + edges.asSequence() + regions.asSequence()
-
-    var startState: StateViewModel? = null
-        /**
-         * Sets the start state of the automaton of the system.
-         *
-         * @param value the new start state
-         */
-        set(value) {
-            field?.let { it.isStartState = false }
-            value?.isStartState = true
-            field = value
-        }
 
     init {
         size = DEFAULT_SYSTEM_SIZE
@@ -78,17 +72,11 @@ data class AutomatonViewModel(
     fun addRegion(target: RegionViewModel) = regionsProperty.add(target)
     fun addEdge(edge: EdgeViewModel) = edges.add(edge)
 
-    companion object {
-        val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)
-    }
-
     override fun editor(actionManager: ActionManager, geckoView: GeckoView): EditorView {
         TODO("Not yet implemented")
     }
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
-        val v = EditorView(actionManager, this, geckoView)
-        v.shortcutHandler = AutomatonEditorViewShortcutHandler(actionManager, geckoView)
-        return v
+        TODO()
     }
 }

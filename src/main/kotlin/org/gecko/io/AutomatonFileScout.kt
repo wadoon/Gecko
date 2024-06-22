@@ -22,8 +22,7 @@ class AutomatonFileScout(ctx: ModelContext) {
 
 
     val rootChildren: MutableSet<SystemContext> = HashSet()
-    val parents: MutableMap<SystemContext?, MutableList<SystemContext>> =
-        HashMap()
+    val parents = HashMap<SystemContext, MutableList<SystemContext>>()
 
     val scoutVisitor: ScoutVisitor
 
@@ -32,38 +31,27 @@ class AutomatonFileScout(ctx: ModelContext) {
         ctx.accept(scoutVisitor)
     }
 
-    fun getSystem(name: String): SystemContext? {
-        return systems[name]
-    }
+    fun getSystem(name: String) = systems[name]
 
-    fun getAutomaton(name: String): AutomataContext? {
-        return automata[name]
-    }
+    fun getAutomaton(name: String) = automata[name]
 
-    fun getContract(name: String): PrepostContext? {
-        return contracts[name]
-    }
+    fun getContract(name: String) = contracts[name]
 
-    fun getParents(ctx: SystemContext?): List<SystemContext> {
-        return parents[ctx]!!
-    }
+    fun getParents(ctx: SystemContext) = parents[ctx] ?: listOf()
 
-    fun getChildSystemInfos(ctx: SystemContext): List<SystemInfo> {
-        return scoutVisitor.getChildSystems(ctx)
-    }
+    fun getChildSystemInfos(ctx: SystemContext) = scoutVisitor.getChildSystems(ctx)
 
     inner class ScoutVisitor : SystemDefBaseVisitor<Unit>() {
         override fun visitModel(ctx: ModelContext) {
-            ctx.system().forEach(Consumer { system: SystemContext -> system.accept(this) })
-            ctx.system().forEach(Consumer { systemContext: SystemContext -> this.registerParent(systemContext) })
-            ctx.contract().forEach(Consumer { contract: ContractContext -> contract.accept(this) })
+            ctx.system().forEach { system: SystemContext -> system.accept(this) }
+            ctx.system().forEach { systemContext: SystemContext -> this.registerParent(systemContext) }
+            ctx.contract().forEach { contract: ContractContext -> contract.accept(this) }
             val defines = ctx.defines()
-            defines?.variable()
-                ?.forEach(Consumer { variable: VariableContext ->
-                    variable.accept(
-                        this
-                    )
-                })
+            defines?.variable()?.forEach { variable: VariableContext ->
+                variable.accept(
+                    this
+                )
+            }
             foundChildren.stream().map(SystemInfo::type).toList().forEach(
                 Consumer { o: String -> rootChildrenIdents.remove(o) })
             rootChildren.addAll(ctx.system()

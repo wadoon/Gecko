@@ -6,30 +6,23 @@ import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
-import org.gecko.exceptions.ModelException
-
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.*
 import java.util.*
 
 /**
- * Used for building a [GeckoModel] from a sys file. This class is a visitor for the ANTLR4 generated parser for
- * the sys file format. The entire [GeckoModel] can be built by calling [.visitModel] and passing it the
+ * Used for building a [GeckoViewModel] from a sys file. This class is a visitor for the ANTLR4 generated parser for
+ * the sys file format. The entire [GeckoViewModel] can be built by calling [.visitModel] and passing it the
  * [SystemDefParser.ModelContext] of a sys file.
  */
 class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     var model: GeckoViewModel = GeckoViewModel()
-    val warnings: MutableSet<String>
+    val warnings: MutableSet<String> = TreeSet()
 
-    var currentSystem: SystemViewModel
-    var nextSystemName: String? = null
-    var scout: AutomatonFileScout? = null
-    var elementsCreated = 0u
+    var currentSystem = model.root
+    private lateinit var scout: AutomatonFileScout
 
-    init {
-        this.warnings = TreeSet()
-        currentSystem = model.root
-    }
+    var instanceName: String? = null
 
     override fun visitModel(ctx: ModelContext) {
         val scout = AutomatonFileScout(ctx)
@@ -38,51 +31,57 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         if (hasCyclicChildSystems(ctx)) {
             throw RuntimeException("Cyclic child systems found")
         }
-        val rootName: String?
-        if (scout.rootChildren.size == 1) {
-            rootName = scout.rootChildren.iterator().next().ident().text
-        } else if (scout.rootChildren.size > 1) {
-            val rootNames = scout.rootChildren.stream().map { ctx1: SystemContext -> ctx1.ident().text }
-                .toList()
-            rootName = makeUserChooseSystem(rootNames)
-            if (rootName == null) {
-                throw RuntimeException("No root system chosen")
+
+        val rootName: String =
+            if (scout.rootChildren.size == 1) {
+                scout.rootChildren.first().ident().text
+            } else if (scout.rootChildren.size > 1) {
+                val rootNames = scout.rootChildren.map { it.ident().text }
+                makeUserChooseSystem(rootNames)
+            } else {
+                throw RuntimeException("No root system found")
             }
-        } else {
-            throw RuntimeException("No root system found")
-        }
-        scout.getSystem(rootName!!)!!.accept(this)
+
+        scout.getSystem(rootName)!!.accept(this)
         val newRoot = model.root.subSystems.first()
         newRoot.parent = null
         model = GeckoViewModel(newRoot)
         if (ctx.globalCode != null) {
             model.globalCode = cleanCode(ctx.globalCode.text)
         }
+
         if (ctx.defines() != null) {
-            model.globalDefines = ctx.defines().text
+            val constants = ctx.defines().variable().flatMap {
+                it.n.map { name ->
+                    Constant(name.text, it.t.text, it.init.text)
+                }
+            }
+            model.globalDefines.setAll(constants)
         }
     }
 
     override fun visitSystem(ctx: SystemContext) {
-        val system = buildSystem(ctx)
+        val system: SystemViewModel = currentSystem.createSubSystem()
+        system.name = instanceName ?: ctx.ident().Ident().text
+        if (ctx.reaction() != null) {
+            system.code = cleanCode(ctx.reaction().text)
+        }
         currentSystem = system
-        for (io in ctx.io()) {
-            io.accept(this)
-        }
-        for (child in scout!!.getChildSystemInfos(ctx)) {
-            if (scout!!.getSystem(child.type) == null) {
-                throw RuntimeException(String.format("System %s not found", child.type))
+
+        for (io in ctx.io()) io.accept(this)
+
+        scout.getChildSystemInfos(ctx)
+            .forEach {
+                val ctx = scout.getSystem(it.type) ?: error(String.format("System %s not found", it.type))
+                instanceName = it.name
+                ctx.accept(this)
             }
-            val childCtx = scout!!.getSystem(child.type)
-            nextSystemName = child.name
-            childCtx!!.accept(this)
-        }
-        for (connection in ctx.connection()) {
-            connection.accept(this)
-        }
+
+        ctx.connection().forEach { it.accept(this) }
+
         if (ctx.use_contracts().isNotEmpty()) {
-            if (ctx.use_contracts().size > 1 || ctx.use_contracts().first().use_contract().size > 1) {
-                throw RuntimeException("Multiple automata in one system are not supported")
+            require(ctx.use_contracts().size == 1 && ctx.use_contracts().first().use_contract().size == 1) {
+                "Multiple automata in one system are not supported"
             }
             ctx.use_contracts().first().use_contract().first().accept(this)
         }
@@ -90,7 +89,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     override fun visitUse_contract(ctx: Use_contractContext) {
-        val automata = scout!!.getAutomaton(ctx.ident().text)
+        val automata = scout.getAutomaton(ctx.ident().text)
             ?: throw RuntimeException(String.format("Automaton %s not found", ctx.ident().text))
         automata.accept(this)
         for (subst in ctx.subst()) {
@@ -116,34 +115,19 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         if (ctx.history().isNotEmpty()) {
             warnings.add(String.format("Automaton %s has history, which is ignored", ctx.ident().text))
         }
+
         if (ctx.use_contracts().isNotEmpty()) {
             warnings.add(String.format("Automaton %s has use_contracts, which are be ignored", ctx.ident().text))
         }
+
         if (ctx.transition().isEmpty()) {
             warnings.add(String.format("Automaton %s has no transitions", ctx.ident().text))
         }
-        for (transition in ctx.transition()) {
+
+        for (transition in ctx.transition())
             transition.accept(this)
-        }
-        val startStateCandidates = currentSystem.automaton
-            .states
-            .filter { state: StateViewModel -> state.name.matches(START_STATE_REGEX.toRegex()) }
-        if (startStateCandidates.size > 1) {
-            throw RuntimeException(String.format("Multiple start states found in automaton %s", ctx.ident().text))
-        } else if (startStateCandidates.size == 1) {
-            try {
-                currentSystem.automaton.startState = startStateCandidates.first()
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
-        } else {
-            try {
-                //this should always work because if we have a transition, we have a state
-                currentSystem.automaton.startState = currentSystem.automaton.states.iterator().next()
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
-        }
+
+        currentSystem.automaton.states.forEach { it.isStartState = it.name[0].isLowerCase() }
     }
 
     override fun visitTransition(ctx: TransitionContext) {
@@ -154,36 +138,24 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         val endName = ctx.to.text
         var start = currentSystem.automaton.getStateByName(startName)
         if (start == null) {
-            try {
-                start = currentSystem.automaton.createState()
-                elementsCreated++
-                start.name = startName
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
+            start = currentSystem.automaton.createState()
+
+            start.name = startName
+
         }
         var end = currentSystem.automaton.getStateByName(endName)
         if (end == null) {
-            try {
-                end = currentSystem.automaton.createState()
-                elementsCreated++
-                end.name = endName
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
+            end = currentSystem.automaton.createState()
+
+            end.name = endName
         }
         val contract = if (ctx.contr != null) {
-            buildContract(start, scout!!.getContract(ctx.contr.text))
+            buildContract(start, scout.getContract(ctx.contr.text))
         } else {
             buildContract(start, ctx.pre.text, ctx.post.text)
         }
-        val edge: EdgeViewModel
-        try {
-            edge = currentSystem.automaton.createEdge(start, end)
-            elementsCreated++
-        } catch (e: ModelException) {
-            throw RuntimeException(e.message)
-        }
+        val edge: EdgeViewModel = currentSystem.automaton.createEdge(start, end)
+
         edge.contract = contract
     }
 
@@ -197,7 +169,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         for (variable in ctx.variable()) {
             if (!builtinTypes.contains(variable.t.text)) {
                 if (visibility == Visibility.STATE) {
-                    if (scout!!.getSystem(variable.t.text) != null) {
+                    if (scout.getSystem(variable.t.text) != null) {
                         return
                     } else {
                         throw RuntimeException("State type must be a system or builtin type")
@@ -207,21 +179,17 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
                 }
             }
             for (ident in variable.n) {
-                if (currentSystem.getVariableByName(ident.Ident().text) != null || scout!!.getSystem(ident.text) != null
+                if (currentSystem.getVariableByName(ident.Ident().text) != null || scout.getSystem(ident.text) != null
                 ) {
                     continue
                 }
-                try {
-                    val v = currentSystem.createVariable()
-                    elementsCreated++
-                    v.name = (ident.Ident().text)
-                    v.type = (variable.t.text)
-                    v.visibility = (visibility)
-                    if (variable.init != null) {
-                        v.value = variable.init.text
-                    }
-                } catch (e: ModelException) {
-                    throw RuntimeException(e.message)
+                val v = currentSystem.createVariable()
+
+                v.name = (ident.Ident().text)
+                v.type = (variable.t.text)
+                v.visibility = (visibility)
+                if (variable.init != null) {
+                    v.value = variable.init.text
                 }
             }
         }
@@ -241,78 +209,29 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
                 ?: throw RuntimeException(String.format("Could not find variable %s", ident.port.text))
             end.add(endVar)
         }
-        try {
-            for (variable in end) {
-                model.viewModelFactory.createSystemConnectionViewModelIn(currentSystem, start, variable)
-                elementsCreated++
-            }
-        } catch (e: ModelException) {
-            throw RuntimeException(e.message)
+        for (variable in end) {
+            model.viewModelFactory.createSystemConnectionViewModelIn(currentSystem, start, variable)
+
         }
+
     }
 
-    fun buildSystem(ctx: SystemContext): SystemViewModel {
-        val system: SystemViewModel
-        try {
-            system = currentSystem.createSubSystem()
-            elementsCreated++
-        } catch (e: ModelException) {
-            throw RuntimeException(e.message)
-        }
-        if (nextSystemName != null) {
-            try {
-                system.name = nextSystemName!!
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
-            nextSystemName = null
-        } else {
-            try {
-                system.name = ctx.ident().Ident().text
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
-        }
-        if (ctx.reaction() != null) {
-            try {
-                system.code = cleanCode(ctx.reaction().text)
-            } catch (e: ModelException) {
-                throw RuntimeException(e.message)
-            }
-        }
-        return system
-    }
-
-    fun buildContract(state: StateViewModel, contract: PrepostContext?): ContractViewModel {
+    private fun buildContract(state: StateViewModel, contract: PrepostContext?): ContractViewModel {
         val c = buildContract(state, contract!!.pre.text, contract.post.text)
-        try {
-            c.name = contract.name.text
-        } catch (e: ModelException) {
-            throw RuntimeException(e.message)
-        }
+        c.name = contract.name.text
         return c
     }
 
-    fun buildContract(state: StateViewModel, pre: String, post: String): ContractViewModel {
-        val newContract: ContractViewModel
-        val preCondition: Condition
-        val postCondition: Condition
-        try {
-            newContract = ContractViewModel()
-            elementsCreated++
-            preCondition = Condition(pre)
-            elementsCreated++
-            postCondition = Condition(post)
-            elementsCreated++
-            newContract.preCondition = preCondition
-            newContract.postCondition = postCondition
-        } catch (e: ModelException) {
-            throw RuntimeException(e.message)
-        }
+    private fun buildContract(state: StateViewModel, pre: String, post: String): ContractViewModel {
+        val newContract = ContractViewModel()
+        val preCondition = Condition(pre)
+        val postCondition = Condition(post)
+        newContract.preCondition = preCondition
+        newContract.postCondition = postCondition
         return newContract
     }
 
-    fun applySubstitution(currentSystem: SystemViewModel, toReplace: String, toReplaceWith: String) {
+    private fun applySubstitution(currentSystem: SystemViewModel, toReplace: String, toReplaceWith: String) {
         val automaton = currentSystem.automaton
         for (state in automaton.states) {
             for (contract in state.contracts) {
@@ -322,24 +241,20 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
     }
 
-    fun applySubstitution(condition: Condition, toReplace: String, toReplaceWith: String) {
+    private fun applySubstitution(condition: Condition, toReplace: String, toReplaceWith: String) {
         var con = condition.value
         //replace normal occurrences (var -> newVar)
         con = con.replace("\\b$toReplace\\b".toRegex(), toReplaceWith)
         //replace history occurrences (h_var_\d -> h_newVar_\d)
         con = con.replace(("\\bh_" + toReplace + "_(\\d+)\\b").toRegex(), "h_" + toReplaceWith + "_$1")
-        try {
-            condition.value = con
-        } catch (e: ModelException) {
-            throw RuntimeException("Failed to apply substitution")
-        }
+        condition.value = con
     }
 
-    fun cleanCode(code: String): String {
+    private fun cleanCode(code: String): String {
         return code.substring(CODE_BEGIN.length, code.length - CODE_BEGIN.length)
     }
 
-    fun parseSystemReference(name: String): SystemViewModel {
+    private fun parseSystemReference(name: String): SystemViewModel {
         return if (name == SELF_REFERENCE_TOKEN) {
             currentSystem
         } else {
@@ -347,13 +262,13 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
     }
 
-    fun hasCyclicChildSystems(ctx: ModelContext): Boolean {
+    private fun hasCyclicChildSystems(ctx: ModelContext): Boolean {
         for (system in ctx.system()) {
             val parents: MutableList<SystemContext?> = ArrayList()
-            var currentParents = scout!!.getParents(system)
+            var currentParents = scout.getParents(system)
             while (currentParents != null && currentParents.isNotEmpty()) {
                 parents.addAll(currentParents)
-                currentParents = currentParents.map { scout!!.getParents(it) }.flatten()
+                currentParents = currentParents.map { scout.getParents(it) }.flatten()
                 if (parents.contains(system)) {
                     return true
                 }
@@ -362,8 +277,8 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return false
     }
 
-    fun makeUserChooseSystem(systemNames: List<String?>): String? {
-        val comboBox = ComboBox<String?>()
+    private fun makeUserChooseSystem(systemNames: List<String>): String {
+        val comboBox = ComboBox<String>()
         comboBox.items.addAll(systemNames)
         comboBox.promptText = "Choose a system"
 
@@ -389,7 +304,6 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     companion object {
-        const val START_STATE_REGEX = "[a-z].*"
         const val USER_SYSTEM_CHOICE_VBOX_SPACING = 10
         const val USER_SYSTEM_CHOICE_VBOX_PADDING = 20
         const val SELF_REFERENCE_TOKEN: String = "self"

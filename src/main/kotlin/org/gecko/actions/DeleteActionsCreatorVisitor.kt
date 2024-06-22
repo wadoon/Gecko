@@ -81,6 +81,7 @@ class DeleteActionsHelper(val geckoViewModel: GeckoViewModel, val parentSystemVi
         is RegionViewModel -> visit(element)
         is EdgeViewModel -> visit(element)
         is SystemConnectionViewModel -> visit(element)
-        else -> error("")
+        is StateViewModel -> visit(element)
+        else -> error("Unkown element ${element.javaClass}")
     }
 }

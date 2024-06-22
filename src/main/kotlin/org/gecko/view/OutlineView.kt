@@ -1,9 +1,8 @@
 package org.gecko.view
 
-import javafx.scene.control.Label
 import javafx.scene.control.TreeItem
-import javafx.scene.layout.BorderPane
 import org.gecko.viewmodel.*
+import tornadofx.UIComponent
 import tornadofx.treeview
 
 /**
@@ -11,11 +10,8 @@ import tornadofx.treeview
  * @author Alexander Weigl
  * @version 1 (20.06.24)
  */
-class OutlineView(val viewModel: GeckoViewModel) {
-    val root = BorderPane().apply {
-        top = Label("Outline")
-        center = treeview(SystemItem(viewModel.root)) {}
-    }
+class OutlineView(val viewModel: GeckoViewModel) : UIComponent("Outline") {
+    override val root = treeview(SystemItem(viewModel.root)) {}
 }
 
 class SystemItem(val sys: SystemViewModel) : TreeItem<String>("") {

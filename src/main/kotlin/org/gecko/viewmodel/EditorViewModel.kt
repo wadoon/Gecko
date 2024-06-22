@@ -26,7 +26,6 @@ import kotlin.math.min
  * contained [PositionableViewModelElement]s, the [SelectionManager] and others, updating the view model of
  * the Gecko project.
  */
-
 class EditorViewModel(
     val actionManager: ActionManager,
     val currentSystem: SystemViewModel,
@@ -207,7 +206,7 @@ class EditorViewModel(
     fun getElementsByName(name: String): List<PositionableViewModelElement> {
         val matches: MutableList<PositionableViewModelElement> = ArrayList()
         //val visitor: PositionableViewModelElementVisitor<*> = ViewElementSearchVisitor(name)
-        /*containedPositionableViewModelElementsProperty.forEach(Consumer { element: PositionableViewModelElement ->
+        /*containedPositionableViewModelElementsProperty.forEach( { element: PositionableViewModelElement ->
             val searchResult = element.accept(visitor) as PositionableViewModelElement?
             if (searchResult != null) {
                 matches.add(searchResult)
@@ -265,7 +264,7 @@ class EditorViewModel(
     }
 
     override fun editor(actionManager: ActionManager, geckoView: GeckoView): EditorView {
-        val editorView = EditorView(actionManager, this)
+        val editorView = EditorView(actionManager, this, geckoView)
         editorView.shortcutHandler =
             if (isAutomatonEditor) AutomatonEditorViewShortcutHandler(actionManager, editorView)
             else SystemEditorViewShortcutHandler(actionManager, editorView)

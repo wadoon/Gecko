@@ -3,8 +3,6 @@ package org.gecko.view.views.viewelement
 
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.Property
-import javafx.beans.property.SimpleIntegerProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
@@ -13,10 +11,9 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.util.Pair
-import org.gecko.viewmodel.ContractViewModel
-import org.gecko.viewmodel.EdgeViewModel
-import org.gecko.viewmodel.Kind
-import org.gecko.viewmodel.onChange
+import org.gecko.viewmodel.*
+import tornadofx.getValue
+import tornadofx.setValue
 import kotlin.math.*
 
 /**
@@ -28,12 +25,20 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
     ConnectionViewElement(listOf(edgeViewModel.startPoint, edgeViewModel.endPoint)),
     ViewElement<EdgeViewModel> {
     override val target: EdgeViewModel
-    val contractProperty: Property<ContractViewModel>
-    val priorityProperty: IntegerProperty
-    val kindProperty: Property<Kind>
-    val label: Label
+    val contractProperty: Property<ContractViewModel> = objectProperty(ContractViewModel())
+    val priorityProperty: IntegerProperty = intProperty()
+    val kindProperty: Property<Kind> = objectProperty(Kind.HIT)
+
+    val versionExpressionsProperty = listProperty<String>()
+    var versionExpressions by versionExpressionsProperty
+
+    val label: Label = Label()
 
     init {
+        contractProperty.bind(edgeViewModel.contractProperty)
+        priorityProperty.bind(edgeViewModel.priorityProperty)
+        kindProperty.bind(edgeViewModel.kindProperty)
+        this.target = edgeViewModel
         edgeViewModel.startPointProperty.onChange { _: Point2D?, n: Point2D? ->
             pathSource[0] = n
         }
@@ -42,15 +47,7 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
             pathSource[1] = n
         }
 
-        this.contractProperty = SimpleObjectProperty()
-        this.priorityProperty = SimpleIntegerProperty()
-        this.kindProperty = SimpleObjectProperty()
-        contractProperty.bind(edgeViewModel.contractProperty)
-        priorityProperty.bind(edgeViewModel.priorityProperty)
-        kindProperty.bind(edgeViewModel.kindProperty)
-        this.target = edgeViewModel
 
-        this.label = Label()
         label.text = edgeViewModel.representation
 
         val updateLabelPosition =
@@ -142,12 +139,10 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
             }
         }
 
-    override fun drawElement(): Node {
-        return pane
-    }
+    override fun drawElement(): Node = pane
 
     override val position: Point2D
-        get() = position
+        get() = target.position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

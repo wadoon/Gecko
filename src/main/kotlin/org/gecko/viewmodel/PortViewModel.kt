@@ -36,8 +36,14 @@ data class PortViewModel(
     val hasIncomingConnection: Boolean
         get() = incomingConnections.isNotEmpty()
 
+    var visibility: Visibility by visibilityProperty
+    var type: String by typeProperty
+    var value: String? by valueProperty
+
     init {
         sizeProperty.value = DEFAULT_PORT_SIZE
+        name = AutoNaming.name("port_${visibility}_")
+
     }
 
     fun setSystemPortPosition(position: Point2D) {
@@ -47,10 +53,6 @@ data class PortViewModel(
     fun setSystemPortSize(size: Point2D) {
         systemPortSizeProperty.value = size
     }
-
-    var visibility: Visibility by visibilityProperty
-    var type: String by typeProperty
-    var value: String? by valueProperty
 
     fun addIncomingConnection(connection: SystemConnectionViewModel) {
         incomingConnections.add(connection)

@@ -214,10 +214,10 @@ class ViewModelFactory(
     fun updateStartState(state: StateViewModel) {
         val root = geckoViewModel.root
         val parentSystem = findSystemWithState(root, state)
-        if (parentSystem != null && state == parentSystem.automaton.startState) {
+        /*if (parentSystem != null && state == parentSystem.automaton.startState) {
             val parentSystemViewModel = parentSystem
             state.isStartState = true
-        }
+        }*/
     }
 
     fun findSystemWithState(parentSystem: SystemViewModel, state: StateViewModel): SystemViewModel? {

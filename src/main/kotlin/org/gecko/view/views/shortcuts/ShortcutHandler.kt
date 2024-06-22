@@ -46,9 +46,9 @@ abstract class ShortcutHandler protected constructor(
 
     fun addSelectStandardToolShortcuts() {
         val standardTools = listOf(ToolType.CURSOR, ToolType.MARQUEE_TOOL, ToolType.PAN, ToolType.ZOOM_TOOL)
-        standardTools.forEach(Consumer { tool ->
+        standardTools.forEach { tool ->
             shortcuts[tool.keyCodeCombination] = { actionManager.run(actionFactory.createSelectToolAction(tool)) }
-        })
+        }
     }
 
     fun addZoomShortcuts() {

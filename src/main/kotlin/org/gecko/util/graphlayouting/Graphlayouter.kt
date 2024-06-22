@@ -41,7 +41,7 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         if (root!!.children.isEmpty()) {
             return
         }
-        root.setProperty(CoreOptions.ALGORITHM, layoutAlgorithm.clazz.packageName)
+        root.setProperty(CoreOptions.ALGORITHM, layoutAlgorithm.elkId)
         val spacing = root.children.first().width / 3
         root.setProperty(CoreOptions.SPACING_NODE_NODE, spacing)
         if (layoutAlgorithm == LayoutAlgorithms.LAYERED) {

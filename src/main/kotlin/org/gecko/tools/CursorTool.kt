@@ -14,7 +14,6 @@ import org.gecko.view.views.viewelement.decorator.BlockElementScalerViewElementD
 import org.gecko.view.views.viewelement.decorator.ConnectionElementScalerViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
-import java.util.function.Consumer
 
 /**
  * A concrete representation of an area-[Tool], utilized for marking a rectangle-formed area in the view. Holds
@@ -260,10 +259,10 @@ class CursorTool(
         }
         val eventPosition = viewPane!!.screenToWorldCoordinates(event.screenX, event.screenY)
         val delta = eventPosition.subtract(previousDragPosition)
-        selectionManager.currentSelection.forEach(Consumer { element: PositionableViewModelElement ->
+        selectionManager.currentSelection.forEach { element: PositionableViewModelElement ->
             element.setCurrentlyModified(true)
             element.position = element.position.add(delta)
-        })
+        }
         previousDragPosition = eventPosition
         event.consume()
     }
@@ -273,10 +272,10 @@ class CursorTool(
             return
         }
         val endWorldPos = viewPane!!.screenToWorldCoordinates(event.screenX, event.screenY)
-        selectionManager.currentSelection.forEach(Consumer { element: PositionableViewModelElement ->
+        selectionManager.currentSelection.forEach { element: PositionableViewModelElement ->
             element.setCurrentlyModified(false)
             element.position = element.position.add(startDragPosition!!.subtract(endWorldPos))
-        })
+        }
         val moveAction: Action = actionManager.actionFactory
             .createMoveBlockViewModelElementAction(endWorldPos.subtract(startDragPosition))
         actionManager.run(moveAction)

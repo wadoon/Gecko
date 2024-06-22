@@ -10,6 +10,6 @@ import javafx.application.Application
 object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        Application.launch(App::class.java, *args)
+        Application.launch(GeckoManager::class.java, *args)
     }
 }

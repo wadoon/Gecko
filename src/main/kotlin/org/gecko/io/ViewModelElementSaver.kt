@@ -28,12 +28,12 @@ class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
 
         val automaton = system.automaton
 
-        if (automaton.startState != null) {
+        /*if (automaton.startState != null) {
             val startStateContainer = StartStateContainer()
             //startStateContainer.systemId = system.hashCode()
             startStateContainer.startStateName = automaton.startState!!.name
             startStates.add(startStateContainer)
-        }
+        }*/
 
         for (region in automaton.regions) {
             this.saveRegionViewModelProperties(region)

@@ -64,6 +64,7 @@ data class SystemViewModel(
 
     init {
         size = DEFAULT_SYSTEM_SIZE
+        name = AutoNaming.name("System_")
     }
 
     fun addPort(port: PortViewModel) {
@@ -88,7 +89,7 @@ data class SystemViewModel(
 
     fun getVariableByName(text: String?): PortViewModel? = ports.firstOrNull { it.name == text }
     fun createVariable(): PortViewModel = PortViewModel().also { addPort(it) }
-    fun createSubSystem(): SystemViewModel = SystemViewModel().also { subSystems.add(it) }
+    fun createSubSystem(): SystemViewModel = SystemViewModel().also { subSystems.add(it); it.parent = this }
 
     companion object {
         val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)

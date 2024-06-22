@@ -26,16 +26,22 @@ class GeckoViewModel(val root: SystemViewModel = SystemViewModel()) {
     var openedEditors by openedEditorsProperty
 
     val knownVariantGroupsProperty = listProperty<VariantGroup>()
-    var knownVariantGroups by knownVariantGroupsProperty
+    val knownVariantGroups: ObservableList<VariantGroup> by knownVariantGroupsProperty
 
-    val globalDefinesProperty = stringProperty("")
-    var globalDefines: String? by globalDefinesProperty
+    val activatedVariantsProperty = setProperty<String>()
+    var activatedVariants by activatedVariantsProperty
+
+    val globalDefinesProperty = listProperty<Constant>()
+    var globalDefines by globalDefinesProperty
 
     val globalCodeProperty = stringProperty("")
     var globalCode: String? by globalCodeProperty
 
     val allSystems: List<SystemViewModel>
-        get() = root.subSystems
+        get() {
+            fun list(s: SystemViewModel): List<SystemViewModel> = listOf(s) + s.subSystems.flatMap { list(it) }
+            return list(root)
+        }
 
 
     val viewModelFactory = ViewModelFactory(actionManager, this)
@@ -133,6 +139,16 @@ class GeckoViewModel(val root: SystemViewModel = SystemViewModel()) {
 
     fun getSystemViewModelWithPort(portViewModel: PortViewModel): SystemViewModel? =
         root.getChildSystemWithVariable(portViewModel)
+}
+
+class Constant(name: String, type: String, value: String) {
+    val nameProperty: StringProperty = stringProperty("")
+    val typeProperty: StringProperty = stringProperty("")
+    val valueProperty: StringProperty = stringProperty("")
+
+    var name by nameProperty
+    var type by typeProperty
+    var value by valueProperty
 }
 
 fun booleanProperty(value: Boolean = false): BooleanProperty = SimpleBooleanProperty(value)

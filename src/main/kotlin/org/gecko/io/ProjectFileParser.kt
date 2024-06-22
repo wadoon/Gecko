@@ -12,8 +12,9 @@ var gson = FxGson.fullBuilder()
 
 inline fun <reified T : Any> decodeFromStream(it: InputStream) = gson.fromJson(InputStreamReader(it), T::class.java)
 
-inline fun <reified T> encodeToStream(obj: T, it: OutputStream) =
-    gson.toJson(obj, T::class.java, OutputStreamWriter(it))
+inline fun <reified T> encodeToStream(obj: T, it: Writer): Unit =
+    gson.toJson(obj, T::class.java, it)
+
 
 /**
  * Provides methods for the conversion of data from a JSON file into Gecko-specific data.

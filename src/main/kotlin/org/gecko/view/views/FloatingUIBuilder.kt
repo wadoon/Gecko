@@ -105,7 +105,7 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         searchTextField.onAction = EventHandler<ActionEvent> { e: ActionEvent? ->
             editorViewModel.selectionManager.deselectAll()
             val oldSearchMatches: List<PositionableViewModelElement> = ArrayList(matches)
-            oldSearchMatches.forEach(Consumer { o: PositionableViewModelElement -> matches.remove(o) })
+            oldSearchMatches.forEach { o: PositionableViewModelElement -> matches.remove(o) }
             matches.addAll(editorViewModel.getElementsByName(searchTextField.text))
             if (!matches.isEmpty()) {
                 actionManager.run(

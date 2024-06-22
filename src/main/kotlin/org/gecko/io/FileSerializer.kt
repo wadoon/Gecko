@@ -1,7 +1,6 @@
 package org.gecko.io
 
-import java.io.File
-import java.io.IOException
+import java.io.*
 
 /**
  * Provides methods for the conversion of Gecko-specific data to a different format and writing the converted data in a
@@ -9,5 +8,17 @@ import java.io.IOException
  */
 interface FileSerializer {
     @Throws(IOException::class)
-    fun writeToFile(file: File)
+    fun writeToStream(w: Writer)
+
+    fun writeToFile(file: File) {
+        file.bufferedWriter().use { it ->
+            writeToStream(it)
+        }
+    }
+
+    fun writeToString(): String {
+        val sw = StringWriter()
+        writeToStream(sw)
+        return sw.toString()
+    }
 }

@@ -18,9 +18,9 @@ class AutomatonEditorViewShortcutHandler(actionManager: ActionManager, editorVie
 
     fun addCreatorShortcuts() {
         val creatorTools = List.of(ToolType.STATE_CREATOR, ToolType.EDGE_CREATOR, ToolType.REGION_CREATOR)
-        creatorTools.forEach(Consumer { tool: ToolType ->
+        creatorTools.forEach { tool: ToolType ->
             shortcuts[tool.keyCodeCombination] =
                 { actionManager.run(actionFactory.createSelectToolAction(tool)) }
-        })
+        }
     }
 }
