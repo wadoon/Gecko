@@ -67,15 +67,7 @@ internal class ViewModelFactoryTest {
         val portViewModel1 = viewModelFactory.createPortViewModelIn(systemViewModel1)
         portViewModel1.visibility = (Visibility.OUTPUT)
         val portViewModel2 = viewModelFactory.createPortViewModelIn(systemViewModel2)
-        var systemConnectionViewModel: SystemConnectionViewModel
-        try {
-            systemConnectionViewModel =
-                viewModelFactory.createSystemConnectionViewModelIn(root, portViewModel1, portViewModel2)
-        } catch (e: ModelException) {
-            Assertions.fail<Any>()
-        }
-
-        //viewModelFactory!!.createSystemConnectionViewModelFrom(systemConnectionViewModel)
+        viewModelFactory.createSystemConnectionViewModelIn(root, portViewModel1, portViewModel2)
         Assertions.assertEquals(1, root.connections.size)
     }
 

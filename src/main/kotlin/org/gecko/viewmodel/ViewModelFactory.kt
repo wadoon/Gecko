@@ -96,9 +96,8 @@ class ViewModelFactory(
         val result = SystemConnectionViewModel()
         result.source = source
         result.destination = destination
-
+        parentSystem.connections.add(result)
         geckoViewModel.addViewModelElement(result)
-
         setSystemConnectionEdgePoints(parentSystem, source, destination, result)
         return result
     }

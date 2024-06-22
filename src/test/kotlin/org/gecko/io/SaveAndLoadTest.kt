@@ -1,7 +1,8 @@
 package org.gecko.io
 
 import org.gecko.exceptions.ModelException
-import org.gecko.viewmodel.*
+import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -99,7 +100,7 @@ class ProjectFileSerializerTest {
     @Test
     fun writeToFileEmpty() {
         val fileForEmpty = File("src/test/java/org/gecko/io/files/emptyGecko.json")
-        Assertions.assertDoesNotThrow { projectFileSerializerForEmpty!!.writeToFile(fileForEmpty) }
+        projectFileSerializerForEmpty.writeToFile(fileForEmpty)
     }
 
     /*
