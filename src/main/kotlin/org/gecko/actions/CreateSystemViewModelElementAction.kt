@@ -13,21 +13,21 @@ import org.gecko.viewmodel.SystemViewModel
  */
 class CreateSystemViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
-    val position: Point2D?
+    val position: Point2D
 ) : Action() {
-    var createdSystemViewModel: SystemViewModel? = null
+    lateinit var createdSystemViewModel: SystemViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
-        createdSystemViewModel = geckoViewModel.viewModelFactory.createSystemViewModelIn(currentParentSystem)
-        createdSystemViewModel!!.center = position!!
+        createdSystemViewModel = geckoViewModel.viewModelFactory.createSystem(currentParentSystem)
+        createdSystemViewModel.setPositionFromCenter(position)
         val actionManager = geckoViewModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdSystemViewModel!!, true))
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdSystemViewModel!!)
+        return actionFactory.createDeleteAction(createdSystemViewModel!!)
     }
 }

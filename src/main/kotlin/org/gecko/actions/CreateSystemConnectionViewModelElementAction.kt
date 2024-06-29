@@ -39,6 +39,6 @@ class CreateSystemConnectionViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdSystemConnectionViewModel!!)
+        return actionFactory.createDeleteAction(createdSystemConnectionViewModel!!)
     }
 }

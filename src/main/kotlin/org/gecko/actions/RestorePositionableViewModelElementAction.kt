@@ -33,5 +33,5 @@ class RestorePositionableViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory) =
-        actionFactory.createDeletePositionableViewModelElementAction(deletedElements)
+        actionFactory.createDeleteAction(deletedElements)
 }

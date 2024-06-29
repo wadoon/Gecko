@@ -29,7 +29,7 @@ class VariableBlockViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(portViewModel)
+                actionManager.actionFactory.createDeleteAction(portViewModel)
             )
         }
 

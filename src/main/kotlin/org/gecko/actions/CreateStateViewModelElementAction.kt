@@ -15,15 +15,15 @@ import org.gecko.viewmodel.StateViewModel
 class CreateStateViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
     val editorViewModel: EditorViewModel,
-    val position: Point2D?
+    val position: Point2D
 ) : Action() {
     lateinit var createdStateViewModel: StateViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
-        createdStateViewModel = geckoViewModel.viewModelFactory.createStateViewModelIn(currentParentSystem)
-        createdStateViewModel.center = position!!
+        createdStateViewModel = geckoViewModel.viewModelFactory.createState(currentParentSystem)
+        createdStateViewModel.setPositionFromCenter(position)
         editorViewModel.updateRegions()
         val actionManager = geckoViewModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdStateViewModel, true))
@@ -31,6 +31,6 @@ class CreateStateViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdStateViewModel)
+        return actionFactory.createDeleteAction(createdStateViewModel)
     }
 }

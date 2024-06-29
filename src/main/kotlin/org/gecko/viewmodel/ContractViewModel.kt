@@ -2,7 +2,6 @@ package org.gecko.viewmodel
 
 
 import javafx.beans.property.*
-
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -23,6 +22,12 @@ data class ContractViewModel(
     override val children: Sequence<Element>
         get() = sequenceOf()
 
+
+    override fun asJson() = withJsonObject {
+        addProperty("name", name)
+        addProperty("preCondition", preCondition.value)
+        addProperty("postCondition", postCondition.value)
+    }
 
     constructor(name: String, pre: String, post: String) : this() {
         this.name = name

@@ -17,7 +17,7 @@ class InspectorRemoveVariableButton(actionManager: ActionManager, portViewModel:
         tooltip = Tooltip(ResourceHandler.inspector_remove_variable)
         onAction = EventHandler { _: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(portViewModel!!)
+                actionManager.actionFactory.createDeleteAction(portViewModel!!)
             )
         }
     }

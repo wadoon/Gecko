@@ -14,7 +14,7 @@ internal class ChangeInvariantViewModelElementActionTest {
     init {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel = geckoViewModel.root
-        region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+        region1 = viewModelFactory.createRegion(rootSystemViewModel)
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }
 

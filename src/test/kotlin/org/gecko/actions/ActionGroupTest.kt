@@ -12,8 +12,8 @@ internal class ActionGroupTest {
     var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
     val viewModelFactory = geckoViewModel.viewModelFactory
     val rootSystemViewModel = geckoViewModel.root
-    var region1: RegionViewModel = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
-    var region2: RegionViewModel = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+    var region1: RegionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
+    var region2: RegionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
 
     init {
         geckoViewModel.switchEditor(rootSystemViewModel, true)
@@ -22,7 +22,7 @@ internal class ActionGroupTest {
     @Test
     fun testUndoActionReturnsNullWithNonUndoableAction() {
         val changeColor1Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(1.0, 1.0, 1.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(1.0, 1.0, 1.0, 0.0))
         val focusAction: Action = actionFactory.createFocusPositionableViewModelElementAction(
             region2
         )
@@ -34,7 +34,7 @@ internal class ActionGroupTest {
     @Test
     fun testUndoActionNotNull() {
         val changeColor1Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(1.0, 1.0, 1.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(1.0, 1.0, 1.0, 0.0))
         val actionGroup = ActionGroup(arrayListOf(changeColor1Action))
         actionManager.run(actionGroup)
         val undoAction = actionGroup.getUndoAction(actionFactory)
@@ -44,9 +44,9 @@ internal class ActionGroupTest {
     @Test
     fun testActionGroupRunsInOrder() {
         val changeColor1Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(1.0, 1.0, 1.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(1.0, 1.0, 1.0, 0.0))
         val changeColor2Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(0.0, 0.0, 0.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(0.0, 0.0, 0.0, 0.0))
         val actionGroup = ActionGroup(arrayListOf(changeColor1Action, changeColor2Action))
         actionManager.run(actionGroup)
         Assertions.assertEquals(Color(0.0, 0.0, 0.0, 0.0), region1.color)
@@ -56,9 +56,9 @@ internal class ActionGroupTest {
     fun testOrderOfUndoActions() {
         val beforeChange = region1.color
         val changeColor1Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(1.0, 1.0, 1.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(1.0, 1.0, 1.0, 0.0))
         val changeColor2Action: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, Color(0.0, 0.0, 0.0, 0.0))
+            actionFactory.createChangeColorRegion(region1, Color(0.0, 0.0, 0.0, 0.0))
         val actionGroup = ActionGroup(arrayListOf(changeColor1Action, changeColor2Action))
         actionManager.run(actionGroup)
         Assertions.assertEquals(Color(0.0, 0.0, 0.0, 0.0), region1.color)

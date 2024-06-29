@@ -28,11 +28,17 @@ data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElem
     val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
     var color: Color by colorProperty
 
-    val invariantProperty = SimpleObjectProperty<Condition>(Condition(""))
+    val invariantProperty = SimpleObjectProperty(Condition(""))
     var invariant: Condition by invariantProperty
 
     val statesProperty = listProperty<StateViewModel>()
     var states: ObservableList<StateViewModel> by statesProperty
+
+    override fun asJson() = super.asJson().apply {
+        add("color", color.asJson())
+        addProperty("invariant", invariant.value)
+        add("contract", contract.asJson())
+    }
 
     init {
         val random = Random(System.currentTimeMillis())
@@ -95,3 +101,4 @@ data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElem
     override fun inspector(actionManager: ActionManager) =
         RegionInspectorBuilder(actionManager, this)
 }
+

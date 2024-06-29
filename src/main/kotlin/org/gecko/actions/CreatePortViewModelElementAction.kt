@@ -20,14 +20,14 @@ class CreatePortViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        createdPortViewModel = geckoViewModel.viewModelFactory.createPortViewModelIn(systemViewModel)
+        createdPortViewModel = geckoViewModel.viewModelFactory.createPort(systemViewModel)
         val offset = createdPortViewModel.size.y * (systemViewModel.ports.size - 1)
         createdPortViewModel.position = (Point2D(MARGIN.toDouble(), MARGIN + offset))
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory) =
-        actionFactory.createDeletePositionableViewModelElementAction(createdPortViewModel)
+        actionFactory.createDeleteAction(createdPortViewModel)
 
     companion object {
         const val MARGIN = 2

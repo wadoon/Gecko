@@ -1,6 +1,8 @@
 package org.gecko.viewmodel
 
 
+import com.google.gson.JsonNull
+import com.google.gson.JsonPrimitive
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
@@ -36,6 +38,16 @@ class EdgeViewModel(src: StateViewModel, dst: StateViewModel) : PositionableView
     var contract: ContractViewModel? by contractProperty
     var source: StateViewModel by sourceProperty
     var destination: StateViewModel by destinationProperty
+
+    override fun asJson() = super.asJson().apply {
+        addProperty("source", source.name)
+        addProperty("destination", destination.name)
+        add("contract",
+            contract?.name?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE)
+        addProperty("kind", kind.name)
+        addProperty("priority", priority)
+    }
+
 
     /**
      * The list of edge points that define the path of the edge.

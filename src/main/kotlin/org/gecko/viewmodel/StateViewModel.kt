@@ -35,6 +35,10 @@ data class StateViewModel(
     var incomingEdges by incomingEdgesProperty
     var outgoingEdges: ObservableList<EdgeViewModel> by outgoingEdgesProperty
 
+    override fun asJson() = super.asJson().apply {
+        addProperty("isStartState", isStartState)
+        add("contracts", contracts.asJsonArray())
+    }
 
     init {
         name = AutoNaming.name("State_")

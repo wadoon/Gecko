@@ -5,35 +5,44 @@ import org.gecko.viewmodel.GeckoViewModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class DeleteRestoreActionTest {
+class DeleteRestoreActionTest {
+    private val geckoViewModel = GeckoViewModel()
+    private val actionManager = ActionManager(geckoViewModel)
+    private val viewModelFactory = geckoViewModel.viewModelFactory
+    private val root = geckoViewModel.currentEditor!!.currentSystem
+    private val child = viewModelFactory.createSystem(root)
+    private val state1 = viewModelFactory.createState(root)
+    private val state2 = viewModelFactory.createState(child)
+
     @Test
     fun deleteElement() {
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
-        actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel))
-        )
-        Assertions.assertTrue(geckoViewModel.currentEditor!!.containedPositionableViewModelElementsProperty.isEmpty())
+        geckoViewModel.switchEditor(root, true)
+        val v = geckoViewModel.currentEditor!!.containedPositionableViewModelElementsProperty
+        Assertions.assertTrue(v.isNotEmpty())
+        Assertions.assertTrue(state1 in v)
+        actionManager.run(actionManager.actionFactory.createDeleteAction(setOf(state1)))
+        Assertions.assertTrue(v.isEmpty())
     }
 
     @Test
     fun restoreElementCheckViewModel() {
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
+        geckoViewModel.switchEditor(root, true)
         actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel))
+            actionManager.actionFactory.createDeleteAction(setOf(state1))
         )
         actionManager.undo()
         Assertions.assertTrue(
             geckoViewModel.currentEditor!!
                 .containedPositionableViewModelElementsProperty
-                .contains(stateViewModel)
+                .contains(state1)
         )
     }
 
     @Test
     fun restoreElementCheckModel() {
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
+        geckoViewModel.switchEditor(root, true)
         actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel))
+            actionManager.actionFactory.createDeleteAction(setOf(state1))
         )
         actionManager.undo()
         /*Assertions.assertTrue(
@@ -45,46 +54,36 @@ internal class DeleteRestoreActionTest {
 
     @Test
     fun deleteElementInChildSystem() {
-        geckoViewModel.switchEditor(childSystemViewModel1, true)
-        actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel2))
-        )
+        geckoViewModel.switchEditor(child, true)
+        actionManager.run(actionManager.actionFactory.createDeleteAction(setOf(state2)))
         Assertions.assertTrue(geckoViewModel.currentEditor!!.containedPositionableViewModelElementsProperty.isEmpty())
     }
 
     @Test
     fun restoreElementCheckChildSystemViewModel() {
-        geckoViewModel.switchEditor(childSystemViewModel1, true)
+        geckoViewModel.switchEditor(child, true)
         actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel2))
+            actionManager.actionFactory.createDeleteAction(setOf(state2))
         )
         actionManager.undo()
         Assertions.assertTrue(
             geckoViewModel.currentEditor!!
                 .containedPositionableViewModelElementsProperty
-                .contains(stateViewModel2)
+                .contains(state2)
         )
     }
 
     @Test
     fun restoreElementCheckChildSystemModel() {
-        geckoViewModel.switchEditor(childSystemViewModel1, true)
+        geckoViewModel.switchEditor(child, true)
         actionManager.run(
-            actionManager.actionFactory.createDeletePositionableViewModelElementAction(setOf(stateViewModel2))
+            actionManager.actionFactory.createDeleteAction(setOf(state2))
         )
         actionManager.undo()
         Assertions.assertTrue(
-            childSystemViewModel1.automaton.states.contains(
-                stateViewModel2
+            child.automaton.states.contains(
+                state2
             )
         )
     }
-
-    private var geckoViewModel = GeckoViewModel()
-    private var actionManager = ActionManager(geckoViewModel)
-    val viewModelFactory = geckoViewModel.viewModelFactory
-    private var rootSystemViewModel = geckoViewModel.currentEditor!!.currentSystem
-    private var childSystemViewModel1 = viewModelFactory.createSystemViewModelIn(rootSystemViewModel)
-    private var stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
-    private var stateViewModel2 = viewModelFactory.createStateViewModelIn(childSystemViewModel1)
 }

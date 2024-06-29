@@ -10,8 +10,8 @@ class PositionableViewModelTest {
     var geckoViewModel: GeckoViewModel = TestHelper.createGeckoViewModel()
     var viewModelFactory: ViewModelFactory = geckoViewModel.viewModelFactory
     var root: SystemViewModel = geckoViewModel.currentEditor!!.currentSystem
-    var stateViewModel1: StateViewModel = viewModelFactory.createStateViewModelIn(root)
-    var stateViewModel2: StateViewModel = viewModelFactory.createStateViewModelIn(root)
+    var stateViewModel1: StateViewModel = viewModelFactory.createState(root)
+    var stateViewModel2: StateViewModel = viewModelFactory.createState(root)
 
     @Test
     @Throws(ModelException::class)

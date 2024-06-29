@@ -1,19 +1,19 @@
 package org.gecko.viewmodel
 
-import com.sun.javafx.collections.NonIterableChange
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.collections.ObservableListBase
-import org.gecko.actions.Action
+import org.gecko.io.Mappable
 import org.gecko.lint.Problem
 import tornadofx.getValue
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberProperties
 
 
 /**
  * Represents an abstraction of a view model element of a Gecko project. An [Element] has an id
  * and a target-[Element], the data of which it can update.
  */
-abstract class Element {
+abstract class Element : Mappable {
     val issuesProperty = listProperty<Problem>()
     val issues: ObservableList<Problem> by issuesProperty
     abstract val children: Sequence<Element>

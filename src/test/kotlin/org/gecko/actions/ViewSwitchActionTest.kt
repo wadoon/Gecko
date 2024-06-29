@@ -10,7 +10,7 @@ class ViewSwitchActionTest {
     val actionFactory = ActionFactory(geckoViewModel)
     val viewModelFactory = geckoViewModel.viewModelFactory
     val rootSystemViewModel = geckoViewModel.root
-    val systemViewModel = viewModelFactory.createSystemViewModelIn(rootSystemViewModel)
+    val systemViewModel = viewModelFactory.createSystem(rootSystemViewModel)
 
     @Test
     fun switchAutomatonView() {

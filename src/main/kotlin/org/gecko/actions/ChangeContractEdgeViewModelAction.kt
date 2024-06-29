@@ -22,6 +22,6 @@ class ChangeContractEdgeViewModelAction(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeContractEdgeViewModelAction(edgeViewModel, oldContract)
+        return actionFactory.createChangeContractEdge(edgeViewModel, oldContract)
     }
 }

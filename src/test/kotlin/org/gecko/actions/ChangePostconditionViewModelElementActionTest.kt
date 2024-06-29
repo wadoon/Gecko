@@ -10,10 +10,10 @@ internal class ChangePostconditionViewModelElementActionTest {
     val rootSystemViewModel = geckoViewModel.root
     private var actionManager = ActionManager(geckoViewModel)
     private var actionFactory = ActionFactory(geckoViewModel)
-    private var region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+    private var region1 = viewModelFactory.createRegion(rootSystemViewModel)
 
     init {
-        val stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        val stateViewModel = viewModelFactory.createState(rootSystemViewModel)
         viewModelFactory.createContractViewModelIn(stateViewModel)
         val preCondition = stateViewModel.contractsProperty.first().preCondition
         val postCondition = stateViewModel.contractsProperty.first().postCondition

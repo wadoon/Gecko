@@ -14,28 +14,28 @@ import org.gecko.viewmodel.RegionViewModel
  */
 class CreateRegionViewModelElementAction internal constructor(
     val geckoViewModel: GeckoViewModel,
-    val position: Point2D?,
-    val size: Point2D?,
+    val position: Point2D,
+    val size: Point2D,
     val color: Color?
 ) : Action() {
-    lateinit var createdRegionViewModel: RegionViewModel
+    lateinit var createdRegion: RegionViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
-        createdRegionViewModel = geckoViewModel.viewModelFactory.createRegionViewModelIn(currentParentSystem)
-        createdRegionViewModel.position = (position!!)
-        createdRegionViewModel.size = (size!!)
+        createdRegion = geckoViewModel.viewModelFactory.createRegion(currentParentSystem)
+        createdRegion.position = position
+        createdRegion.size = size
         if (color != null) {
-            createdRegionViewModel.color = (color)
+            createdRegion.color = (color)
         }
         val actionManager = geckoViewModel.actionManager
-        actionManager.run(actionManager.actionFactory.createSelectAction(createdRegionViewModel, true))
+        actionManager.run(actionManager.actionFactory.createSelectAction(createdRegion, true))
         geckoViewModel.currentEditor!!.updateRegions()
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdRegionViewModel)
+        return actionFactory.createDeleteAction(createdRegion)
     }
 }

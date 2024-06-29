@@ -42,7 +42,7 @@ class EdgeViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.delete)
         deleteMenuItem.onAction = EventHandler {
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(edgeViewModel)
+                actionManager.actionFactory.createDeleteAction(edgeViewModel)
             )
         }
 

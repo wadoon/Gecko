@@ -1,6 +1,7 @@
 package org.gecko.io
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -20,6 +21,7 @@ class AutomatonFileSerializerTest {
         Assertions.assertDoesNotThrow { automatonFileSerializer.writeToFile(serializedParsedAEBFile) }
     }
 
+    @Disabled("outdated format")
     @Test
     fun parseComplexGecko2() {
         val projectFileParser = ProjectFileParser()

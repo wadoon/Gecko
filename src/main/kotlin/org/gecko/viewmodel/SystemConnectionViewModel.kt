@@ -31,6 +31,11 @@ data class SystemConnectionViewModel(
     var source: PortViewModel? by sourceProperty
     var destination: PortViewModel? by destinationProperty
 
+    override fun asJson() = super.asJson().apply {
+        addProperty("source", source?.name)
+        addProperty("destination", destination?.name)
+    }
+
     init {
         sizeProperty.value = Point2D.ZERO
         source?.addOutgoingConnection(this)

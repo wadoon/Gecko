@@ -14,8 +14,8 @@ internal class ChangePreconditionViewModelElementActionTest {
     init {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel = geckoViewModel.root
-        region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
-        val stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        region1 = viewModelFactory.createRegion(rootSystemViewModel)
+        val stateViewModel = viewModelFactory.createState(rootSystemViewModel)
         viewModelFactory.createContractViewModelIn(stateViewModel)
         val preCondition = stateViewModel.contractsProperty.first().preCondition
         val postCondition = stateViewModel.contractsProperty.first().postCondition

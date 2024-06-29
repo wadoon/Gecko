@@ -22,7 +22,7 @@ class InspectorColorPicker(actionManager: ActionManager, regionViewModel: Region
         onAction = EventHandler {
             actionManager.run(
                 actionManager.actionFactory
-                    .createChangeColorRegionViewModelElementAction(regionViewModel, value)
+                    .createChangeColorRegion(regionViewModel, value)
             )
         }
     }

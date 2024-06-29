@@ -78,27 +78,9 @@ class EditorViewModel(
      * @param stateViewModel the [StateViewModel] to get the containing [RegionViewModel]s for
      * @return the [RegionViewModel]s that contain the given [StateViewModel]
      */
-    fun getRegionViewModels(stateViewModel: StateViewModel): ObservableList<RegionViewModel> {
-        val regionViewModels = FXCollections.observableArrayList<RegionViewModel>()
+    fun getRegions(stateViewModel: StateViewModel): List<RegionViewModel> {
         val regions = currentSystem.automaton.regions
-        val containingStateRegions =
-            regions.filter { it.states.contains(stateViewModel) }.toList()
-        val containedRegionViewModels = containedPositionableViewModelElementsProperty.stream()
-            .filter { containingStateRegions.contains(it) }
-            .map { it as RegionViewModel }
-            .toList()
-        regionViewModels.addAll(containedRegionViewModels)
-
-        for (region in containedPositionableViewModelElementsProperty.stream()
-            .filter { element: PositionableViewModelElement -> regions.contains(element) }
-            .map { element: PositionableViewModelElement -> element as RegionViewModel }
-            .toList()) {
-            region.statesProperty.addListener { change: ListChangeListener.Change<out StateViewModel> ->
-                updateStateRegionList(stateViewModel, region, change, regionViewModels)
-            }
-        }
-
-        return regionViewModels
+        return regions.filter { it.box.contains(stateViewModel.box) }
     }
 
     var currentTool: Tool by currentToolProperty
@@ -241,6 +223,7 @@ class EditorViewModel(
         const val MIN_ZOOM_SCALE = 0.1
         const val DEFAULT_ZOOM_SCALE = 1.0
         const val DEFAULT_ZOOM_STEP = 1.1
+
         fun updateStateRegionList(
             stateViewModel: StateViewModel, region: RegionViewModel,
             change: ListChangeListener.Change<out StateViewModel>, regionViewModels: ObservableList<RegionViewModel>

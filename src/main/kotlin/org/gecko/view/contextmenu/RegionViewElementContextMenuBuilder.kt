@@ -29,7 +29,7 @@ class RegionViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(regionViewModel)
+                actionManager.actionFactory.createDeleteAction(regionViewModel)
             )
         }
 

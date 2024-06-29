@@ -16,8 +16,8 @@ class ChangeVisibilityPortViewModelElementActionTest {
     init {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel = geckoViewModel.root
-        val systemViewModel1 = viewModelFactory.createSystemViewModelIn(rootSystemViewModel)
-        port = viewModelFactory.createPortViewModelIn(systemViewModel1)
+        val systemViewModel1 = viewModelFactory.createSystem(rootSystemViewModel)
+        port = viewModelFactory.createPort(systemViewModel1)
     }
 
     @Test

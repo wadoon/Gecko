@@ -1,5 +1,7 @@
 package org.gecko.io
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import org.gecko.viewmodel.GeckoViewModel
 
 
@@ -8,11 +10,15 @@ import org.gecko.viewmodel.GeckoViewModel
  * ViewModel-specific attributes of PositionableViewModelElements like position coordinates, size coordinates and color
  * values for [RegionViewModels][org.gecko.viewmodel.RegionViewModel].
  */
-data class GeckoJsonWrapper(
+data class Project(
     val model: GeckoViewModel,
     //val startStates: List<StartStateContainer>,
     //val viewModelProperties: List<ViewModelPropertiesContainer>
-)
+) : Mappable {
+    override fun asJson(): JsonElement = objectOf("model" to model.asJson())
+}
+
+fun objectOf(vararg pair: Pair<String, JsonElement>) = JsonObject().also { pair.forEach { (k, v) -> it.add(k, v) } }
 
 data class StartStateContainer(var systemId: UInt = 0u, var startStateName: String? = null)
 

@@ -8,7 +8,6 @@ import org.gecko.actions.ActionManager
 import org.gecko.tools.ToolType
 import org.gecko.view.views.EditorView
 import org.gecko.viewmodel.EditorViewModel
-import java.util.function.Consumer
 
 /**
  * An abstract representation of a handler for shortcut events, implementing the [EventHandler] interface, which
@@ -86,7 +85,7 @@ abstract class ShortcutHandler protected constructor(
     fun addDeleteShortcuts() {
         shortcuts[Shortcuts.DELETE.get()] = {
             actionManager.run(
-                actionFactory.createDeletePositionableViewModelElementAction(
+                actionFactory.createDeleteAction(
                     editorView.viewModel.selectionManager.currentSelection
                 )
             )

@@ -18,7 +18,7 @@ internal class ChangeColorRegionViewModelElementActionTest {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
             geckoViewModel.root
-        region1 = viewModelFactory.createRegionViewModelIn(rootSystemViewModel)
+        region1 = viewModelFactory.createRegion(rootSystemViewModel)
         geckoViewModel.switchEditor(rootSystemViewModel, true)
     }
 
@@ -26,7 +26,7 @@ internal class ChangeColorRegionViewModelElementActionTest {
     fun run() {
         val color = Color(1.0, 1.0, 1.0, 0.0)
         val changeColorRegionViewModelElementAction: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, color)
+            actionFactory.createChangeColorRegion(region1, color)
         actionManager.run(changeColorRegionViewModelElementAction)
         Assertions.assertEquals(color, region1.color)
     }
@@ -35,7 +35,7 @@ internal class ChangeColorRegionViewModelElementActionTest {
     fun undoAction() {
         val color = Color(0.0, 0.0, 0.0, 0.0)
         val changeColorRegionViewModelElementAction: Action =
-            actionFactory.createChangeColorRegionViewModelElementAction(region1, color)
+            actionFactory.createChangeColorRegion(region1, color)
         val beforeChangeColor = region1.color
         actionManager.run(changeColorRegionViewModelElementAction)
         actionManager.undo()

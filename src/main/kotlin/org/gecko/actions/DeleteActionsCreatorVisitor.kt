@@ -41,10 +41,10 @@ class DeleteActionsHelper(val geckoViewModel: GeckoViewModel, val parentSystemVi
 
     // parentSystem has to be the system that contains the port
     fun visit(portViewModel: PortViewModel): List<AbstractPositionableViewModelElementAction> {
-        val actualParentSystemViewModel: SystemViewModel
+        val actualParentSystemViewModel: SystemViewModel?
         val containingSystemViewModel: SystemViewModel
         if (parentSystemViewModel.ports.contains(portViewModel)) {
-            actualParentSystemViewModel = parentSystemViewModel.parent!!
+            actualParentSystemViewModel = parentSystemViewModel.parent
             containingSystemViewModel = parentSystemViewModel
         } else {
             actualParentSystemViewModel = parentSystemViewModel

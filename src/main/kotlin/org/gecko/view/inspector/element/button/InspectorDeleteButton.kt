@@ -15,7 +15,7 @@ class InspectorDeleteButton(actionManager: ActionManager, elementToRemove: Posit
     init {
         onAction = EventHandler { event ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(elementToRemove!!)
+                actionManager.actionFactory.createDeleteAction(elementToRemove!!)
             )
         }
         text = ResourceHandler.delete

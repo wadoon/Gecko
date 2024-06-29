@@ -20,7 +20,7 @@ class StateCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolT
             }
             val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
             val createStateAction: Action =
-                actionManager.actionFactory.createCreateStateViewModelElementAction(position)
+                actionManager.actionFactory.createState(position)
             actionManager.run(createStateAction)
         }
     }

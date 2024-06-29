@@ -16,7 +16,7 @@ class RenameViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val systemViewModel = geckoViewModel.root
-        stateViewModel = viewModelFactory.createStateViewModelIn(systemViewModel)
+        stateViewModel = viewModelFactory.createState(systemViewModel)
     }
 
     @Test

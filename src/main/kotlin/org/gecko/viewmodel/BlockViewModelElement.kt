@@ -20,6 +20,9 @@ abstract class BlockViewModelElement : PositionableViewModelElement(), Renamable
     override val nameProperty: StringProperty = SimpleStringProperty("")
     override var name: String by nameProperty
 
+    override fun asJson() = super.asJson().apply { addProperty("name", name) }
+
+
     /**
      * Manipulates the position and size of the element, so that the two points are two diagonally opposite corners of
      * the [BlockViewModelElement].
@@ -49,13 +52,18 @@ abstract class BlockViewModelElement : PositionableViewModelElement(), Renamable
         return true
     }
 
+    fun setPositionFromCenter(center: Point2D) {
+        position = Point2D(center.x - +sizeProperty.value.x / 2, center.y - +sizeProperty.value.y / 2)
+    }
 
-    override var center: Point2D
+
+    override val center: Point2D
         get() = positionProperty.value + sizeProperty.value * 0.5
-        set(value) {}
 
     companion object {
         const val MIN_WIDTH: Double = 100.0
         const val MIN_HEIGHT: Double = 100.0
     }
 }
+
+fun <K, V> Map<K, V?>.extends(vararg mapOf: Pair<K, V?>): Map<K, V?> = this.toMutableMap().also { it.putAll(mapOf) }

@@ -23,6 +23,6 @@ class ChangeColorRegionViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeColorRegionViewModelElementAction(regionViewModel, oldColor)
+        return actionFactory.createChangeColorRegion(regionViewModel, oldColor)
     }
 }

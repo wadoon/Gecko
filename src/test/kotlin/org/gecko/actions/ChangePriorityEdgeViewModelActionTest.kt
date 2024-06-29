@@ -18,8 +18,8 @@ class ChangePriorityEdgeViewModelActionTest {
         val rootSystemViewModel =
             geckoViewModel.root
 
-        val stateViewModel1 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
-        val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        val stateViewModel1 = viewModelFactory.createState(rootSystemViewModel)
+        val stateViewModel2 = viewModelFactory.createState(rootSystemViewModel)
 
         edge = viewModelFactory.createEdgeViewModelIn(rootSystemViewModel, stateViewModel1, stateViewModel2)
     }

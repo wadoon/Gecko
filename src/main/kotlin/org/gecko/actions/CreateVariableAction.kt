@@ -14,21 +14,21 @@ import org.gecko.viewmodel.PortViewModel
  */
 class CreateVariableAction internal constructor(
     val geckoViewModel: GeckoViewModel,
-    val position: Point2D?
+    val position: Point2D
 ) : Action() {
     private lateinit var createdPortViewModel: PortViewModel
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         createdPortViewModel = geckoViewModel.viewModelFactory
-            .createPortViewModelIn(geckoViewModel.currentEditor!!.currentSystem)
-        createdPortViewModel.center = (position!!)
+            .createPort(geckoViewModel.currentEditor!!.currentSystem)
+        createdPortViewModel.setPositionFromCenter(position)
         val actionManager = geckoViewModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdPortViewModel, true))
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdPortViewModel)
+        return actionFactory.createDeleteAction(createdPortViewModel)
     }
 }

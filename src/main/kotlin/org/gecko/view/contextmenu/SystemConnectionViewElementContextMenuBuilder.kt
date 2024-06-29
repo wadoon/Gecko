@@ -30,7 +30,7 @@ class SystemConnectionViewElementContextMenuBuilder(
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
                 actionManager.actionFactory
-                    .createDeletePositionableViewModelElementAction(systemConnectionViewModel)
+                    .createDeleteAction(systemConnectionViewModel)
             )
         }
 

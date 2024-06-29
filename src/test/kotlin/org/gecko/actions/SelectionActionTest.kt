@@ -67,10 +67,10 @@ class SelectionActionTest {
     val actionFactory = ActionFactory(geckoViewModel)
     val viewModelFactory = geckoViewModel.viewModelFactory
     val systemViewModel = geckoViewModel.root
-    val stateViewModel1 = viewModelFactory.createStateViewModelIn(systemViewModel)
-    val stateViewModel2 = viewModelFactory.createStateViewModelIn(systemViewModel)
-    val stateViewModel3 = viewModelFactory.createStateViewModelIn(systemViewModel)
-    val stateViewModel4 = viewModelFactory.createStateViewModelIn(systemViewModel)
+    val stateViewModel1 = viewModelFactory.createState(systemViewModel)
+    val stateViewModel2 = viewModelFactory.createState(systemViewModel)
+    val stateViewModel3 = viewModelFactory.createState(systemViewModel)
+    val stateViewModel4 = viewModelFactory.createState(systemViewModel)
 
     private fun selectBunch() {
         val selectAction1: Action = actionFactory.createSelectAction(

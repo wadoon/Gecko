@@ -20,8 +20,8 @@ class ContractViewModelTest {
         val rootSystemViewModel =
             geckoViewModel.root
 
-        stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
-        val stateViewModel2 = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        stateViewModel = viewModelFactory.createState(rootSystemViewModel)
+        val stateViewModel2 = viewModelFactory.createState(rootSystemViewModel)
 
         edge = viewModelFactory.createEdgeViewModelIn(rootSystemViewModel, stateViewModel!!, stateViewModel2)
     }
@@ -47,7 +47,7 @@ class ContractViewModelTest {
         actionManager!!.run(createContractAction)
         Assertions.assertEquals(1, stateViewModel!!.contracts.size)
         val contractViewModel = stateViewModel!!.contracts.first()
-        val assignContractAction = actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
+        val assignContractAction = actionFactory!!.createChangeContractEdge(edge!!, contractViewModel)
         actionManager!!.run(assignContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
@@ -62,7 +62,7 @@ class ContractViewModelTest {
         Assertions.assertEquals(1, stateViewModel!!.contracts.size)
         val contractViewModel = stateViewModel!!.contracts.first()
 
-        val assignContractAction = actionFactory!!.createChangeContractEdgeViewModelAction(edge!!, contractViewModel)
+        val assignContractAction = actionFactory!!.createChangeContractEdge(edge!!, contractViewModel)
         actionManager!!.run(assignContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
 

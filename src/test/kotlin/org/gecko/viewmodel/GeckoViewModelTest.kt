@@ -59,12 +59,12 @@ internal class GeckoViewModelTest {
         geckoViewModel = GeckoViewModel()
         val viewModelFactory = geckoViewModel.viewModelFactory
         rootSystemViewModel = geckoViewModel.currentEditor!!.currentSystem
-        childSystemViewModel1 = viewModelFactory.createSystemViewModelIn(
+        childSystemViewModel1 = viewModelFactory.createSystem(
             rootSystemViewModel
         )
-        childSystemViewModel2 = viewModelFactory.createSystemViewModelIn(
+        childSystemViewModel2 = viewModelFactory.createSystem(
             rootSystemViewModel
         )
-        stateViewModel = viewModelFactory.createStateViewModelIn(rootSystemViewModel)
+        stateViewModel = viewModelFactory.createState(rootSystemViewModel)
     }
 }

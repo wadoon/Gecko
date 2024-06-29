@@ -83,6 +83,12 @@ data class PortViewModel(
     override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
         VariableBlockInspectorBuilder(actionManager, this)
 
+    override fun asJson() = super.asJson().apply {
+        addProperty("type", type)
+        addProperty("visibility", visibility.name)
+        addProperty("value", value)
+    }
+
     companion object {
         val DEFAULT_PORT_SIZE = Point2D(100.0, 50.0)
     }

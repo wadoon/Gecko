@@ -17,7 +17,7 @@ class ActionManagerTest {
 
     @Test
     fun testRedo() {
-        val createStateAction = actionFactory.createCreateStateViewModelElementAction(Point2D(100.0, 100.0))
+        val createStateAction = actionFactory.createState(Point2D(100.0, 100.0))
         actionManager.run(createStateAction)
 
         Assertions.assertEquals(1, systemViewModel.automaton.states.size)

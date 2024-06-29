@@ -60,7 +60,7 @@ class SystemConnectionCreatorTool(actionManager: ActionManager) :
     fun setPortViewModel(viewModel: PortViewModel?) {
         if (previousPortViewModel != null) {
             val createAction: Action = actionManager.actionFactory
-                .createCreateSystemConnectionViewModelElementAction(previousPortViewModel!!, viewModel!!)
+                .createCreateSystemConnection(previousPortViewModel!!, viewModel!!)
             actionManager.run(createAction)
         }
         previousPortViewModel = viewModel

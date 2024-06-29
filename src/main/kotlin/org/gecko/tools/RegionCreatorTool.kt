@@ -32,7 +32,7 @@ class RegionCreatorTool(actionManager: ActionManager) : AreaTool(actionManager, 
         }
         actionManager.run(
             actionManager.actionFactory
-                .createCreateRegionViewModelElementAction(
+                .createRegion(
                     Point2D(worldBounds.minX, worldBounds.minY),
                     Point2D(worldBounds.width, worldBounds.height), color
                 )

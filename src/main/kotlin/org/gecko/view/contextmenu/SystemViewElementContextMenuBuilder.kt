@@ -40,7 +40,7 @@ class SystemViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(systemViewModel)
+                actionManager.actionFactory.createDeleteAction(systemViewModel)
             )
         }
 

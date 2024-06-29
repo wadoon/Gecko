@@ -9,10 +9,20 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class CreateSystemConnectionViewModelElementActionTest {
+    private val geckoViewModel = TestHelper.createGeckoViewModel()
+    private var actionManager: ActionManager = ActionManager(geckoViewModel)
+    private var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
+    private var parent: SystemViewModel = geckoViewModel.root
+    private val viewModelFactory = geckoViewModel.viewModelFactory
+    private val system1 = viewModelFactory.createSystem(parent)
+    private val system2 = viewModelFactory.createSystem(parent)
+    private var port1: PortViewModel = viewModelFactory.createPort(system1)
+    private var port2: PortViewModel = viewModelFactory.createPort(system2)
+
     @Test
     fun run() {
         val createSystemConnectionAction: Action =
-            actionFactory.createCreateSystemConnectionViewModelElementAction(
+            actionFactory.createCreateSystemConnection(
                 port1, port2
             )
         actionManager.run(createSystemConnectionAction)
@@ -25,23 +35,9 @@ internal class CreateSystemConnectionViewModelElementActionTest {
 
         actionManager.run(createSystemConnectionAction)
         Assertions.assertEquals(1, parent.connections.size)
-    }
 
-    @Test
-    fun undoAction() {
-        Assertions.assertEquals(1, parent.connections.size)
         actionManager.undo()
         Assertions.assertEquals(0, parent.connections.size)
     }
 
-
-    private val geckoViewModel = TestHelper.createGeckoViewModel()
-    private var actionManager: ActionManager = ActionManager(geckoViewModel)
-    private var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    private var parent: SystemViewModel = geckoViewModel.root
-    private val viewModelFactory = geckoViewModel.viewModelFactory
-    private val system1 = viewModelFactory.createSystemViewModelIn(parent)
-    private val system2 = viewModelFactory.createSystemViewModelIn(parent)
-    private var port1: PortViewModel = viewModelFactory.createPortViewModelIn(system1)
-    private var port2: PortViewModel = viewModelFactory.createPortViewModelIn(system2)
 }

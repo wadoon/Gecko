@@ -35,6 +35,12 @@ data class AutomatonViewModel(
         name = AutoNaming.name("Automaton_")
     }
 
+    override fun asJson() = super.asJson().apply {
+        add("states", states.asJsonArray())
+        add("edges", edges.asJsonArray())
+        add("regions", regions.asJsonArray())
+    }
+
     val allElements: MutableList<PositionableViewModelElement>
         get() = (states + edges + regions).toMutableList()
 

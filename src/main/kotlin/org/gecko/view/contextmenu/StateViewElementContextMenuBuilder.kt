@@ -37,7 +37,7 @@ class StateViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeletePositionableViewModelElementAction(stateViewModel)
+                actionManager.actionFactory.createDeleteAction(stateViewModel)
             )
         }
 

@@ -1,5 +1,7 @@
 package org.gecko.io
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import org.gecko.viewmodel.GeckoViewModel
 import org.gecko.viewmodel.SystemViewModel
 import org.hildan.fxgson.FxGson
@@ -9,6 +11,10 @@ import java.io.*
 var gson = FxGson.fullBuilder()
     .setPrettyPrinting()
     .create()
+
+interface Mappable {
+    fun asJson(): JsonElement
+}
 
 inline fun <reified T : Any> decodeFromStream(it: InputStream) = gson.fromJson(InputStreamReader(it), T::class.java)
 
@@ -24,12 +30,13 @@ class ProjectFileParser : FileParser {
     override fun parse(file: File): GeckoViewModel {
         val wrapper =
             file.inputStream().use {
-                decodeFromStream<GeckoJsonWrapper>(it)
-            }
-        val model = wrapper.model
+                JsonParser.parseReader(InputStreamReader(it))
+            }.asJsonObject
+
+        val model = GeckoViewModel()
+        model.initFromMap(wrapper.get("model").asJsonObject)
 
         //val viewModel = GeckoViewModel(geckoJsonWrapper)
-
         /*
         val creator =
             ViewModelElementCreator(

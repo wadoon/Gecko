@@ -31,10 +31,10 @@ class ViewModelFactory(
      * If no start state is set in the parent system, the new state will be set as the start state.
      */
     @Throws(ModelException::class)
-    fun createStateViewModelIn(parentSystem: SystemViewModel): StateViewModel =
-        createStateViewModelIn(parentSystem.automaton)
+    fun createState(parentSystem: SystemViewModel): StateViewModel =
+        createState(parentSystem.automaton)
 
-    fun createStateViewModelIn(parentSystem: AutomatonViewModel): StateViewModel {
+    fun createState(parentSystem: AutomatonViewModel): StateViewModel {
         val result = parentSystem.createState()
         geckoViewModel.addViewModelElement(result)
         return result
@@ -137,8 +137,7 @@ class ViewModelFactory(
 //        )
 //    }
 
-    @Throws(ModelException::class)
-    fun createSystemViewModelIn(parentSystem: SystemViewModel): SystemViewModel {
+    fun createSystem(parentSystem: SystemViewModel): SystemViewModel {
         val result = SystemViewModel()
         parentSystem.subSystems.add(result)
         geckoViewModel.addViewModelElement(result)
@@ -180,11 +179,13 @@ class ViewModelFactory(
 //        }
 //    }
 
-    @Throws(ModelException::class)
-    fun createRegionViewModelIn(parentSystem: SystemViewModel): RegionViewModel {
+    fun createRegion(parentSystem: SystemViewModel) = createRegion(parentSystem.automaton)
+
+    fun createRegion(automaton: AutomatonViewModel): RegionViewModel {
         val result = RegionViewModel(ContractViewModel())
+        automaton.addRegion(result)
         // Check for states in the region
-        for (state in parentSystem.automaton.states) {
+        for (state in automaton.states) {
             result.checkStateInRegion(state!!)
         }
 
@@ -192,8 +193,7 @@ class ViewModelFactory(
         return result
     }
 
-    @Throws(ModelException::class)
-    fun createPortViewModelIn(systemViewModel: SystemViewModel): PortViewModel {
+    fun createPort(systemViewModel: SystemViewModel): PortViewModel {
         val result = PortViewModel()
         systemViewModel.addPort(result)
         geckoViewModel.addViewModelElement(result)

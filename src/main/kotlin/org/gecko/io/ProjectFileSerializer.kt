@@ -12,10 +12,7 @@ class ProjectFileSerializer(val viewModel: GeckoViewModel) : FileSerializer {
     @Throws(IOException::class)
     override fun writeToStream(w: Writer) {
         val root = viewModel
-        //val saver = ViewModelElementSaver(viewModel)
-        //val startStates = saver.startStates
-        //val viewModelProperties = saver.getViewModelProperties(root)
-        val geckoJsonWrapper = GeckoJsonWrapper(root)
-        encodeToStream(geckoJsonWrapper, w)
+        val project = Project(root).asJson()
+        gson.toJson(project, w)
     }
 }

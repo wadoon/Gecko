@@ -28,6 +28,6 @@ class CreateEdgeViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createDeletePositionableViewModelElementAction(createdEdgeViewModel)
+        return actionFactory.createDeleteAction(createdEdgeViewModel)
     }
 }

@@ -61,6 +61,14 @@ data class SystemViewModel(
     val automatonProperty = objectProperty(AutomatonViewModel())
     var automaton: AutomatonViewModel by automatonProperty
 
+    override fun asJson() = super.asJson().apply {
+        addProperty("code", code)
+        add("connections", connections.asJsonArray())
+        add("ports", ports.asJsonArray())
+        add("subSystems", subSystems.asJsonArray())
+        add("automaton", automaton.asJson())
+    }
+
 
     init {
         size = DEFAULT_SYSTEM_SIZE
@@ -97,8 +105,4 @@ data class SystemViewModel(
 
     override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
         SystemInspectorBuilder(actionManager, this)
-
-    fun deleteAction() {
-
-    }
 }

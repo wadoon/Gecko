@@ -17,7 +17,7 @@ internal class ChangeTypePortViewModelElementActionTest {
         val viewModelFactory = geckoViewModel.viewModelFactory
         val rootSystemViewModel =
             geckoViewModel.root
-        port = viewModelFactory.createPortViewModelIn(rootSystemViewModel)
+        port = viewModelFactory.createPort(rootSystemViewModel)
     }
 
     @Test

@@ -1,14 +1,20 @@
 package org.gecko.viewmodel
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
 import javafx.collections.*
+import javafx.geometry.Point2D
+import javafx.scene.paint.Color
 import org.gecko.actions.ActionManager
+import org.gecko.io.Mappable
 import tornadofx.asObservable
 import tornadofx.getValue
 import tornadofx.setValue
 import java.util.*
 import java.util.function.Consumer
+
 
 /**
  * Represents the ViewModel component of a Gecko project, which connects the Model and View. Holds a
@@ -17,7 +23,7 @@ import java.util.function.Consumer
  * corresponding [Element]s from Model. Contains methods for managing the [EditorViewModel] and the retained
  * [PositionableViewModelElement]s.
  */
-class GeckoViewModel(val root: SystemViewModel = SystemViewModel()) {
+class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() {
     val actionManager = ActionManager(this)
     val currentEditorProperty: ObjectProperty<EditorViewModel?> = nullableObjectProperty()
     var currentEditor by currentEditorProperty
@@ -139,16 +145,142 @@ class GeckoViewModel(val root: SystemViewModel = SystemViewModel()) {
 
     fun getSystemViewModelWithPort(portViewModel: PortViewModel): SystemViewModel? =
         root.getChildSystemWithVariable(portViewModel)
+
+    override val children: Sequence<Element>
+        get() = sequenceOf(root)
+
+    override fun asJson() = withJsonObject {
+        add("root", root.asJson())
+        add("knownVariantGroups", knownVariantGroups.asJsonArray())
+        add("activatedVariants", activatedVariants.asJsonArray())
+        add("globalDefines", globalDefines.asJsonArray())
+        addProperty("globalCode", globalCode)
+        add("openedEditors", openedEditors.map { it.currentSystem.name }.asJsonArray())
+        addProperty("currentEditor", currentEditor?.currentSystem?.name)
+    }
+
+    fun initFromMap(map: JsonObject) {
+        root = map["root"]!!.asJsonObject.initSystemViewModel()
+        knownVariantGroups.setAll(map["knownVariantGroups"].mapOfJsonObjects(::initVariantGroup))
+        activatedVariants.addAll(map["activatedVariants"].asStringList())
+        globalDefines.setAll(map["globalDefines"].mapOfJsonObjects(::initConstants))
+        globalCode = map["globalCode"].asString
+
+        //"openedEditors" to openedEditors.map { it.currentSystem.name }
+        //"currentEditor" to currentEditor?.currentSystem?.name
+    }
 }
 
-class Constant(name: String, type: String, value: String) {
-    val nameProperty: StringProperty = stringProperty("")
-    val typeProperty: StringProperty = stringProperty("")
-    val valueProperty: StringProperty = stringProperty("")
+fun initConstants(obj: JsonObject) = Constant(obj["name"].asString, obj["type"].asString, obj["value"].asString)
+
+fun JsonElement.asStringList(): Collection<String> = asJsonArray.map { it.asString }
+
+fun createSystemViewModel(x: JsonObject) = x.initSystemViewModel()
+fun JsonObject.initSystemViewModel(): SystemViewModel = SystemViewModel().also {
+    it.code = this["code"].asString
+    it.subSystems.setAll(this["subSystems"].mapOfJsonObjects(::createSystemViewModel))
+    it.ports.setAll(this["ports"].mapOfJsonObjects(::initPortViewModel))
+
+    val wp = this["connections"].asJsonArray
+        .map { it.asJsonObject }
+        .map { it["source"].asString to it["destination"].asString }
+        .map { (s, d) -> it.getVariableByName(s) to it.getVariableByName(d) }
+        .map { (s, d) -> SystemConnectionViewModel().also { it.source = s; it.destination = d } }
+    it.connections.setAll(wp)
+
+    initBlockViewElement(it, this)
+
+    it.automaton = this["automaton"].asJsonObject.initAutomaton()
+        ?: error("Entry for 'automaton' missing!")
+}
+
+fun <T> JsonElement.mapOfJsonObjects(fn: (JsonObject) -> T) =
+    asJsonArray.map { it.asJsonObject }.map(fn)
+
+fun JsonObject.initAutomaton(): AutomatonViewModel =
+    AutomatonViewModel().also {
+        initBlockViewElement(it, this)
+        it.states.setAll(this["states"].mapOfJsonObjects(::initState))
+        it.edges.setAll(this["edges"].mapOfJsonObjects { o -> initEdges(o, it) })
+        it.regions.setAll(this["regions"].mapOfJsonObjects(::initRegions))
+    }
+
+fun initEdges(map: JsonObject, avm: AutomatonViewModel) = EdgeViewModel(
+    avm.getStateByName(map["source"].asString)!!,
+    avm.getStateByName(map["destination"].asString)!!
+).also {
+    it.priority = map["priority"].asInt
+    it.kind = Kind.valueOf(map["kind"].asString ?: "HIT")
+    it.contract = map["contract"]?.asJsonObject?.initContract()
+}
+
+fun initRegions(m: JsonObject): RegionViewModel {
+    val contract: ContractViewModel = m["contract"].asJsonObject.initContract()
+    return RegionViewModel(contract).also {
+        initBlockViewElement(it, m)
+        val (r, g, b, a) = m["color"].asJsonArray.map { it.asDouble }
+        it.color = Color(r, g, b, a)
+        it.invariant = Condition(m["invariant"].asString)
+    }
+}
+
+fun initState(m: JsonObject) =
+    StateViewModel().also {
+        initBlockViewElement(it, m)
+        it.isStartState = m["isStartState"].asBoolean ?: false
+        it.contracts.setAll(m["contracts"].mapOfJsonObjects(::initContracts))
+    }
+
+fun JsonObject.initContract() =
+    ContractViewModel(
+        this["name"].asString,
+        this["preCondition"].asString,
+        this["postCondition"].asString
+    )
+
+fun initContracts(any: JsonObject) = any.initContract()
+
+fun initPortViewModel(a: JsonObject): PortViewModel = PortViewModel().also {
+    initPositionableViewElement(it, a)
+    it.value = a["value"].asString
+    it.type = a["type"].asString
+    it.visibility = Visibility.valueOf(a["visibility"].asString)
+}
+
+fun initBlockViewElement(it: BlockViewModelElement, m: JsonObject) {
+    it.name = m["name"].asString
+    initPositionableViewElement(it, m)
+}
+
+fun initPositionableViewElement(it: PositionableViewModelElement, m: JsonObject) {
+    fun JsonElement.asPoint2D() = asJsonObject.let {
+        Point2D(it["x"].asDouble, it["y"].asDouble)
+    }
+    it.size = m["size"].asPoint2D()
+    it.position = m["position"].asPoint2D()
+}
+
+fun initVariantGroup(it: JsonObject): VariantGroup = it.let {
+    val vg = VariantGroup()
+    vg.name = it["name"].asString
+    vg.variants.setAll(it["variants"].asStringList())
+    vg
+}
+
+class Constant(name: String, type: String, value: String) : Mappable {
+    val nameProperty: StringProperty = stringProperty(name)
+    val typeProperty: StringProperty = stringProperty(type)
+    val valueProperty: StringProperty = stringProperty(value)
 
     var name by nameProperty
     var type by typeProperty
     var value by valueProperty
+
+    override fun asJson() = withJsonObject {
+        addProperty("name", name)
+        addProperty("type", type)
+        addProperty("value", value)
+    }
 }
 
 fun booleanProperty(value: Boolean = false): BooleanProperty = SimpleBooleanProperty(value)
@@ -165,7 +297,9 @@ fun <K, V> mapProperty(value: ObservableMap<K, V> = FXCollections.observableHash
 
 fun <T> objectProperty(value: T): ObjectProperty<T> = SimpleObjectProperty(value)
 fun <T> nullableObjectProperty(value: T? = null): ObjectProperty<T?> = SimpleObjectProperty(value)
-fun <V> setProperty(value: ObservableSet<V> = FXCollections.observableSet()): SetProperty<V> = SimpleSetProperty(value)
+fun <V> setProperty(value: ObservableSet<V> = FXCollections.observableSet()): SetProperty<V> =
+    SimpleSetProperty(value)
+
 fun stringProperty(value: String): StringProperty = SimpleStringProperty(value)
 
 

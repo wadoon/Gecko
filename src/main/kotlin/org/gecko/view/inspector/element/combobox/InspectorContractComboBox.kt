@@ -26,7 +26,7 @@ class InspectorContractComboBox(actionManager: ActionManager, edge: EdgeViewMode
             }
             val newContract = source.contracts.find { it.name == value }
             actionManager.run(
-                actionManager.actionFactory.createChangeContractEdgeViewModelAction(edge, newContract)
+                actionManager.actionFactory.createChangeContractEdge(edge, newContract)
             )
         }
     }

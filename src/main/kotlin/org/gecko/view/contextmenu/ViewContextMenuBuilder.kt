@@ -48,7 +48,7 @@ open class ViewContextMenuBuilder {
         val cutMenuItem = MenuItem(ResourceHandler.cut)
         cutMenuItem.onAction = EventHandler { e: ActionEvent? ->
             //actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
-            actionManager.run(actionManager.actionFactory.createDeletePositionableViewModelElementAction())
+            actionManager.run(actionManager.actionFactory.createDeleteAction())
         }
         cutMenuItem.accelerator = Shortcuts.CUT.get()
         if (editorViewModel != null) {
