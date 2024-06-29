@@ -23,7 +23,7 @@ import java.util.function.Consumer
  * corresponding [Element]s from Model. Contains methods for managing the [EditorViewModel] and the retained
  * [PositionableViewModelElement]s.
  */
-class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() {
+class GModel(var root: System = System()) : Element() {
     val actionManager = ActionManager(this)
     val currentEditorProperty: ObjectProperty<EditorViewModel?> = nullableObjectProperty()
     var currentEditor by currentEditorProperty
@@ -43,9 +43,9 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
     val globalCodeProperty = stringProperty("")
     var globalCode: String? by globalCodeProperty
 
-    val allSystems: List<SystemViewModel>
+    val allSystems: List<System>
         get() {
-            fun list(s: SystemViewModel): List<SystemViewModel> = listOf(s) + s.subSystems.flatMap { list(it) }
+            fun list(s: System): List<System> = listOf(s) + s.subSystems.flatMap { list(it) }
             return list(root)
         }
 
@@ -62,35 +62,35 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
     }
 
     /**
-     * Switches the current [EditorViewModel] to the one that contains the given [SystemViewModel] and has
+     * Switches the current [EditorViewModel] to the one that contains the given [System] and has
      * the correct type (automaton  or system editor). If the [EditorViewModel] does not exist, a new one is
      * created.
      *
-     * @param nextSystemViewModel the [SystemViewModel] that should be displayed in the editor
+     * @param nextSystem the [System] that should be displayed in the editor
      * @param isAutomatonEditor   true if the editor should be an automaton editor, false if it should be a system
      * editor
      */
-    fun switchEditor(nextSystemViewModel: SystemViewModel, isAutomatonEditor: Boolean) {
+    fun switchEditor(nextSystem: System, isAutomatonEditor: Boolean) {
         openedEditorsProperty.stream()
-            .filter { editorViewModel: EditorViewModel -> (editorViewModel.currentSystem == nextSystemViewModel && editorViewModel.isAutomatonEditor == isAutomatonEditor) }
+            .filter { editorViewModel: EditorViewModel -> (editorViewModel.currentSystem == nextSystem && editorViewModel.isAutomatonEditor == isAutomatonEditor) }
             .findFirst()
             .ifPresentOrElse(
                 { editorViewModel: EditorViewModel -> this.currentEditor = editorViewModel },
-                { setupNewEditorViewModel(nextSystemViewModel, isAutomatonEditor) })
+                { setupNewEditorViewModel(nextSystem, isAutomatonEditor) })
     }
 
-    fun setupNewEditorViewModel(nextSystemViewModel: SystemViewModel, isAutomatonEditor: Boolean) {
-        var parent: SystemViewModel? = null
-        if (nextSystemViewModel.parent != null) {
-            parent = nextSystemViewModel.parent
+    fun setupNewEditorViewModel(nextSystem: System, isAutomatonEditor: Boolean) {
+        var parent: System? = null
+        if (nextSystem.parent != null) {
+            parent = nextSystem.parent
         }
-        val editorViewModel = viewModelFactory.createEditorViewModel(nextSystemViewModel, parent, isAutomatonEditor)
+        val editorViewModel = viewModelFactory.createEditorViewModel(nextSystem, parent, isAutomatonEditor)
         openedEditorsProperty.add(editorViewModel)
         currentEditor = editorViewModel
     }
 
     /**
-     * Adds a new [PositionableViewModelElement] to the [GeckoViewModel]. The element is mapped to its
+     * Adds a new [PositionableViewModelElement] to the [GModel]. The element is mapped to its
      * corresponding [Element] from the model. The [PositionableViewModelElement] is then added to the
      * correct [EditorViewModel].
      *
@@ -101,7 +101,7 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
     }
 
     /**
-     * Deletes a [PositionableViewModelElement] from the [GeckoViewModel]. The element is removed from the
+     * Deletes a [PositionableViewModelElement] from the [GModel]. The element is removed from the
      * mapping and from all [EditorViewModel]s. The selection managers of the editors are updated and the element
      * is removed from the editor that displays it.
      *
@@ -123,11 +123,9 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
 
     fun updateEditors() {
         openedEditorsProperty.forEach { this.updateEditor(it) }
-        /*val editorViewModelsToDelete = openedEditorsProperty
-            .filter { it.currentSystem == }
-            .toSet()
-        openedEditorsProperty.removeAll(editorViewModelsToDelete)
-         */
+        // TODO
+        //val editorViewModelsToDelete = openedEditorsProperty.filter { it.currentSystem == }
+        //openedEditorsProperty.removeAll(editorViewModelsToDelete)
     }
 
     fun updateEditor(editorViewModel: EditorViewModel) {
@@ -136,6 +134,8 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
 
     fun addPositionableViewModelElementsToEditor(editorViewModel: EditorViewModel) {
         val currentSystem = editorViewModel.currentSystem
+        editorViewModel.viewableElements.clear()
+
         if (editorViewModel.isAutomatonEditor) {
             editorViewModel.addPositionableViewModelElements(currentSystem.automaton.allElements)
         } else {
@@ -143,8 +143,8 @@ class GeckoViewModel(var root: SystemViewModel = SystemViewModel()) : Element() 
         }
     }
 
-    fun getSystemViewModelWithPort(portViewModel: PortViewModel): SystemViewModel? =
-        root.getChildSystemWithVariable(portViewModel)
+    fun getSystemViewModelWithPort(Port: Port): System? =
+        root.getChildSystemWithVariable(Port)
 
     override val children: Sequence<Element>
         get() = sequenceOf(root)
@@ -176,7 +176,7 @@ fun initConstants(obj: JsonObject) = Constant(obj["name"].asString, obj["type"].
 fun JsonElement.asStringList(): Collection<String> = asJsonArray.map { it.asString }
 
 fun createSystemViewModel(x: JsonObject) = x.initSystemViewModel()
-fun JsonObject.initSystemViewModel(): SystemViewModel = SystemViewModel().also {
+fun JsonObject.initSystemViewModel(): System = System().also {
     it.code = this["code"].asString
     it.subSystems.setAll(this["subSystems"].mapOfJsonObjects(::createSystemViewModel))
     it.ports.setAll(this["ports"].mapOfJsonObjects(::initPortViewModel))
@@ -197,15 +197,15 @@ fun JsonObject.initSystemViewModel(): SystemViewModel = SystemViewModel().also {
 fun <T> JsonElement.mapOfJsonObjects(fn: (JsonObject) -> T) =
     asJsonArray.map { it.asJsonObject }.map(fn)
 
-fun JsonObject.initAutomaton(): AutomatonViewModel =
-    AutomatonViewModel().also {
+fun JsonObject.initAutomaton(): Automaton =
+    Automaton().also {
         initBlockViewElement(it, this)
         it.states.setAll(this["states"].mapOfJsonObjects(::initState))
         it.edges.setAll(this["edges"].mapOfJsonObjects { o -> initEdges(o, it) })
         it.regions.setAll(this["regions"].mapOfJsonObjects(::initRegions))
     }
 
-fun initEdges(map: JsonObject, avm: AutomatonViewModel) = EdgeViewModel(
+fun initEdges(map: JsonObject, avm: Automaton) = Edge(
     avm.getStateByName(map["source"].asString)!!,
     avm.getStateByName(map["destination"].asString)!!
 ).also {
@@ -214,9 +214,9 @@ fun initEdges(map: JsonObject, avm: AutomatonViewModel) = EdgeViewModel(
     it.contract = map["contract"]?.asJsonObject?.initContract()
 }
 
-fun initRegions(m: JsonObject): RegionViewModel {
-    val contract: ContractViewModel = m["contract"].asJsonObject.initContract()
-    return RegionViewModel(contract).also {
+fun initRegions(m: JsonObject): Region {
+    val contract: Contract = m["contract"].asJsonObject.initContract()
+    return Region(contract).also {
         initBlockViewElement(it, m)
         val (r, g, b, a) = m["color"].asJsonArray.map { it.asDouble }
         it.color = Color(r, g, b, a)
@@ -232,7 +232,7 @@ fun initState(m: JsonObject) =
     }
 
 fun JsonObject.initContract() =
-    ContractViewModel(
+    Contract(
         this["name"].asString,
         this["preCondition"].asString,
         this["postCondition"].asString
@@ -240,7 +240,7 @@ fun JsonObject.initContract() =
 
 fun initContracts(any: JsonObject) = any.initContract()
 
-fun initPortViewModel(a: JsonObject): PortViewModel = PortViewModel().also {
+fun initPortViewModel(a: JsonObject): Port = Port().also {
     initPositionableViewElement(it, a)
     it.value = a["value"].asString
     it.type = a["type"].asString

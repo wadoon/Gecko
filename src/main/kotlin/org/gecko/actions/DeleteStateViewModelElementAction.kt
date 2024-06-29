@@ -3,20 +3,19 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 
 import org.gecko.viewmodel.*
-import java.util.function.Consumer
 import java.util.stream.Collectors
 
 /**
- * A concrete representation of an [Action] that removes a [StateViewModel] from the [GeckoViewModel]
+ * A concrete representation of an [Action] that removes a [StateViewModel] from the [GModel]
  * and its target-[State] from the given [Automaton].
  */
 class DeleteStateViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
+    val gModel: GModel,
     val stateViewModel: StateViewModel,
-    val systemViewModel: SystemViewModel
+    val System: System
 ) : AbstractPositionableViewModelElementAction() {
-    val editorViewModel: EditorViewModel = geckoViewModel.currentEditor!!
-    val automaton: AutomatonViewModel = systemViewModel.automaton
+    val editorViewModel: EditorViewModel = gModel.currentEditor!!
+    val automaton: Automaton = System.automaton
     var wasStartState = false
 
     @Throws(GeckoException::class)
@@ -28,25 +27,25 @@ class DeleteStateViewModelElementAction internal constructor(
         }*/
 
         // remove from region if it is in one
-        val regionViewModels = editorViewModel.containedPositionableViewModelElementsProperty
+        val RegionViewModels = editorViewModel.viewableElements
             .stream()
             .filter { element: PositionableViewModelElement -> automaton.regions.contains(element) }
-            .map { element: PositionableViewModelElement -> element as RegionViewModel }
+            .map { element: PositionableViewModelElement -> element as Region }
             .collect(Collectors.toSet())
 
-        regionViewModels.forEach { regionViewModel: RegionViewModel ->
-            regionViewModel.removeState(
+        RegionViewModels.forEach { Region: Region ->
+            Region.removeState(
                 stateViewModel
             )
         }
 
         automaton.removeState(stateViewModel)
-        geckoViewModel.deleteViewModelElement(stateViewModel)
+        gModel.deleteViewModelElement(stateViewModel)
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestoreStateViewModelElementAction(geckoViewModel, stateViewModel, systemViewModel, wasStartState)
+        return RestoreStateViewModelElementAction(gModel, stateViewModel, System, wasStartState)
     }
 
 

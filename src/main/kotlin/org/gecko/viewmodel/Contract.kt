@@ -6,10 +6,10 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of a [Contract] model element. A [ContractViewModel] is described by a name, a
+ * Represents an abstraction of a [Contract] model element. A [Contract] is described by a name, a
  * pre- and a postcondition. Contains methods for managing the afferent data and updating the target-[Contract].
  */
-data class ContractViewModel(
+data class Contract(
     override val nameProperty: StringProperty = SimpleStringProperty(""),
     val preConditionProperty: ObjectProperty<Condition> = objectProperty(Condition()),
     val postConditionProperty: ObjectProperty<Condition> = objectProperty(Condition()),

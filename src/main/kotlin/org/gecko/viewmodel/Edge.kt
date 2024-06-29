@@ -18,16 +18,16 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of an [Edge] model element. An [EdgeViewModel] is described by a source- and a
+ * Represents an abstraction of an [Edge] model element. An [Edge] is described by a source- and a
  * destination-[StateViewModel]. It is also associated with one of the start-[StateViewModel]'s
- * [ContractViewModel]s, has a priority and a [Kind], which informs about how the associated
- * [ContractViewModel] is handled. Contains methods for managing the afferent data and updating the
+ * [Contract]s, has a priority and a [Kind], which informs about how the associated
+ * [Contract] is handled. Contains methods for managing the afferent data and updating the
  * target-[Edge].
  */
-class EdgeViewModel(src: StateViewModel, dst: StateViewModel) : PositionableViewModelElement(), Inspectable {
+class Edge(src: StateViewModel, dst: StateViewModel) : PositionableViewModelElement(), Inspectable {
     val kindProperty: ObjectProperty<Kind> = SimpleObjectProperty(Kind.HIT)
     val priorityProperty: IntegerProperty = SimpleIntegerProperty(0)
-    val contractProperty: ObjectProperty<ContractViewModel?> = nullableObjectProperty()
+    val contractProperty: ObjectProperty<Contract?> = nullableObjectProperty()
     val sourceProperty: ObjectProperty<StateViewModel> = objectProperty(src)
     val destinationProperty: ObjectProperty<StateViewModel> = objectProperty(dst)
     val isLoopProperty: BooleanProperty = SimpleBooleanProperty(false)
@@ -35,7 +35,7 @@ class EdgeViewModel(src: StateViewModel, dst: StateViewModel) : PositionableView
 
     var priority: Int by priorityProperty
     var kind: Kind by kindProperty
-    var contract: ContractViewModel? by contractProperty
+    var contract: Contract? by contractProperty
     var source: StateViewModel by sourceProperty
     var destination: StateViewModel by destinationProperty
 
@@ -69,9 +69,9 @@ class EdgeViewModel(src: StateViewModel, dst: StateViewModel) : PositionableView
 
     val representation: String
         /**
-         * Returns a string representation of this [EdgeViewModel] in the form of "priority. kind(contract)".
+         * Returns a string representation of this [Edge] in the form of "priority. kind(contract)".
          *
-         * @return a string representation of this [EdgeViewModel]
+         * @return a string representation of this [Edge]
          */
         get() {
             var representation = ""

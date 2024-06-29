@@ -4,7 +4,6 @@ import javafx.beans.property.*
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.collections.ObservableSet
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.geometry.Point2D
@@ -22,18 +21,17 @@ import kotlin.math.min
 
 /**
  * Represents the view model correspondent to an [EditorView][org.gecko.view.views.EditorView], holding relevant
- * items like the [ActionManager], the current- and parent-[SystemsViewModel][SystemViewModel]s, the
+ * items like the [ActionManager], the current- and parent-[SystemsViewModel][System]s, the
  * contained [PositionableViewModelElement]s, the [SelectionManager] and others, updating the view model of
  * the Gecko project.
  */
 class EditorViewModel(
     val actionManager: ActionManager,
-    val currentSystem: SystemViewModel,
-    val parentSystem: SystemViewModel?,
+    val currentSystem: System,
+    val parentSystem: System?,
     val isAutomatonEditor: Boolean,
 ) : Openable {
-    val containedPositionableViewModelElementsProperty: ObservableSet<PositionableViewModelElement> =
-        FXCollections.observableSet()
+    val viewableElements = listProperty<PositionableViewModelElement>()
     val tools: MutableList<List<Tool>> = FXCollections.observableArrayList()
     val selectionManager = SelectionManager()
     val pivotProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
@@ -72,13 +70,13 @@ class EditorViewModel(
     }
 
     /**
-     * Returns the [RegionViewModel]s that contain the given [StateViewModel] by checking if the state is in
+     * Returns the [Region]s that contain the given [StateViewModel] by checking if the state is in
      * set of states of the region.
      *
-     * @param stateViewModel the [StateViewModel] to get the containing [RegionViewModel]s for
-     * @return the [RegionViewModel]s that contain the given [StateViewModel]
+     * @param stateViewModel the [StateViewModel] to get the containing [Region]s for
+     * @return the [Region]s that contain the given [StateViewModel]
      */
-    fun getRegions(stateViewModel: StateViewModel): List<RegionViewModel> {
+    fun getRegions(stateViewModel: StateViewModel): List<Region> {
         val regions = currentSystem.automaton.regions
         return regions.filter { it.box.contains(stateViewModel.box) }
     }
@@ -107,8 +105,8 @@ class EditorViewModel(
      * @param elements the elements to add
      */
     fun addPositionableViewModelElements(elements: MutableList<PositionableViewModelElement>) {
-        elements.removeAll(containedPositionableViewModelElementsProperty)
-        containedPositionableViewModelElementsProperty.addAll(elements)
+        elements.removeAll(viewableElements)
+        viewableElements.addAll(elements)
     }
 
     /**
@@ -118,11 +116,10 @@ class EditorViewModel(
      * @param elements the elements to remove
      */
     fun removePositionableViewModelElements(elements: Set<PositionableViewModelElement>) {
-        elements.forEach { containedPositionableViewModelElementsProperty.remove(it) }
+        elements.forEach { viewableElements.remove(it) }
     }
 
-    val positionableViewModelElements: Set<PositionableViewModelElement>
-        get() = containedPositionableViewModelElementsProperty
+    val positionableViewModelElements by viewableElements
 
     fun initializeTools() {
         tools.add(
@@ -204,7 +201,7 @@ class EditorViewModel(
      * @return the elements that are in the given area
      */
     fun getElementsInArea(bound: Bounds): Set<PositionableViewModelElement> {
-        return containedPositionableViewModelElementsProperty.stream()
+        return viewableElements.stream()
             .filter { element: PositionableViewModelElement ->
                 if (element.size == Point2D.ZERO) {
                     return@filter false
@@ -225,18 +222,18 @@ class EditorViewModel(
         const val DEFAULT_ZOOM_STEP = 1.1
 
         fun updateStateRegionList(
-            stateViewModel: StateViewModel, region: RegionViewModel,
-            change: ListChangeListener.Change<out StateViewModel>, regionViewModels: ObservableList<RegionViewModel>
+            stateViewModel: StateViewModel, region: Region,
+            change: ListChangeListener.Change<out StateViewModel>, Regions: ObservableList<Region>
         ) {
             while (change.next()) {
                 if (change.wasAdded()) {
                     if (change.addedSubList.contains(stateViewModel)) {
-                        regionViewModels.add(region)
+                        Regions.add(region)
                     }
                 }
                 if (change.wasRemoved()) {
                     if (change.removed.contains(stateViewModel)) {
-                        regionViewModels.remove(region)
+                        Regions.remove(region)
                     }
                 }
             }

@@ -11,73 +11,73 @@ import org.gecko.viewmodel.*
  * [delta value][Point2D].
  */
 class MoveSystemConnectionViewModelElementAction : Action {
-    val geckoViewModel: GeckoViewModel
+    val gModel: GModel
     val editorViewModel: EditorViewModel
     val systemConnectionViewModel: SystemConnectionViewModel?
     val elementScalerBlock: ElementScalerBlock
     var delta: Point2D? = null
-    var portViewModel: PortViewModel? = null
-    var previousPortViewModel: PortViewModel? = null
+    var Port: Port? = null
+    var previousPort: Port? = null
     var isVariableBlock = false
     var wasVariableBlock = false
 
     internal constructor(
-        geckoViewModel: GeckoViewModel,
+        gModel: GModel,
         systemConnectionViewModel: SystemConnectionViewModel?,
         elementScalerBlock: ElementScalerBlock,
         delta: Point2D?
     ) {
-        this.geckoViewModel = geckoViewModel
-        this.editorViewModel = geckoViewModel.currentEditor!!
+        this.gModel = gModel
+        this.editorViewModel = gModel.currentEditor!!
         this.systemConnectionViewModel = systemConnectionViewModel
         this.elementScalerBlock = elementScalerBlock
         this.delta = delta
     }
 
     internal constructor(
-        geckoViewModel: GeckoViewModel,
+        gModel: GModel,
         systemConnectionViewModel: SystemConnectionViewModel?,
         elementScalerBlock: ElementScalerBlock,
-        portViewModel: PortViewModel?,
+        Port: Port?,
         isVariableBlock: Boolean
     ) {
-        this.geckoViewModel = geckoViewModel
-        this.editorViewModel = geckoViewModel.currentEditor!!
+        this.gModel = gModel
+        this.editorViewModel = gModel.currentEditor!!
         this.systemConnectionViewModel = systemConnectionViewModel
         this.elementScalerBlock = elementScalerBlock
-        this.portViewModel = portViewModel
+        this.Port = Port
         this.isVariableBlock = isVariableBlock
     }
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        if (portViewModel == null) {
-            portViewModel = portViewModelAt
-            if (portViewModel == null) {
+        if (Port == null) {
+            Port = PortAt
+            if (Port == null) {
                 return false
             }
         }
 
-        val parentSystem = geckoViewModel.currentEditor!!.currentSystem
+        val parentSystem = gModel.currentEditor!!.currentSystem
         var sourcePortViewModel = systemConnectionViewModel!!.source!!
         var destinationPortViewModel = systemConnectionViewModel.destination!!
 
         if (isSource) {
-            if (portViewModel == sourcePortViewModel) {
+            if (Port == sourcePortViewModel) {
                 return false
             }
-            wasVariableBlock = geckoViewModel.getSystemViewModelWithPort(sourcePortViewModel) == parentSystem
-            sourcePortViewModel = portViewModel!!
+            wasVariableBlock = gModel.getSystemViewModelWithPort(sourcePortViewModel) == parentSystem
+            sourcePortViewModel = Port!!
         } else {
-            if (portViewModel == destinationPortViewModel) {
+            if (Port == destinationPortViewModel) {
                 return false
             }
-            wasVariableBlock = geckoViewModel.getSystemViewModelWithPort(destinationPortViewModel) == parentSystem
-            destinationPortViewModel = portViewModel!!
+            wasVariableBlock = gModel.getSystemViewModelWithPort(destinationPortViewModel) == parentSystem
+            destinationPortViewModel = Port!!
         }
 
-        val sourceSystem = geckoViewModel.getSystemViewModelWithPort(sourcePortViewModel)
-        val destinationSystem = geckoViewModel.getSystemViewModelWithPort(destinationPortViewModel)
+        val sourceSystem = gModel.getSystemViewModelWithPort(sourcePortViewModel)
+        val destinationSystem = gModel.getSystemViewModelWithPort(destinationPortViewModel)
 
         if (!isConnectingAllowed(
                 sourcePortViewModel,
@@ -92,7 +92,7 @@ class MoveSystemConnectionViewModelElementAction : Action {
         }
 
         val newPositionProperty = if (isVariableBlock) {
-            calculateEndPortPosition(portViewModel!!.position, portViewModel!!.size, portViewModel!!.visibility, false)
+            calculateEndPortPosition(Port!!.position, Port!!.size, Port!!.visibility, false)
 
             /*portViewModel.getPositionProperty().addListener((observable, oldValue, newValue) ->
                     newPositionProperty.setValue(
@@ -100,9 +100,9 @@ class MoveSystemConnectionViewModelElementAction : Action {
                                     portViewModel.getVisibility(), false)));*/
         } else {
             calculateEndPortPosition(
-                portViewModel!!.systemPortPositionProperty.value,
-                portViewModel!!.systemPortSizeProperty.value,
-                portViewModel!!.visibility,
+                Port!!.systemPortPositionProperty.value,
+                Port!!.systemPortSizeProperty.value,
+                Port!!.visibility,
                 true
             )
 
@@ -115,10 +115,10 @@ class MoveSystemConnectionViewModelElementAction : Action {
         systemConnectionViewModel.edgePoints[elementScalerBlock.index] = newPositionProperty
 
         if (isSource) {
-            previousPortViewModel = systemConnectionViewModel.source
+            previousPort = systemConnectionViewModel.source
             systemConnectionViewModel.source = sourcePortViewModel
         } else {
-            previousPortViewModel = systemConnectionViewModel.destination
+            previousPort = systemConnectionViewModel.destination
             systemConnectionViewModel.destination = destinationPortViewModel
         }
         elementScalerBlock.updatePosition()
@@ -129,12 +129,12 @@ class MoveSystemConnectionViewModelElementAction : Action {
         return actionFactory.createMoveSystemConnectionViewModelElementAction(
             systemConnectionViewModel,
             elementScalerBlock,
-            previousPortViewModel,
+            previousPort,
             wasVariableBlock
         )
     }
 
-    val portViewModelAt: PortViewModel?
+    val PortAt: Port?
         get() {
             if (systemConnectionViewModel == null) {
                 return null
@@ -143,7 +143,7 @@ class MoveSystemConnectionViewModelElementAction : Action {
             return getPortViewModelAt(elementScalerBlock.layoutPosition.add(delta))
         }
 
-    fun getPortViewModelAt(point: Point2D): PortViewModel? {
+    fun getPortViewModelAt(point: Point2D): Port? {
         // Check for variable blocks in the current system
         for (variable in editorViewModel.currentSystem.ports) {
             if (point.x > variable.position.x && point.x < variable.position.x + variable.size.x && point.y > variable.position.y && point.y < variable.position.y + variable.size.y) {

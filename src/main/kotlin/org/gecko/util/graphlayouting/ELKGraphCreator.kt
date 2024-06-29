@@ -9,8 +9,8 @@ import org.gecko.viewmodel.*
  * current position and size of the view model elements to the ELK nodes. It also creates edges between the nodes based
  * on the connections in the view model.
  */
-internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
-    fun createSystemElkGraph(system: SystemViewModel): ElkNode {
+internal class ELKGraphCreator(val viewModel: GModel) {
+    fun createSystemElkGraph(system: System): ElkNode {
         val root = ElkGraphUtil.createGraph()
         val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(system))
         children.addAll(system.ports)
@@ -25,7 +25,7 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
         return root
     }
 
-    fun createAutomatonElkGraph(system: SystemViewModel): ElkNode {
+    fun createAutomatonElkGraph(system: System): ElkNode {
         val root = ElkGraphUtil.createGraph()
         val children = getStates(system)
         for (child in children) {
@@ -46,18 +46,18 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
         node.identifier = block.hashCode().toString()
     }
 
-    fun getChildSystemViewModels(systemViewModel: SystemViewModel): List<SystemViewModel> {
-        return systemViewModel.subSystems
+    fun getChildSystemViewModels(System: System): List<System> {
+        return System.subSystems
     }
 
-    fun getAutomatonEdges(systemViewModel: SystemViewModel): List<EdgeViewModel> =
-        systemViewModel.automaton.edges
+    fun getAutomatonEdges(System: System): List<Edge> =
+        System.automaton.edges
 
-    fun getConnectionViewModels(systemViewModel: SystemViewModel): List<SystemConnectionViewModel> =
-        systemViewModel.connections
+    fun getConnectionViewModels(System: System): List<SystemConnectionViewModel> =
+        System.connections
 
-    fun getStates(systemViewModel: SystemViewModel): List<StateViewModel> {
-        return systemViewModel.automaton.states
+    fun getStates(System: System): List<StateViewModel> {
+        return System.automaton.states
     }
 
     fun findNode(graph: ElkNode, element: BlockViewModelElement): ElkNode {
@@ -68,7 +68,7 @@ internal class ELKGraphCreator(val viewModel: GeckoViewModel) {
             .orElse(null)
     }
 
-    fun findPortOrSystemNode(graph: ElkNode, parentSystem: SystemViewModel, element: PortViewModel): ElkNode {
+    fun findPortOrSystemNode(graph: ElkNode, parentSystem: System, element: Port): ElkNode {
         if (parentSystem.ports.contains(element)) {
             return findNode(graph, element)
         } else {

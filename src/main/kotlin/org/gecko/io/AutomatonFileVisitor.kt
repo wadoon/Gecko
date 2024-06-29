@@ -11,12 +11,12 @@ import org.gecko.viewmodel.*
 import java.util.*
 
 /**
- * Used for building a [GeckoViewModel] from a sys file. This class is a visitor for the ANTLR4 generated parser for
- * the sys file format. The entire [GeckoViewModel] can be built by calling [.visitModel] and passing it the
+ * Used for building a [GModel] from a sys file. This class is a visitor for the ANTLR4 generated parser for
+ * the sys file format. The entire [GModel] can be built by calling [.visitModel] and passing it the
  * [SystemDefParser.ModelContext] of a sys file.
  */
 class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
-    var model: GeckoViewModel = GeckoViewModel()
+    var model: GModel = GModel()
     val warnings: MutableSet<String> = TreeSet()
 
     var currentSystem = model.root
@@ -45,7 +45,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         scout.getSystem(rootName)!!.accept(this)
         val newRoot = model.root.subSystems.first()
         newRoot.parent = null
-        model = GeckoViewModel(newRoot)
+        model = GModel(newRoot)
         if (ctx.globalCode != null) {
             model.globalCode = cleanCode(ctx.globalCode.text)
         }
@@ -61,7 +61,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     override fun visitSystem(ctx: SystemContext) {
-        val system: SystemViewModel = currentSystem.createSubSystem()
+        val system: System = currentSystem.createSubSystem()
         system.name = instanceName ?: ctx.ident().Ident().text
         if (ctx.reaction() != null) {
             system.code = cleanCode(ctx.reaction().text)
@@ -154,7 +154,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         } else {
             buildContract(start, ctx.pre.text, ctx.post.text)
         }
-        val edge: EdgeViewModel = currentSystem.automaton.createEdge(start, end)
+        val edge: Edge = currentSystem.automaton.createEdge(start, end)
 
         edge.contract = contract
     }
@@ -202,7 +202,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         val startSystem = parseSystemReference(ctx.from.inst.text)
         val start = startSystem.getVariableByName(ctx.from.port.text)
             ?: throw RuntimeException(String.format("Could not find variable %s", ctx.from.port.text))
-        val end: MutableSet<PortViewModel> = HashSet()
+        val end: MutableSet<Port> = HashSet()
         for (ident in ctx.to) {
             val endSystem = parseSystemReference(ident.inst.text)
             val endVar = endSystem.getVariableByName(ident.port.text)
@@ -216,14 +216,14 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
     }
 
-    private fun buildContract(state: StateViewModel, contract: PrepostContext?): ContractViewModel {
+    private fun buildContract(state: StateViewModel, contract: PrepostContext?): Contract {
         val c = buildContract(state, contract!!.pre.text, contract.post.text)
         c.name = contract.name.text
         return c
     }
 
-    private fun buildContract(state: StateViewModel, pre: String, post: String): ContractViewModel {
-        val newContract = ContractViewModel()
+    private fun buildContract(state: StateViewModel, pre: String, post: String): Contract {
+        val newContract = Contract()
         val preCondition = Condition(pre)
         val postCondition = Condition(post)
         newContract.preCondition = preCondition
@@ -231,7 +231,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return newContract
     }
 
-    private fun applySubstitution(currentSystem: SystemViewModel, toReplace: String, toReplaceWith: String) {
+    private fun applySubstitution(currentSystem: System, toReplace: String, toReplaceWith: String) {
         val automaton = currentSystem.automaton
         for (state in automaton.states) {
             for (contract in state.contracts) {
@@ -254,7 +254,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return code.substring(CODE_BEGIN.length, code.length - CODE_BEGIN.length)
     }
 
-    private fun parseSystemReference(name: String): SystemViewModel {
+    private fun parseSystemReference(name: String): System {
         return if (name == SELF_REFERENCE_TOKEN) {
             currentSystem
         } else {

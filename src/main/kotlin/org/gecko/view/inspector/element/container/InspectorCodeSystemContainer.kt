@@ -10,11 +10,11 @@ import org.gecko.view.ResourceHandler
 import org.gecko.view.inspector.element.InspectorElement
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.view.inspector.element.textfield.InspectorCodeSystemField
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 import java.io.File
 import java.nio.file.Files
 
-class InspectorCodeSystemContainer(actionManager: ActionManager, viewModel: SystemViewModel) : VBox(),
+class InspectorCodeSystemContainer(actionManager: ActionManager, viewModel: System) : VBox(),
     InspectorElement<VBox> {
     init {
         if (viewModel.subSystems.isEmpty()) {
@@ -31,7 +31,7 @@ class InspectorCodeSystemContainer(actionManager: ActionManager, viewModel: Syst
     override val control = this
 
     data class OpenExternallyHandler(
-        val actionManager: ActionManager, val viewModel: SystemViewModel,
+        val actionManager: ActionManager, val viewModel: System,
         val codeProperty: StringProperty
     ) : EventHandler<ActionEvent?>, Runnable {
         override fun handle(actionEvent: ActionEvent?) {

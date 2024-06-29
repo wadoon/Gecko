@@ -9,44 +9,44 @@ import org.gecko.viewmodel.*
 /**
  * Represents a factory for actions. Provides a method for the creation of each subtype of [Action].
  */
-class ActionFactory(val geckoViewModel: GeckoViewModel) {
-    fun createChangeColorRegion(regionViewModel: RegionViewModel, color: Color?) =
-        ChangeColorRegionViewModelElementAction(regionViewModel, color)
+class ActionFactory(val gModel: GModel) {
+    fun createChangeColorRegion(Region: Region, color: Color?) =
+        ChangeColorRegionViewModelElementAction(Region, color)
 
-    fun createChangeContractEdge(viewModel: EdgeViewModel, contract: ContractViewModel?) =
+    fun createChangeContractEdge(viewModel: Edge, contract: Contract?) =
         ChangeContractEdgeViewModelAction(viewModel, contract)
 
     fun createChangeInvariantViewModelElementAction(
-        regionViewModel: RegionViewModel, newInvariant: String
-    ) = ChangeInvariantViewModelElementAction(regionViewModel, newInvariant)
+        Region: Region, newInvariant: String
+    ) = ChangeInvariantViewModelElementAction(Region, newInvariant)
 
-    fun createChangeKindAction(edgeViewModel: EdgeViewModel, kind: Kind?) =
-        ChangeKindEdgeViewModelAction(edgeViewModel, kind)
+    fun createChangeKindAction(Edge: Edge, kind: Kind?) =
+        ChangeKindEdgeViewModelAction(Edge, kind)
 
-    fun createChangePreconditionViewModelElementAction(contractViewModel: ContractViewModel, newPrecondition: String) =
-        ChangePreconditionViewModelElementAction(contractViewModel, newPrecondition)
+    fun createChangePreconditionViewModelElementAction(Contract: Contract, newPrecondition: String) =
+        ChangePreconditionViewModelElementAction(Contract, newPrecondition)
 
     fun createChangePostconditionViewModelElementAction(
-        contractViewModel: ContractViewModel, newPostcondition: String
-    ) = ChangePostconditionViewModelElementAction(contractViewModel, newPostcondition)
+        Contract: Contract, newPostcondition: String
+    ) = ChangePostconditionViewModelElementAction(Contract, newPostcondition)
 
     fun createChangeTypePortViewModelElementAction(
-        portViewModel: PortViewModel, newType: String
-    ) = ChangeTypePortViewModelElementAction(portViewModel, newType)
+        Port: Port, newType: String
+    ) = ChangeTypePortViewModelElementAction(Port, newType)
 
     fun createChangeVariableValuePortViewModelAction(
-        portViewModel: PortViewModel, newValue: String?
-    ) = ChangeVariableValuePortViewModelAction(portViewModel, newValue)
+        Port: Port, newValue: String?
+    ) = ChangeVariableValuePortViewModelAction(Port, newValue)
 
     fun changeVisibility(
-        portViewModel: PortViewModel, visibility: Visibility
-    ) = ChangeVisibilityPortViewModelAction(geckoViewModel, portViewModel, visibility)
+        Port: Port, visibility: Visibility
+    ) = ChangeVisibilityPortViewModelAction(gModel, Port, visibility)
 
     fun changeVisibility(
-        portViewModel: PortViewModel, visibility: Visibility, systemConnectionDeleteActionGroup: Action?
+        Port: Port, visibility: Visibility, systemConnectionDeleteActionGroup: Action?
     ): ChangeVisibilityPortViewModelAction {
         return ChangeVisibilityPortViewModelAction(
-            geckoViewModel, portViewModel, visibility, systemConnectionDeleteActionGroup
+            gModel, Port, visibility, systemConnectionDeleteActionGroup
         )
     }
 
@@ -57,80 +57,80 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
 
     fun createCreateContractViewModelElementAction(
         stateViewModel: StateViewModel
-    ) = CreateContractViewModelElementAction(geckoViewModel, stateViewModel)
+    ) = CreateContractViewModelElementAction(gModel, stateViewModel)
 
     fun createCreateEdgeViewModelElementAction(
         source: StateViewModel?, destination: StateViewModel?
-    ) = CreateEdgeViewModelElementAction(geckoViewModel, source!!, destination!!)
+    ) = CreateEdgeViewModelElementAction(gModel, source!!, destination!!)
 
-    fun createCreatePortViewModelElementAction(parentSystem: SystemViewModel) =
-        CreatePortViewModelElementAction(geckoViewModel, parentSystem)
+    fun createCreatePortViewModelElementAction(parentSystem: System) =
+        CreatePortViewModelElementAction(gModel, parentSystem)
 
     fun createRegion(position: Point2D, size: Point2D, color: Color?) =
-        CreateRegionViewModelElementAction(geckoViewModel, position, size, color)
+        CreateRegionViewModelElementAction(gModel, position, size, color)
 
     fun createState(position: Point2D) =
-        CreateStateViewModelElementAction(geckoViewModel, geckoViewModel.currentEditor!!, position)
+        CreateStateViewModelElementAction(gModel, gModel.currentEditor!!, position)
 
-    fun createCreateSystemConnection(source: PortViewModel, destination: PortViewModel) =
-        CreateSystemConnectionViewModelElementAction(geckoViewModel, source, destination)
+    fun createCreateSystemConnection(source: Port, destination: Port) =
+        CreateSystemConnectionViewModelElementAction(gModel, source, destination)
 
-    fun createCreateSystemViewModelElementAction(position: Point2D) =
-        CreateSystemViewModelElementAction(geckoViewModel, position)
+    fun createSystem(position: Point2D) =
+        CreateSystemViewModelElementAction(gModel, position)
 
-    fun createVariable(position: Point2D) = CreateVariableAction(geckoViewModel, position)
+    fun createVariable(position: Point2D) = CreateVariableAction(gModel, position)
 
-    fun createDeleteContractViewModelAction(parent: StateViewModel, contractViewModel: ContractViewModel?) =
-        DeleteContractViewModelAction(parent, contractViewModel)
+    fun createDeleteContractViewModelAction(parent: StateViewModel, Contract: Contract?) =
+        DeleteContractViewModelAction(parent, Contract)
 
     fun createDeleteAction(
         element: PositionableViewModelElement
-    ) = DeletePositionableViewModelElementAction(geckoViewModel, element)
+    ) = DeletePositionableViewModelElementAction(gModel, element)
 
     fun createDeleteAction(elements: Set<PositionableViewModelElement>) =
-        DeletePositionableViewModelElementAction(geckoViewModel, elements)
+        DeletePositionableViewModelElementAction(gModel, elements)
 
     fun createDeleteAction() = DeletePositionableViewModelElementAction(
-        geckoViewModel,
-        geckoViewModel.currentEditor!!.selectionManager.currentSelection
+        gModel,
+        gModel.currentEditor!!.selectionManager.currentSelection
     )
 
     fun createMoveBlockViewModelElementAction(delta: Point2D) =
-        MoveBlockViewModelElementAction(geckoViewModel.currentEditor!!, delta)
+        MoveBlockViewModelElementAction(gModel.currentEditor!!, delta)
 
     fun createMoveBlockViewModelElementAction(
         elementsToMove: Set<PositionableViewModelElement>?, delta: Point2D
-    ) = MoveBlockViewModelElementAction(geckoViewModel.currentEditor!!, elementsToMove, delta)
+    ) = MoveBlockViewModelElementAction(gModel.currentEditor!!, elementsToMove, delta)
 
     fun createMoveEdgeViewModelElementAction(
-        edgeViewModel: EdgeViewModel, elementScalerBlock: ElementScalerBlock, delta: Point2D?
-    ) = MoveEdgeViewModelElementAction(geckoViewModel, edgeViewModel, elementScalerBlock, delta)
+        Edge: Edge, elementScalerBlock: ElementScalerBlock, delta: Point2D?
+    ) = MoveEdgeViewModelElementAction(gModel, Edge, elementScalerBlock, delta)
 
     fun createMoveEdgeViewModelElementAction(
-        edgeViewModel: EdgeViewModel,
+        Edge: Edge,
         elementScalerBlock: ElementScalerBlock,
         stateViewModel: StateViewModel?,
-        contractViewModel: ContractViewModel?
+        Contract: Contract?
     ) = MoveEdgeViewModelElementAction(
-        geckoViewModel, edgeViewModel, elementScalerBlock, stateViewModel, contractViewModel
+        gModel, Edge, elementScalerBlock, stateViewModel, Contract
     )
 
     fun createMoveSystemConnectionViewModelElementAction(
         systemConnectionViewModel: SystemConnectionViewModel?, elementScalerBlock: ElementScalerBlock?, delta: Point2D?
     ): MoveSystemConnectionViewModelElementAction {
         return MoveSystemConnectionViewModelElementAction(
-            geckoViewModel, systemConnectionViewModel, elementScalerBlock!!, delta
+            gModel, systemConnectionViewModel, elementScalerBlock!!, delta
         )
     }
 
     fun createMoveSystemConnectionViewModelElementAction(
         systemConnectionViewModel: SystemConnectionViewModel?,
         elementScalerBlock: ElementScalerBlock?,
-        portViewModel: PortViewModel?,
+        Port: Port?,
         isVariableBlock: Boolean
     ): MoveSystemConnectionViewModelElementAction {
         return MoveSystemConnectionViewModelElementAction(
-            geckoViewModel, systemConnectionViewModel, elementScalerBlock!!, portViewModel, isVariableBlock
+            gModel, systemConnectionViewModel, elementScalerBlock!!, Port, isVariableBlock
         )
     }
 
@@ -142,8 +142,8 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         RenameViewModelElementAction(renamable, name)
 
     fun createRestoreContractViewModelElementAction(
-        parent: StateViewModel, contractViewModel: ContractViewModel?, edgesWithContract: Set<EdgeViewModel>?
-    ) = RestoreContractViewModelElementAction(parent, contractViewModel, edgesWithContract)
+        parent: StateViewModel, Contract: Contract?, edgesWithContract: Set<Edge>?
+    ) = RestoreContractViewModelElementAction(parent, Contract, edgesWithContract)
 
     fun createScaleBlockViewModelElementAction(
         blockViewModelElement: BlockViewModelElement,
@@ -152,46 +152,46 @@ class ActionFactory(val geckoViewModel: GeckoViewModel) {
         size: Point2D?,
         isPreviousScale: Boolean
     ) = ScaleBlockViewModelElementAction(
-        geckoViewModel.currentEditor!!, blockViewModelElement, elementScalerBlock, position, size, isPreviousScale
+        gModel.currentEditor!!, blockViewModelElement, elementScalerBlock, position, size, isPreviousScale
     )
 
     fun createScaleBlockViewModelElementAction(
         blockViewModelElement: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?) = ScaleBlockViewModelElementAction(
-        geckoViewModel.currentEditor!!, blockViewModelElement, elementScalerBlock
+        gModel.currentEditor!!, blockViewModelElement, elementScalerBlock
     )
 
     fun createFocusPositionableViewModelElementAction(
         element: PositionableViewModelElement
-    ) = FocusPositionableViewModelElementAction(geckoViewModel.currentEditor!!, element)
+    ) = FocusPositionableViewModelElementAction(gModel.currentEditor!!, element)
 
     fun createModifyEdgeViewModelPriorityAction(
-        edgeViewModel: EdgeViewModel, priority: Int
-    ) = ModifyEdgeViewModelPriorityAction(edgeViewModel, priority)
+        Edge: Edge, priority: Int
+    ) = ModifyEdgeViewModelPriorityAction(Edge, priority)
 
     fun createSelectAction(element: PositionableViewModelElement, newSelection: Boolean) =
         createSelectAction(setOf(element), newSelection)
 
     fun createSelectAction(elements: Set<PositionableViewModelElement>?, newSelection: Boolean) =
-        SelectAction(geckoViewModel.currentEditor!!, elements, newSelection)
+        SelectAction(gModel.currentEditor!!, elements, newSelection)
 
-    fun createDeselectAction() = DeselectAction(geckoViewModel.currentEditor!!)
+    fun createDeselectAction() = DeselectAction(gModel.currentEditor!!)
 
-    fun createSelectionHistoryBackAction() = SelectionHistoryBackAction(geckoViewModel.currentEditor!!.selectionManager)
+    fun createSelectionHistoryBackAction() = SelectionHistoryBackAction(gModel.currentEditor!!.selectionManager)
 
     fun createSelectionHistoryForwardAction() =
-        SelectionHistoryForwardAction(geckoViewModel.currentEditor!!.selectionManager)
+        SelectionHistoryForwardAction(gModel.currentEditor!!.selectionManager)
 
-    fun createSelectToolAction(tool: ToolType) = SelectToolAction(geckoViewModel.currentEditor!!, tool)
+    fun createSelectToolAction(tool: ToolType) = SelectToolAction(gModel.currentEditor!!, tool)
     fun createSetStartStateViewModelElementAction(stateViewModel: StateViewModel) =
-        SetStartStateViewModelElementAction(geckoViewModel, stateViewModel, true)
+        SetStartStateViewModelElementAction(gModel, stateViewModel, true)
 
-    fun createViewSwitchAction(systemViewModel: SystemViewModel?, isAutomaton: Boolean) =
-        ViewSwitchAction(geckoViewModel, systemViewModel, isAutomaton)
+    fun createViewSwitchAction(System: System?, isAutomaton: Boolean) =
+        ViewSwitchAction(gModel, System, isAutomaton)
 
-    fun createZoomAction(pivot: Point2D, factor: Double) = ZoomAction(geckoViewModel.currentEditor!!, pivot, factor)
-    fun createZoomCenterAction(factor: Double) = ZoomCenterAction(geckoViewModel.currentEditor!!, factor)
-    fun createChangeCodeSystemViewModelAction(systemViewModel: SystemViewModel, newCode: String) =
-        ChangeCodeSystemViewModelAction(systemViewModel, newCode)
+    fun createZoomAction(pivot: Point2D, factor: Double) = ZoomAction(gModel.currentEditor!!, pivot, factor)
+    fun createZoomCenterAction(factor: Double) = ZoomCenterAction(gModel.currentEditor!!, factor)
+    fun createChangeCodeSystemViewModelAction(System: System, newCode: String) =
+        ChangeCodeSystemViewModelAction(System, newCode)
 
     /*fun createCutPositionableViewModelElementAction(): CutPositionableViewModelElementAction {
         return CutPositionableViewModelElementAction(geckoViewModel)

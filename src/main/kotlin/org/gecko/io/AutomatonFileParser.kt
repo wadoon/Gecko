@@ -6,18 +6,18 @@ import javafx.scene.control.*
 import org.antlr.v4.runtime.*
 import org.gecko.util.graphlayouting.Graphlayouter
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import java.io.File
 import java.io.IOException
 
 /**
  * The AutomatonFileParser is used to import a project from a sys file. It is responsible for parsing a sys file and
- * creating a [GeckoViewModel] from it. It uses the [AutomatonFileVisitor] the file into a
- * [GeckoViewModel]. And then uses the [ViewModelElementCreator] to create the view model from the model.
+ * creating a [GModel] from it. It uses the [AutomatonFileVisitor] the file into a
+ * [GModel]. And then uses the [ViewModelElementCreator] to create the view model from the model.
  */
 class AutomatonFileParser : FileParser {
     @Throws(IOException::class)
-    override fun parse(file: File): GeckoViewModel {
+    override fun parse(file: File): GModel {
         val stream = CharStreams.fromPath(file.toPath())
         val parser = SystemDefParser(CommonTokenStream(SystemDefLexer(stream)))
         val listener = SyntaxErrorListener()

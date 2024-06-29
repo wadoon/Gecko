@@ -18,23 +18,22 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.SystemConnectionViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
-import java.util.function.Consumer
 import kotlin.math.min
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [SystemViewModel].
+ * [System].
  */
-class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(systemViewModel),
-    ViewElement<SystemViewModel> {
-    override val target: SystemViewModel = systemViewModel
+class SystemViewElement(System: System) : BlockViewElement(System),
+    ViewElement<System> {
+    override val target: System = System
     val nameProperty: StringProperty = SimpleStringProperty()
     val codeProperty: StringProperty = SimpleStringProperty()
-    val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList())
+    val portsProperty: ListProperty<Port> = SimpleListProperty(FXCollections.observableArrayList())
     val inputPortsAligner = VBox()
     val outputPortsAligner = VBox()
     val portViewElements: ListProperty<PortViewElement> =
@@ -85,13 +84,13 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
         val portContainers = setupPortContainers()
         container.children.addAll(portContainers.first(), centeredNameLabel, portContainers.last())
         children.addAll(backgroundRectangle, container)
-        portsProperty.forEach { portViewModel: PortViewModel? -> this.addPort(portViewModel) }
-        portsProperty.addListener { change: ListChangeListener.Change<out PortViewModel> ->
+        portsProperty.forEach { Port: Port? -> this.addPort(Port) }
+        portsProperty.addListener { change: ListChangeListener.Change<out Port> ->
             this.onPortsChanged(change)
         }
     }
 
-    fun onPortsChanged(change: ListChangeListener.Change<out PortViewModel>) {
+    fun onPortsChanged(change: ListChangeListener.Change<out Port>) {
         while (change.next()) {
             if (change.wasAdded()) {
                 change.addedSubList.forEach { this.addPort(it) }
@@ -116,46 +115,46 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
         }
     }
 
-    fun addPort(portViewModel: PortViewModel?) {
-        portViewModel!!.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
+    fun addPort(Port: Port?) {
+        Port!!.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
             this.onVisibilityChanged(observable, oldValue, newValue)
         }
-        val portViewElement = PortViewElement(portViewModel)
+        val portViewElement = PortViewElement(Port)
         portViewElement.layoutYProperty()
             .addListener { observable: ObservableValue<out Number?>?, oldValue: Number?, newValue: Number? -> updatePortViewModels() }
         portViewElements.add(portViewElement)
-        if (portViewModel.visibility == Visibility.INPUT) {
+        if (Port.visibility == Visibility.INPUT) {
             inputPortsAligner.children.add(portViewElement)
-        } else if (portViewModel.visibility == Visibility.OUTPUT) {
+        } else if (Port.visibility == Visibility.OUTPUT) {
             outputPortsAligner.children.add(portViewElement)
         }
-        portViewModel.incomingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.incomingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
             this.onConnectionChanged(change)
         }
-        portViewModel.outgoingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.outgoingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
     }
 
-    fun removePort(portViewModel: PortViewModel) {
+    fun removePort(Port: Port) {
         // This is safe, since the portViewElement should be present in the list
         val portViewElement =
-            portViewElements.stream().filter { pve: PortViewElement -> pve.viewModel == portViewModel }.findFirst()
+            portViewElements.stream().filter { pve: PortViewElement -> pve.viewModel == Port }.findFirst()
                 .orElseThrow()
         portViewElements.remove(portViewElement)
-        if (portViewModel.visibility == Visibility.INPUT) {
+        if (Port.visibility == Visibility.INPUT) {
             inputPortsAligner.children.remove(portViewElement)
-        } else if (portViewModel.visibility == Visibility.OUTPUT) {
+        } else if (Port.visibility == Visibility.OUTPUT) {
             outputPortsAligner.children.remove(portViewElement)
         } else {
             inputPortsAligner.children.remove(portViewElement)
             outputPortsAligner.children.remove(portViewElement)
         }
-        portViewModel.incomingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.incomingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
             this.onConnectionChanged(change)
         }
-        portViewModel.outgoingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.outgoingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
@@ -168,7 +167,7 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
             return
         }
         val portViewModel =
-            portsProperty.stream().filter { pvm: PortViewModel? -> pvm!!.visibilityProperty === observable }.findFirst()
+            portsProperty.stream().filter { pvm: Port? -> pvm!!.visibilityProperty === observable }.findFirst()
                 .orElseThrow()
         val portViewElement =
             portViewElements.stream().filter { pve: PortViewElement -> pve.viewModel == portViewModel }.findFirst()
@@ -248,24 +247,24 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
         return getOtherPortY(p1.viewModel).compareTo(getOtherPortY(p2.viewModel))
     }
 
-    fun getSortPosition(portViewModel: PortViewModel?): Point2D {
-        if (portViewModel == null) return Point2D.ZERO
+    fun getSortPosition(Port: Port?): Point2D {
+        if (Port == null) return Point2D.ZERO
 
-        if (isVariableBlock(portViewModel)) {
-            return portViewModel.center
+        if (isVariableBlock(Port)) {
+            return Port.center
         }
-        return portViewModel.systemPositionProperty
+        return Port.systemPositionProperty
             .value
-            .add(portViewModel.systemPortOffsetProperty.value)
+            .add(Port.systemPortOffsetProperty.value)
     }
 
-    fun getOtherPortY(portViewModel: PortViewModel): Double {
+    fun getOtherPortY(Port: Port): Double {
         val connections: List<SystemConnectionViewModel> =
-            if (portViewModel.visibility == Visibility.INPUT) portViewModel.incomingConnections
-            else portViewModel.outgoingConnections
+            if (Port.visibility == Visibility.INPUT) Port.incomingConnections
+            else Port.outgoingConnections
         var minY = Double.MAX_VALUE
         for (connection in connections) {
-            minY = if (connection.source == portViewModel) {
+            minY = if (connection.source == Port) {
                 min(minY, getSortPosition(connection.destination).y)
             } else {
                 min(minY, getSortPosition(connection.source).y)
@@ -274,8 +273,8 @@ class SystemViewElement(systemViewModel: SystemViewModel) : BlockViewElement(sys
         return minY
     }
 
-    fun isVariableBlock(portViewModel: PortViewModel): Boolean {
-        return target.parent!!.ports.contains(portViewModel)
+    fun isVariableBlock(Port: Port): Boolean {
+        return target.parent!!.ports.contains(Port)
     }
 
     private val edgePointListener = { change: ListChangeListener.Change<out Point2D> ->

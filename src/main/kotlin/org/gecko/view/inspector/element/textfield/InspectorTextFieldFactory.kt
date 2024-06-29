@@ -69,7 +69,7 @@ abstract class InspectorAreaField(
 }
 
 
-class InspectorCodeSystemField(actionManager: ActionManager, systemViewModel: SystemViewModel) :
+class InspectorCodeSystemField(actionManager: ActionManager, System: System) :
     InspectorElement<CodeArea> {
     /*public void toggleExpand() {
         setPrefHeight(getPrefHeight() == MAX_HEIGHT ? EXPANDED_MAX_HEIGHT : MAX_HEIGHT);
@@ -111,7 +111,7 @@ class InspectorCodeSystemField(actionManager: ActionManager, systemViewModel: Sy
         }
 
         control.clear()
-        val stringProperty = systemViewModel.codeProperty
+        val stringProperty = System.codeProperty
 
         val getTextFromModel = Supplier {
             val s = stringProperty.get()
@@ -141,7 +141,7 @@ class InspectorCodeSystemField(actionManager: ActionManager, systemViewModel: Sy
             }
             actionManager.run(
                 actionManager.actionFactory.createChangeCodeSystemViewModelAction(
-                    systemViewModel,
+                    System,
                     control.text
                 )
             )
@@ -280,33 +280,33 @@ class InspectorCodeSystemField(actionManager: ActionManager, systemViewModel: Sy
 
 
 /**
- * A concrete representation of an [InspectorAreaField] for a [RegionViewModel], through which the invariant
+ * A concrete representation of an [InspectorAreaField] for a [Region], through which the invariant
  * of the region can be changed.
  */
-class InspectorInvariantField(val actionManager: ActionManager, val regionViewModel: RegionViewModel) :
-    InspectorAreaField(actionManager, regionViewModel.invariant.valueProperty, false) {
+class InspectorInvariantField(val actionManager: ActionManager, val Region: Region) :
+    InspectorAreaField(actionManager, Region.invariant.valueProperty, false) {
     override val action: Action
-        get() = actionManager.actionFactory.createChangeInvariantViewModelElementAction(regionViewModel, text)
+        get() = actionManager.actionFactory.createChangeInvariantViewModelElementAction(Region, text)
 }
 
 /**
- * A concrete representation of an [InspectorTextField] for a [PortViewModel], through which the value of
+ * A concrete representation of an [InspectorTextField] for a [Port], through which the value of
  * the variable can be changed.
  */
-class InspectorVariableValueField(actionManager: ActionManager, val portViewModel: PortViewModel) :
+class InspectorVariableValueField(actionManager: ActionManager, val Port: Port) :
     InspectorTextField(
-        portViewModel.valueProperty, actionManager
+        Port.valueProperty, actionManager
     ) {
     override val action: Action
-        get() = actionManager.actionFactory.createChangeVariableValuePortViewModelAction(portViewModel, text)
+        get() = actionManager.actionFactory.createChangeVariableValuePortViewModelAction(Port, text)
 
     override fun updateText() {
         parent.requestFocus()
-        if (text != null && text == portViewModel.value) {
+        if (text != null && text == Port.value) {
             return
         }
         actionManager.run(action)
-        text = portViewModel.value
+        text = Port.value
     }
 }
 
@@ -324,11 +324,11 @@ class InspectorRenameField(actionManager: ActionManager, val renamable: Renamabl
 
 /**
  * Represents a type of [Spinner] encapsulating an [Integer] and implementing the [InspectorElement]
- * interface. Used to change the priority of an [EdgeViewModel].
+ * interface. Used to change the priority of an [Edge].
  */
-class InspectorPriorityField(val actionManager: ActionManager, val edgeViewModel: EdgeViewModel) :
+class InspectorPriorityField(val actionManager: ActionManager, val Edge: Edge) :
     Spinner<Int>(
-        MIN_PRIORITY, MAX_PRIORITY, edgeViewModel.priority
+        MIN_PRIORITY, MAX_PRIORITY, Edge.priority
     ), InspectorElement<Spinner<Int>> {
     init {
         isEditable = true
@@ -338,8 +338,8 @@ class InspectorPriorityField(val actionManager: ActionManager, val edgeViewModel
                     editor.text = oldValue
                 }
             }
-        edgeViewModel.priorityProperty
-            .addListener { event: Observable? -> valueFactory.setValue(edgeViewModel.priority) }
+        Edge.priorityProperty
+            .addListener { event: Observable? -> valueFactory.setValue(Edge.priority) }
 
 
         onKeyPressed = EventHandler<KeyEvent> { event: KeyEvent ->
@@ -348,15 +348,15 @@ class InspectorPriorityField(val actionManager: ActionManager, val edgeViewModel
             }
             parent.requestFocus()
             if (editor.text.isEmpty()) {
-                editor.text = edgeViewModel.priority.toString()
+                editor.text = Edge.priority.toString()
                 commitValue()
                 return@EventHandler
             }
-            if (value == edgeViewModel.priority) {
+            if (value == Edge.priority) {
                 return@EventHandler
             }
             actionManager.run(
-                actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(edgeViewModel, value!!)
+                actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(Edge, value!!)
             )
         }
     }
@@ -364,14 +364,14 @@ class InspectorPriorityField(val actionManager: ActionManager, val edgeViewModel
     override fun decrement(steps: Int) {
         super.decrement(steps)
         actionManager.run(
-            actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(edgeViewModel, value!!)
+            actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(Edge, value!!)
         )
     }
 
     override fun increment(steps: Int) {
         super.increment(steps)
         actionManager.run(
-            actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(edgeViewModel, value!!)
+            actionManager.actionFactory.createModifyEdgeViewModelPriorityAction(Edge, value!!)
         )
     }
 
@@ -428,32 +428,32 @@ abstract class InspectorTextField protected constructor(
 
 
 /**
- * A concrete representation of an [InspectorAreaField] for a [ContractViewModel], through which the
+ * A concrete representation of an [InspectorAreaField] for a [Contract], through which the
  * precondition of the contract can be changed.
  */
 class InspectorPreconditionField(
     val actionManager: ActionManager,
-    val contractViewModel: ContractViewModel
+    val Contract: Contract
 ) : InspectorAreaField(
-    actionManager, contractViewModel.preCondition.valueProperty, false
+    actionManager, Contract.preCondition.valueProperty, false
 ) {
     override val action: Action
         get() = actionManager.actionFactory
-            .createChangePreconditionViewModelElementAction(contractViewModel, text)
+            .createChangePreconditionViewModelElementAction(Contract, text)
 }
 
 
 /**
- * A concrete representation of an [InspectorAreaField] for a [ContractViewModel], through which the
+ * A concrete representation of an [InspectorAreaField] for a [Contract], through which the
  * postcondition of the contract can be changed.
  */
 class InspectorPostconditionField(
     val actionManager: ActionManager,
-    val contractViewModel: ContractViewModel
+    val Contract: Contract
 ) : InspectorAreaField(
-    actionManager, contractViewModel.postCondition.valueProperty, false
+    actionManager, Contract.postCondition.valueProperty, false
 ) {
     override val action: Action
         get() = actionManager.actionFactory
-            .createChangePostconditionViewModelElementAction(contractViewModel, text)
+            .createChangePostconditionViewModelElementAction(Contract, text)
 }

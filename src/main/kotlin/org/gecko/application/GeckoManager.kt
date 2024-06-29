@@ -16,7 +16,7 @@ import org.gecko.exceptions.GeckoException
 import org.gecko.io.*
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.objectProperty
 import tornadofx.getValue
 import tornadofx.onChange
@@ -32,7 +32,7 @@ import java.io.IOException
 class GeckoManager : Application() {
     lateinit var stage: Stage
 
-    var geckoProperty = objectProperty(GeckoViewModel())
+    var geckoProperty = objectProperty(GModel())
     var gecko by geckoProperty
 
     var geckoView: GeckoView = GeckoView(this, gecko)
@@ -92,7 +92,7 @@ class GeckoManager : Application() {
      * Attempts to create a new project and makes the user choose a file to save it to.
      */
     fun createNewProject() {
-        this.gecko = GeckoViewModel()
+        this.gecko = GModel()
     }
 
     /**
@@ -102,7 +102,7 @@ class GeckoManager : Application() {
     fun loadGeckoProject() {
         getOpenFileChooser(FileTypes.JSON)?.let { fileToLoad ->
             val projectFileParser = ProjectFileParser()
-            val gvm: GeckoViewModel =
+            val gvm: GModel =
                 try {
                     projectFileParser.parse(fileToLoad)
                 } catch (e: IOException) {

@@ -10,14 +10,14 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
 internal class CreateViewModelElementActionTest {
-    private val geckoViewModel = TestHelper.createGeckoViewModel()
-    private val actionManager = ActionManager(geckoViewModel)
-    private val actionFactory = ActionFactory(geckoViewModel)
-    private val factory = geckoViewModel.viewModelFactory
-    private val rootSystem = geckoViewModel.root
+    private val gmodel = TestHelper.createGeckoViewModel()
+    private val actionManager = ActionManager(gmodel)
+    private val actionFactory = ActionFactory(gmodel)
+    private val factory = gmodel.viewModelFactory
+    private val rootSystem = gmodel.root
 
     init {
-        geckoViewModel.switchEditor(rootSystem, true)
+        gmodel.switchEditor(rootSystem, true)
     }
 
     @Test
@@ -46,7 +46,7 @@ internal class CreateViewModelElementActionTest {
         state.position = Point2D(150.0, 150.0)
         state.size = Point2D(50.0, 50.0)
 
-        val currentEditor = geckoViewModel.currentEditor!!
+        val currentEditor = gmodel.currentEditor!!
 
         assertEquals(0, currentEditor.getRegions(state).size)
 
@@ -77,8 +77,8 @@ internal class CreateViewModelElementActionTest {
 
     @Test
     fun createSystem() {
-        geckoViewModel.switchEditor(rootSystem, false)
-        val act = actionFactory.createCreateSystemViewModelElementAction(Point2D(100.0, 100.0))
+        gmodel.switchEditor(rootSystem, false)
+        val act = actionFactory.createSystem(Point2D(100.0, 100.0))
         assertEquals(0, rootSystem.subSystems.size)
 
         actionManager.run(act)

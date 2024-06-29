@@ -1,7 +1,8 @@
 package org.gecko.viewmodel
 
 
-import javafx.beans.property.*
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
@@ -17,14 +18,15 @@ import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
+import java.lang.System
 import java.util.*
 
 /**
- * Represents an abstraction of a [Region] model element. A [RegionViewModel] is described by a
- * [Color], a set of [StateViewModel]s, a [ContractViewModel] and an invariant. Contains methods for
+ * Represents an abstraction of a [Region] model element. A [Region] is described by a
+ * [Color], a set of [StateViewModel]s, a [Contract] and an invariant. Contains methods for
  * managing the afferent data and updating the target-[Region].
  */
-data class RegionViewModel(val contract: ContractViewModel) : BlockViewModelElement(), Inspectable {
+data class Region(val contract: Contract) : BlockViewModelElement(), Inspectable {
     val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
     var color: Color by colorProperty
 

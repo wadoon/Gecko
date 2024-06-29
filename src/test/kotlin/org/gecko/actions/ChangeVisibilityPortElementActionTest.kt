@@ -2,14 +2,14 @@ package org.gecko.actions
 
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ChangeVisibilityPortViewModelElementActionTest {
+class ChangeVisibilityPortElementActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()
-    private var port: PortViewModel
+    private var port: Port
     private var actionManager = ActionManager(geckoViewModel)
     private var actionFactory = ActionFactory(geckoViewModel)
 

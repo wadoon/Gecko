@@ -1,30 +1,30 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PortViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.GModel
+import org.gecko.viewmodel.Port
+import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of an [Action] that removes a [PortViewModel] from the given
- * parent-[SystemViewModel].
+ * A concrete representation of an [Action] that removes a [Port] from the given
+ * parent-[System].
  */
 class DeletePortViewModelElementAction(
-    val geckoViewModel: GeckoViewModel,
-    val portViewModel: PortViewModel,
-    val system: SystemViewModel
+    val gModel: GModel,
+    val Port: Port,
+    val system: System
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        system.removePort(portViewModel)
-        geckoViewModel.deleteViewModelElement(portViewModel)
+        system.removePort(Port)
+        gModel.deleteViewModelElement(Port)
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestorePortViewModelElementAction(geckoViewModel, portViewModel, system)
+        return RestorePortViewModelElementAction(gModel, Port, system)
     }
 
     override val target
-        get() = portViewModel
+        get() = Port
 }

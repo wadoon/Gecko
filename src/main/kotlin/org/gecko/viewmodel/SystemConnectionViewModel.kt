@@ -14,22 +14,22 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [SystemConnection] model element. A [SystemConnectionViewModel] is
- * described by a source- and a destination-[PortViewModel]. Contains methods for managing the afferent data and
+ * described by a source- and a destination-[Port]. Contains methods for managing the afferent data and
  * updating the target-[SystemConnection].
  */
 
 
 data class SystemConnectionViewModel(
-    val sourceProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>(),
-    val destinationProperty: SimpleObjectProperty<PortViewModel?> = SimpleObjectProperty<PortViewModel?>(),
+    val sourceProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
+    val destinationProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
 ) : PositionableViewModelElement(), ConnectionViewModel {
     override val edgePoints = listProperty<Point2D>()
 
     override val children: Sequence<Element>
         get() = sequenceOf()
 
-    var source: PortViewModel? by sourceProperty
-    var destination: PortViewModel? by destinationProperty
+    var source: Port? by sourceProperty
+    var destination: Port? by destinationProperty
 
     override fun asJson() = super.asJson().apply {
         addProperty("source", source?.name)
@@ -76,8 +76,8 @@ data class SystemConnectionViewModel(
  * @return true if the connection is allowed, false otherwise
  */
 fun isConnectingAllowed(
-    source: PortViewModel, destination: PortViewModel, sourceSystem: SystemViewModel?,
-    destinationSystem: SystemViewModel?, parentSystem: SystemViewModel?,
+    source: Port, destination: Port, sourceSystem: System?,
+    destinationSystem: System?, parentSystem: System?,
     systemConnection: SystemConnectionViewModel?
 ): Boolean {
     if (sourceSystem == null || destinationSystem == null || parentSystem == null) {

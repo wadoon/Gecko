@@ -1,19 +1,19 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 
-class ChangeCodeSystemViewModelAction(val systemViewModel: SystemViewModel, val newCode: String) :
+class ChangeCodeSystemViewModelAction(val System: System, val newCode: String) :
     Action() {
-    val oldCode = systemViewModel.code
+    val oldCode = System.code
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        systemViewModel.code = newCode
+        System.code = newCode
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeCodeSystemViewModelAction(systemViewModel, oldCode)
+        return actionFactory.createChangeCodeSystemViewModelAction(System, oldCode)
     }
 }

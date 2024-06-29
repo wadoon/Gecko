@@ -8,7 +8,7 @@ import javafx.scene.control.SeparatorMenuItem
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
@@ -17,7 +17,7 @@ import org.gecko.viewmodel.PortViewModel
  */
 class VariableBlockViewElementContextMenuBuilder(
     actionManager: ActionManager,
-    val portViewModel: PortViewModel,
+    val Port: Port,
     geckoView: GeckoView
 ) : ViewContextMenuBuilder(actionManager, geckoView) {
     override fun build(): ContextMenu {
@@ -29,7 +29,7 @@ class VariableBlockViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeleteAction(portViewModel)
+                actionManager.actionFactory.createDeleteAction(Port)
             )
         }
 

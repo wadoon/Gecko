@@ -16,10 +16,10 @@ import tornadofx.setValue
 
 
 /**
- * Represents an abstraction of a [Variable] model element. A [PortViewModel] is described by a type and a
+ * Represents an abstraction of a [Variable] model element. A [Port] is described by a type and a
  * [Visibility]. Contains methods for managing the afferent data and updating the target-[Variable].
  */
-data class PortViewModel(
+data class Port(
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty(Visibility.STATE),
     val typeProperty: StringProperty = SimpleStringProperty("int"),
     val valueProperty: StringProperty = SimpleStringProperty("")

@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test
 internal class EditorViewModelTest {
     @Test
     fun regionViewModels() {
-        val geckoViewModel = GeckoViewModel()
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = geckoViewModel.root
+        val gModel = GModel()
+        val viewModelFactory = gModel.viewModelFactory
+        val rootSystemViewModel = gModel.root
         val regionViewModel2 = viewModelFactory.createRegion(rootSystemViewModel)
         val regionViewModel1 = viewModelFactory.createRegion(rootSystemViewModel)
         val stateViewModel: StateViewModel = viewModelFactory.createState(rootSystemViewModel)
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
-        val editorViewModel = geckoViewModel.currentEditor!!
+        gModel.switchEditor(rootSystemViewModel, true)
+        val editorViewModel = gModel.currentEditor!!
 
         regionViewModel1.addState(stateViewModel)
         assertEquals(editorViewModel.getRegions(stateViewModel), listOf(regionViewModel1))
@@ -29,9 +29,9 @@ internal class EditorViewModelTest {
 
     @Test
     fun updateRegionViewModels() {
-        val geckoViewModel = GeckoViewModel()
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = geckoViewModel.root
+        val gModel = GModel()
+        val viewModelFactory = gModel.viewModelFactory
+        val rootSystemViewModel = gModel.root
         val regionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
         var stateViewModel: StateViewModel? = null
         try {
@@ -39,8 +39,8 @@ internal class EditorViewModelTest {
         } catch (e: ModelException) {
             fail<Any>()
         }
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
-        val editorViewModel = geckoViewModel.currentEditor
+        gModel.switchEditor(rootSystemViewModel, true)
+        val editorViewModel = gModel.currentEditor
 
         stateViewModel!!.setPositionFromCenter(regionViewModel.center)
         editorViewModel!!.updateRegions()
@@ -62,12 +62,12 @@ internal class EditorViewModelTest {
 
     @Test
     fun testToolSelections() {
-        val geckoViewModel = GeckoViewModel()
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = geckoViewModel.root
+        val gModel = GModel()
+        val viewModelFactory = gModel.viewModelFactory
+        val rootSystemViewModel = gModel.root
 
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
-        val editorViewModel = geckoViewModel.currentEditor
+        gModel.switchEditor(rootSystemViewModel, true)
+        val editorViewModel = gModel.currentEditor
 
         assertEquals(editorViewModel!!.currentTool.toolType, ToolType.CURSOR)
         editorViewModel.setCurrentTool(ToolType.STATE_CREATOR)
@@ -76,20 +76,20 @@ internal class EditorViewModelTest {
 
     @Test
     fun testPositionableViewModelElements() {
-        val geckoViewModel = GeckoViewModel()
-        val viewModelFactory = geckoViewModel.viewModelFactory
-        val rootSystemViewModel = geckoViewModel.root
+        val gModel = GModel()
+        val viewModelFactory = gModel.viewModelFactory
+        val rootSystemViewModel = gModel.root
         val regionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
         val stateViewModel = viewModelFactory.createState(rootSystemViewModel)
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
-        val editorViewModel = geckoViewModel.currentEditor
+        gModel.switchEditor(rootSystemViewModel, true)
+        val editorViewModel = gModel.currentEditor
 
         assertTrue(stateViewModel.name.startsWith("State_"))
 
         assertEquals(1, editorViewModel!!.getElementsByName(stateViewModel.name).size)
 
         assertTrue(editorViewModel.positionableViewModelElements.contains(stateViewModel))
-        assertTrue(editorViewModel.containedPositionableViewModelElementsProperty.contains(regionViewModel))
+        assertTrue(editorViewModel.viewableElements.contains(regionViewModel))
 
         editorViewModel.selectionManager.select(stateViewModel)
         assertEquals(editorViewModel.focusedElement, stateViewModel)

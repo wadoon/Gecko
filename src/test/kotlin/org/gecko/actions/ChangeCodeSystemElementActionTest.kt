@@ -4,7 +4,7 @@ import org.gecko.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ChangeCodeSystemViewModelElementActionTest {
+class ChangeCodeSystemElementActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()
     val actionManager = ActionManager(geckoViewModel)
     val actionFactory = ActionFactory(geckoViewModel)

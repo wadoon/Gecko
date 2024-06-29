@@ -15,15 +15,15 @@ import tornadofx.setValue
 val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)
 
 /**
- * Represents an abstraction of a [System] model element. A [AutomatonViewModel] is described by a code snippet
- * and a set of [PortViewModel]s. Contains methods for managing the afferent data and updating the
+ * Represents an abstraction of a [System] model element. A [Automaton] is described by a code snippet
+ * and a set of [Port]s. Contains methods for managing the afferent data and updating the
  * target-[System].
  */
-data class AutomatonViewModel(
+data class Automaton(
     //val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
     val statesProperty: ListProperty<StateViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-    val edgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-    val regionsProperty: ListProperty<RegionViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+    val edgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
+    val regionsProperty: ListProperty<Region> = SimpleListProperty(FXCollections.observableArrayList()),
 ) : BlockViewModelElement(), Openable {
     val edges by edgesProperty
 
@@ -61,22 +61,22 @@ data class AutomatonViewModel(
         port.systemPositionProperty.unbind()
     }*/
 
-    fun removeEdge(target: EdgeViewModel) = edges.remove(target)
-    fun removeRegion(target: RegionViewModel) = regions.remove(target)
+    fun removeEdge(target: Edge) = edges.remove(target)
+    fun removeRegion(target: Region) = regions.remove(target)
     fun removeState(s: StateViewModel) = states.remove(s)
     fun getOutgoingEdges(state: StateViewModel) = edges.filter { it.source == state }
     fun getStateByName(startName: String?): StateViewModel? = states.firstOrNull { it.name == startName }
-    fun createEdge(start: StateViewModel, end: StateViewModel): EdgeViewModel =
-        EdgeViewModel(start, end).also {
+    fun createEdge(start: StateViewModel, end: StateViewModel): Edge =
+        Edge(start, end).also {
             edges.add(it)
             start.outgoingEdges.add(it)
             end.incomingEdges.add(it)
         }
 
     fun createState(): StateViewModel = StateViewModel().also { states.add(it) }
-    fun getRegionsWithState(state: StateViewModel): List<RegionViewModel> = regions.filter { it.includes(state) }
-    fun addRegion(target: RegionViewModel) = regionsProperty.add(target)
-    fun addEdge(edge: EdgeViewModel) = edges.add(edge)
+    fun getRegionsWithState(state: StateViewModel): List<Region> = regions.filter { it.includes(state) }
+    fun addRegion(target: Region) = regionsProperty.add(target)
+    fun addEdge(edge: Edge) = edges.add(edge)
 
     override fun editor(actionManager: ActionManager, geckoView: GeckoView): EditorView {
         TODO("Not yet implemented")

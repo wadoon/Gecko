@@ -4,7 +4,7 @@ import javafx.scene.control.Alert
 
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import java.util.*
 
 /**
@@ -12,9 +12,9 @@ import java.util.*
  * [ActionFactory], a stack of currently undoable [Action]s and a stack of currently redoable
  * [Action]s, thus providing methods for running, undoing and redoing actions.
  */
-class ActionManager(geckoViewModel: GeckoViewModel) {
+class ActionManager(gModel: GModel) {
 
-    val actionFactory = ActionFactory(geckoViewModel)
+    val actionFactory = ActionFactory(gModel)
     val undoStack = ArrayDeque<Action>()
     val redoStack = ArrayDeque<Action>()
 

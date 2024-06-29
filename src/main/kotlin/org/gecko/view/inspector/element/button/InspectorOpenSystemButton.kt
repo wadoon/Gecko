@@ -6,13 +6,13 @@ import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.shortcuts.Shortcuts
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 
 /**
- * Represents a type of [AbstractInspectorButton] used for opening a [SystemViewModel] by switching to the
+ * Represents a type of [AbstractInspectorButton] used for opening a [System] by switching to the
  * system view corresponding to the given system.
  */
-class InspectorOpenSystemButton(actionManager: ActionManager, systemViewModel: SystemViewModel?) :
+class InspectorOpenSystemButton(actionManager: ActionManager, System: System?) :
     AbstractInspectorButton() {
     init {
         styleClass.add(STYLE)
@@ -25,7 +25,7 @@ class InspectorOpenSystemButton(actionManager: ActionManager, systemViewModel: S
         prefWidth = WIDTH.toDouble()
         onAction = EventHandler { event: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createViewSwitchAction(systemViewModel, false)
+                actionManager.actionFactory.createViewSwitchAction(System, false)
             )
         }
     }

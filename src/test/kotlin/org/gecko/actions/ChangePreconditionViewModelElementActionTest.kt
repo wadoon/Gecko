@@ -2,12 +2,12 @@ package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 import org.junit.jupiter.api.*
 
 internal class ChangePreconditionViewModelElementActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()
-    private var region1: RegionViewModel
+    private var region1: Region
     private var actionManager: ActionManager = ActionManager(geckoViewModel)
     private var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
 

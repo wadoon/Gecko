@@ -8,16 +8,16 @@ import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.util.BasicProgressMonitor
 import org.eclipse.elk.graph.ElkNode
 import org.gecko.viewmodel.BlockViewModelElement
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.StateViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 
 /**
  * The Graphlayouter is the core of the graphlayouting package. It is responsible for creating the ELK graph from the
  * view model and applying the layout to the view model. Currently, the layoutalgorithms are hardcoded to use the
  * layered algorithm for the system graph and the force algorithm for the automaton graph.
  */
-class Graphlayouter(val viewModel: GeckoViewModel) {
+class Graphlayouter(val viewModel: GModel) {
     internal val elkGraphCreator = ELKGraphCreator(viewModel)
 
     fun layout() {
@@ -25,14 +25,14 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         layout(root)
     }
 
-    fun layout(systemViewModel: SystemViewModel) {
-        val systemGraph = elkGraphCreator.createSystemElkGraph(systemViewModel)
+    fun layout(System: System) {
+        val systemGraph = elkGraphCreator.createSystemElkGraph(System)
         layoutGraph(systemGraph, LayoutAlgorithms.LAYERED)
-        applySystemLayoutToViewModel(systemGraph, systemViewModel)
-        val automatonGraph = elkGraphCreator.createAutomatonElkGraph(systemViewModel)
+        applySystemLayoutToViewModel(systemGraph, System)
+        val automatonGraph = elkGraphCreator.createAutomatonElkGraph(System)
         layoutGraph(automatonGraph, LayoutAlgorithms.FORCE)
-        applyAutomatonLayoutToViewModel(automatonGraph, systemViewModel)
-        for (system in systemViewModel.subSystems) {
+        applyAutomatonLayoutToViewModel(automatonGraph, System)
+        for (system in System.subSystems) {
             layout(system)
         }
     }
@@ -51,7 +51,7 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         engine.layout(root, BasicProgressMonitor())
     }
 
-    fun applySystemLayoutToViewModel(root: ElkNode?, viewModel: SystemViewModel) {
+    fun applySystemLayoutToViewModel(root: ElkNode?, viewModel: System) {
         val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(viewModel))
         children.addAll(viewModel.ports)
         for (child in children) {
@@ -59,7 +59,7 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
         }
     }
 
-    fun applyAutomatonLayoutToViewModel(root: ElkNode?, viewModel: SystemViewModel) {
+    fun applyAutomatonLayoutToViewModel(root: ElkNode?, viewModel: System) {
         for (child in getStates(viewModel)) {
             applyLayoutToNode(root, child)
         }
@@ -74,10 +74,10 @@ class Graphlayouter(val viewModel: GeckoViewModel) {
     fun findNodeById(root: ElkNode?, id: Int): ElkNode? =
         root!!.children.firstOrNull { it.identifier == id.toString() }
 
-    fun getChildSystemViewModels(systemViewModel: SystemViewModel): List<SystemViewModel> =
-        systemViewModel.subSystems
+    fun getChildSystemViewModels(System: System): List<System> =
+        System.subSystems
 
-    fun getStates(systemViewModel: SystemViewModel): List<StateViewModel> = systemViewModel
+    fun getStates(System: System): List<StateViewModel> = System
         .automaton
         .states
 }

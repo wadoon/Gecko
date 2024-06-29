@@ -1,12 +1,12 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class ChangeTypePortViewModelElementActionTest {
-    private var port: PortViewModel? = null
+internal class ChangeTypePortElementActionTest {
+    private var port: Port? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 

@@ -10,7 +10,7 @@ import org.gecko.view.views.ViewElementPane
 
 /**
  * A concrete representation of a variable-block-creating-[Tool], utilized for creating a
- * [PortViewModel][org.gecko.viewmodel.PortViewModel].
+ * [PortViewModel][org.gecko.viewmodel.Port].
  */
 class VariableBlockCreatorTool(actionManager: ActionManager) :
     Tool(actionManager, ToolType.VARIABLE_BLOCK_CREATOR, false) {

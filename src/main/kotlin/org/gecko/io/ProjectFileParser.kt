@@ -2,8 +2,8 @@ package org.gecko.io
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.GModel
+import org.gecko.viewmodel.System
 import org.hildan.fxgson.FxGson
 import java.io.*
 
@@ -27,13 +27,13 @@ inline fun <reified T> encodeToStream(obj: T, it: Writer): Unit =
  */
 class ProjectFileParser : FileParser {
     @Throws(IOException::class)
-    override fun parse(file: File): GeckoViewModel {
+    override fun parse(file: File): GModel {
         val wrapper =
             file.inputStream().use {
                 JsonParser.parseReader(InputStreamReader(it))
             }.asJsonObject
 
-        val model = GeckoViewModel()
+        val model = GModel()
         model.initFromMap(wrapper.get("model").asJsonObject)
 
         //val viewModel = GeckoViewModel(geckoJsonWrapper)
@@ -50,7 +50,7 @@ class ProjectFileParser : FileParser {
         return model
     }
 
-    fun updateSystemParents(system: SystemViewModel) {
+    fun updateSystemParents(system: System) {
         for (child in system.subSystems) {
             child.parent = system
             updateSystemParents(child)

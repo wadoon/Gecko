@@ -3,24 +3,24 @@ package org.gecko.view.inspector.element.list
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import org.gecko.view.inspector.element.label.InspectorLabel
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 
 /**
  * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorLabel].
  */
-class InspectorRegionList(regionViewModelList: ObservableList<RegionViewModel>) :
+class InspectorRegionList(RegionList: ObservableList<Region>) :
     AbstractInspectorList<InspectorLabel>() {
     init {
-        for (regionViewModel in regionViewModelList) {
+        for (regionViewModel in RegionList) {
             val regionLabel = InspectorLabel(regionViewModel!!.name)
             items.add(regionLabel)
         }
 
-        regionViewModelList.addListener { c: ListChangeListener.Change<out RegionViewModel> -> this.updateRegionList(c) }
+        RegionList.addListener { c: ListChangeListener.Change<out Region> -> this.updateRegionList(c) }
         minHeight = MIN_HEIGHT
     }
 
-    fun updateRegionList(c: ListChangeListener.Change<out RegionViewModel>) {
+    fun updateRegionList(c: ListChangeListener.Change<out Region>) {
         while (c.next()) {
             if (c.wasAdded()) {
                 for (regionViewModel in c.addedSubList) {

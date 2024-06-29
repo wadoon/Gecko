@@ -2,16 +2,16 @@ package org.gecko.io
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 
 
 /**
  * Wraps two Json Strings: model describes the tree structure of a Gecko Model and viewModelProperties describes
  * ViewModel-specific attributes of PositionableViewModelElements like position coordinates, size coordinates and color
- * values for [RegionViewModels][org.gecko.viewmodel.RegionViewModel].
+ * values for [RegionViewModels][org.gecko.viewmodel.Region].
  */
 data class Project(
-    val model: GeckoViewModel,
+    val model: GModel,
     //val startStates: List<StartStateContainer>,
     //val viewModelProperties: List<ViewModelPropertiesContainer>
 ) : Mappable {
@@ -24,7 +24,7 @@ data class StartStateContainer(var systemId: UInt = 0u, var startStateName: Stri
 
 
 /**
- * Encapsulates [GeckoViewModel][org.gecko.viewmodel.GeckoViewModel]-specific data for a
+ * Encapsulates [GeckoViewModel][org.gecko.viewmodel.GModel]-specific data for a
  * [PositionableViewModelElement][org.gecko.viewmodel.PositionableViewModelElement], useful for the restoration of
  * the [org.gecko.view.GeckoView] after parsing an external file.
  */

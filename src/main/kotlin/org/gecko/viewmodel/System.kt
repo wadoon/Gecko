@@ -19,13 +19,13 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of a [System] model element. A [SystemViewModel] is described by a code snippet
- * and a set of [PortViewModel]s. Contains methods for managing the afferent data and updating the
+ * Represents an abstraction of a [System] model element. A [System] is described by a code snippet
+ * and a set of [Port]s. Contains methods for managing the afferent data and updating the
  * target-[System].
  */
-data class SystemViewModel(
+data class System(
     val codeProperty: SimpleStringProperty = SimpleStringProperty(""),
-    val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList())
+    val portsProperty: ListProperty<Port> = SimpleListProperty(FXCollections.observableArrayList())
 ) : BlockViewModelElement(), Inspectable {
     val allElements: MutableList<PositionableViewModelElement>
         get() {
@@ -51,15 +51,15 @@ data class SystemViewModel(
     val connectionsProperty = listProperty<SystemConnectionViewModel>()
     val connections by connectionsProperty
 
-    var parent: SystemViewModel? = null
+    var parent: System? = null
 
     var code: String by codeProperty
-    var ports: ObservableList<PortViewModel> by portsProperty
-    val subSystemsProperty = listProperty<SystemViewModel>()
-    var subSystems: ObservableList<SystemViewModel> by subSystemsProperty
+    var ports: ObservableList<Port> by portsProperty
+    val subSystemsProperty = listProperty<System>()
+    var subSystems: ObservableList<System> by subSystemsProperty
 
-    val automatonProperty = objectProperty(AutomatonViewModel())
-    var automaton: AutomatonViewModel by automatonProperty
+    val automatonProperty = objectProperty(Automaton())
+    var automaton: Automaton by automatonProperty
 
     override fun asJson() = super.asJson().apply {
         addProperty("code", code)
@@ -75,12 +75,12 @@ data class SystemViewModel(
         name = AutoNaming.name("System_")
     }
 
-    fun addPort(port: PortViewModel) {
+    fun addPort(port: Port) {
         portsProperty.add(port)
         port.systemPositionProperty.bind(positionProperty)
     }
 
-    fun removePort(port: PortViewModel) {
+    fun removePort(port: Port) {
         portsProperty.remove(port)
         port.systemPositionProperty.unbind()
     }
@@ -89,15 +89,16 @@ data class SystemViewModel(
     fun removeConnection(con: SystemConnectionViewModel) = connectionsProperty.remove(con)
     fun addConnection(con: SystemConnectionViewModel) = connections.add(con)
 
-    fun getChildByName(name: String): SystemViewModel? =
+    fun getChildByName(name: String): System? =
         subSystems.firstOrNull { it.name == name }
 
-    fun getChildSystemWithVariable(element: PortViewModel) =
+    fun getChildSystemWithVariable(element: Port) =
         subSystems.firstOrNull { it.ports.contains(element) }
 
-    fun getVariableByName(text: String?): PortViewModel? = ports.firstOrNull { it.name == text }
-    fun createVariable(): PortViewModel = PortViewModel().also { addPort(it) }
-    fun createSubSystem(): SystemViewModel = SystemViewModel().also { subSystems.add(it); it.parent = this }
+    fun getVariableByName(text: String?): Port? = ports.firstOrNull { it.name == text }
+    fun createVariable(): Port = Port().also { addPort(it) }
+    fun createSubSystem(): System = System()
+        .also { subSystems.add(it); it.parent = this }
 
     companion object {
         val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)

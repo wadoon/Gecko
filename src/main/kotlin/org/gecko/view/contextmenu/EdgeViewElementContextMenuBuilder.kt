@@ -8,7 +8,7 @@ import javafx.scene.control.SeparatorMenuItem
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.Kind
 
 /**
@@ -18,7 +18,7 @@ import org.gecko.viewmodel.Kind
  */
 class EdgeViewElementContextMenuBuilder(
     actionManager: ActionManager,
-    val edgeViewModel: EdgeViewModel,
+    val Edge: Edge,
     geckoView: GeckoView
 ) : ViewContextMenuBuilder(actionManager, geckoView) {
     override fun build(): ContextMenu {
@@ -32,7 +32,7 @@ class EdgeViewElementContextMenuBuilder(
         for (kind in Kind.entries) {
             val kindMenuItem = createKindMenuItem(kind)
 
-            if (edgeViewModel.kind == kind) {
+            if (Edge.kind == kind) {
                 kindMenuItem.isDisable = true
             }
 
@@ -42,7 +42,7 @@ class EdgeViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.delete)
         deleteMenuItem.onAction = EventHandler {
             actionManager.run(
-                actionManager.actionFactory.createDeleteAction(edgeViewModel)
+                actionManager.actionFactory.createDeleteAction(Edge)
             )
         }
 
@@ -55,7 +55,7 @@ class EdgeViewElementContextMenuBuilder(
         kindMenuItem.onAction = EventHandler {
             actionManager.run(
                 actionManager.actionFactory.createChangeKindAction(
-                    edgeViewModel, kind
+                    Edge, kind
                 )
             )
         }

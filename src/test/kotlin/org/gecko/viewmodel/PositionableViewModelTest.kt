@@ -7,9 +7,9 @@ import org.gecko.util.TestHelper
 import org.junit.jupiter.api.*
 
 class PositionableViewModelTest {
-    var geckoViewModel: GeckoViewModel = TestHelper.createGeckoViewModel()
-    var viewModelFactory: ViewModelFactory = geckoViewModel.viewModelFactory
-    var root: SystemViewModel = geckoViewModel.currentEditor!!.currentSystem
+    var gModel: GModel = TestHelper.createGeckoViewModel()
+    var viewModelFactory: ViewModelFactory = gModel.viewModelFactory
+    var root: System = gModel.currentEditor!!.currentSystem
     var stateViewModel1: StateViewModel = viewModelFactory.createState(root)
     var stateViewModel2: StateViewModel = viewModelFactory.createState(root)
 

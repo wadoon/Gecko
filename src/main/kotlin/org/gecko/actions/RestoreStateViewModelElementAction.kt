@@ -1,22 +1,22 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.AutomatonViewModel
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.Automaton
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.StateViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 
 /**
  * A concrete representation of an [Action] that restores a deleted [StateViewModel] in a given
  * [Automaton].
  */
 class RestoreStateViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
+    val gModel: GModel,
     val stateViewModel: StateViewModel,
-    val systemViewModel: SystemViewModel,
+    val System: System,
     val wasStartState: Boolean = false
 ) : Action() {
-    val automaton: AutomatonViewModel = systemViewModel.automaton
+    val automaton: Automaton = System.automaton
 
 
     @Throws(GeckoException::class)
@@ -26,6 +26,6 @@ class RestoreStateViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return DeleteStateViewModelElementAction(geckoViewModel, stateViewModel, systemViewModel)
+        return DeleteStateViewModelElementAction(gModel, stateViewModel, System)
     }
 }

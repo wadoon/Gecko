@@ -11,16 +11,16 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.Rectangle
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.Visibility
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [PortViewModel].
+ * [Port].
  */
 
-class VariableBlockViewElement(override val target: PortViewModel) : BlockViewElement(target),
-    ViewElement<PortViewModel> {
+class VariableBlockViewElement(override val target: Port) : BlockViewElement(target),
+    ViewElement<Port> {
     val nameProperty: StringProperty = SimpleStringProperty()
     val typeProperty: StringProperty = SimpleStringProperty()
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()

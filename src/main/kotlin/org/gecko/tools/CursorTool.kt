@@ -186,7 +186,7 @@ class CursorTool(
             val moveAction = if (editorViewModel.isAutomatonEditor) {
                 actionManager.actionFactory
                     .createMoveEdgeViewModelElementAction(
-                        scaler.decoratorTarget as EdgeViewModel,
+                        scaler.decoratorTarget as Edge,
                         scaler, endWorldPos.subtract(startDragPosition)
                     )
             } else {

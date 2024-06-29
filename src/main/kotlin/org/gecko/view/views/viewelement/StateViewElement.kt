@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.ContractViewModel
+import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.StateViewModel
 
 /**
@@ -26,7 +26,7 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
     override val target: StateViewModel = stateViewModel
     val nameProperty: StringProperty = SimpleStringProperty()
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty()
-    val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty()
+    val contractsProperty: ListProperty<Contract> = SimpleListProperty()
 
     override var isSelected: Boolean = false
 
@@ -103,7 +103,7 @@ class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateV
         val contractsPane = VBox()
 
         refreshContracts(contractsPane)
-        contractsProperty.addListener { observable: ObservableValue<out ObservableList<ContractViewModel?>>?, oldValue: ObservableList<ContractViewModel?>?, newValue: ObservableList<ContractViewModel?>? ->
+        contractsProperty.addListener { observable: ObservableValue<out ObservableList<Contract?>>?, oldValue: ObservableList<Contract?>?, newValue: ObservableList<Contract?>? ->
             refreshContracts(
                 contractsPane
             )

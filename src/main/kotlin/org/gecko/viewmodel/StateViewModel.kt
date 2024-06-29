@@ -21,19 +21,19 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [State] model element. A [StateViewModel] is described by a set of
- * [ContractViewModel]s and can target either a regular or a start-[State]. Contains methods for managing
+ * [Contract]s and can target either a regular or a start-[State]. Contains methods for managing
  * the afferent data and updating the target-[State].
  */
 data class StateViewModel(
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty(false),
-    val contractsProperty: ListProperty<ContractViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-    val incomingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-    val outgoingEdgesProperty: ListProperty<EdgeViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+    val contractsProperty: ListProperty<Contract> = SimpleListProperty(FXCollections.observableArrayList()),
+    val incomingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
+    val outgoingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
 ) : BlockViewModelElement(), Inspectable {
     var isStartState by isStartStateProperty
     var contracts by contractsProperty
     var incomingEdges by incomingEdgesProperty
-    var outgoingEdges: ObservableList<EdgeViewModel> by outgoingEdgesProperty
+    var outgoingEdges: ObservableList<Edge> by outgoingEdgesProperty
 
     override fun asJson() = super.asJson().apply {
         addProperty("isStartState", isStartState)
@@ -45,11 +45,11 @@ data class StateViewModel(
         addEdgeListeners()
     }
 
-    fun addContract(contract: ContractViewModel) {
+    fun addContract(contract: Contract) {
         contractsProperty.add(contract)
     }
 
-    fun removeContract(contract: ContractViewModel) {
+    fun removeContract(contract: Contract) {
         contractsProperty.remove(contract)
     }
 
@@ -67,8 +67,8 @@ data class StateViewModel(
 
     fun addEdgeListeners() {
         updateEdgeOffset()
-        incomingEdgesProperty.addListener { _: ListChangeListener.Change<out EdgeViewModel?>? -> updateEdgeOffset() }
-        outgoingEdgesProperty.addListener { _: ListChangeListener.Change<out EdgeViewModel?>? -> updateEdgeOffset() }
+        incomingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? -> updateEdgeOffset() }
+        outgoingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? -> updateEdgeOffset() }
         positionProperty.addListener { _: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? -> updateEdgeOffset() }
     }
 
@@ -78,8 +78,8 @@ data class StateViewModel(
     }
 
     fun notifyOtherState() {
-        outgoingEdges.forEach { edge: EdgeViewModel -> edge.destination.setEdgeOffsets() }
-        incomingEdges.forEach { edge: EdgeViewModel -> edge.source.setEdgeOffsets() }
+        outgoingEdges.forEach { edge: Edge -> edge.destination.setEdgeOffsets() }
+        incomingEdges.forEach { edge: Edge -> edge.source.setEdgeOffsets() }
     }
 
     fun setEdgeOffsets() {
@@ -125,13 +125,13 @@ data class StateViewModel(
         }
     }
 
-    fun getOtherEdgePoint(edge: EdgeViewModel): Point2D {
+    fun getOtherEdgePoint(edge: Edge): Point2D {
         if (edge.source == this)
             return edge.destination.center
         return edge.source.center
     }
 
-    fun compareEdges(e1: EdgeViewModel, e2: EdgeViewModel, orientation: Int): Int {
+    fun compareEdges(e1: Edge, e2: Edge, orientation: Int): Int {
         val compare = when (orientation) {
             0 -> getOtherEdgePoint(e1).x.compareTo(getOtherEdgePoint(e2).x)
             1 -> getOtherEdgePoint(e1).y.compareTo(getOtherEdgePoint(e2).y)
@@ -146,10 +146,10 @@ data class StateViewModel(
         return compare
     }
 
-    fun sortEdges(intersectionOrientationEdges: Map<Int, MutableList<EdgeViewModel>>) {
+    fun sortEdges(intersectionOrientationEdges: Map<Int, MutableList<Edge>>) {
         for (orientation in 0 until ORIENTATIONS) {
             val finalOrientation = orientation
-            intersectionOrientationEdges[orientation]!!.sortWith { e1: EdgeViewModel, e2: EdgeViewModel ->
+            intersectionOrientationEdges[orientation]!!.sortWith { e1: Edge, e2: Edge ->
                 compareEdges(
                     e1, e2, finalOrientation
                 )
@@ -157,7 +157,7 @@ data class StateViewModel(
         }
     }
 
-    fun setOffset(edge: EdgeViewModel, isSource: Boolean, x: Double, y: Double) {
+    fun setOffset(edge: Edge, isSource: Boolean, x: Double, y: Double) {
         if (isSource) {
             edge.setStartOffsetProperty(Point2D(x, y))
         } else {
@@ -165,13 +165,13 @@ data class StateViewModel(
         }
     }
 
-    val intersectionOrientationEdges: Map<Int, MutableList<EdgeViewModel>>
+    val intersectionOrientationEdges: Map<Int, MutableList<Edge>>
         get() {
-            val intersectionOrientationEdges: MutableMap<Int, MutableList<EdgeViewModel>> = HashMap()
+            val intersectionOrientationEdges: MutableMap<Int, MutableList<Edge>> = HashMap()
             for (i in 0 until ORIENTATIONS + 1) {
                 intersectionOrientationEdges[i] = ArrayList()
             }
-            val edges: MutableList<EdgeViewModel> = ArrayList<EdgeViewModel>(incomingEdges)
+            val edges: MutableList<Edge> = ArrayList<Edge>(incomingEdges)
             edges.addAll(outgoingEdges.reversed())
             for (edge in edges) {
                 if (edge.isLoop && !intersectionOrientationEdges[LOOPS]!!.contains(edge)) {

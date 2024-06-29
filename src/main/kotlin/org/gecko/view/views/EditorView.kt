@@ -23,7 +23,6 @@ import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
 import org.gecko.viewmodel.onChange
-import java.util.function.Consumer
 
 /**
  * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed [ViewElement]s and
@@ -109,7 +108,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         StackPane.setAlignment(searchWindow, Pos.TOP_CENTER)
 
         // View element creator listener
-        viewModel.containedPositionableViewModelElementsProperty.onChange { this.onUpdateViewElements(it) }
+        viewModel.viewableElements.onChange { this.onUpdateViewElements(it) }
 
         // Inspector creator listener
         viewModel.focusedElementProperty.onChange { oldValue, newValue ->
@@ -216,7 +215,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     }
 
     fun initializeViewElements() {
-        viewModel.containedPositionableViewModelElementsProperty.forEach { element: PositionableViewModelElement? ->
+        viewModel.viewableElements.forEach { element: PositionableViewModelElement? ->
             this.addElement(
                 element
             )

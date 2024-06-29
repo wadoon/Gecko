@@ -5,24 +5,24 @@ import org.gecko.viewmodel.*
 
 /**
  * A concrete representation of an [Action] that creates an [SystemConnectionViewModel] in the
- * current-[SystemViewModel] with given source- and destination-[PortViewModel]s through the
- * [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GeckoViewModel].
+ * current-[System] with given source- and destination-[Port]s through the
+ * [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GModel].
  */
 class CreateSystemConnectionViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
-    val source: PortViewModel,
-    val destination: PortViewModel
+    val gModel: GModel,
+    val source: Port,
+    val destination: Port
 ) : Action() {
     var createdSystemConnectionViewModel: SystemConnectionViewModel? = null
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
+        val currentParentSystem = gModel.currentEditor!!.currentSystem
         if (!isConnectingAllowed(
                 source,
                 destination,
-                geckoViewModel.getSystemViewModelWithPort(source),
-                geckoViewModel.getSystemViewModelWithPort(destination),
+                gModel.getSystemViewModelWithPort(source),
+                gModel.getSystemViewModelWithPort(destination),
                 currentParentSystem,
                 null
             )
@@ -30,10 +30,10 @@ class CreateSystemConnectionViewModelElementAction internal constructor(
             return false
         }
 
-        createdSystemConnectionViewModel = geckoViewModel.viewModelFactory
+        createdSystemConnectionViewModel = gModel.viewModelFactory
             .createSystemConnectionViewModelIn(currentParentSystem, source, destination)
 
-        val actionManager = geckoViewModel.actionManager
+        val actionManager = gModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdSystemConnectionViewModel!!, true))
         return true
     }

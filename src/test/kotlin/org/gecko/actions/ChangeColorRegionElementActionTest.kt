@@ -2,12 +2,12 @@ package org.gecko.actions
 
 import javafx.scene.paint.Color
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class ChangeColorRegionViewModelElementActionTest {
-    lateinit var region1: RegionViewModel
+internal class ChangeColorRegionElementActionTest {
+    lateinit var region1: Region
     lateinit var actionManager: ActionManager
     lateinit var actionFactory: ActionFactory
 

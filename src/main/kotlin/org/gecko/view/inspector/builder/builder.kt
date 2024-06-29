@@ -60,7 +60,7 @@ abstract class AbstractInspectorBuilder<T : PositionableViewModelElement?> prote
 }
 
 
-class AutomatonVariablePaneBuilder(actionManager: ActionManager, systemViewModel: SystemViewModel) {
+class AutomatonVariablePaneBuilder(actionManager: ActionManager, System: System) {
     private val scrollPane = ScrollPane()
 
     init {
@@ -70,10 +70,10 @@ class AutomatonVariablePaneBuilder(actionManager: ActionManager, systemViewModel
         scrollPane.maxHeight = VARIABLE_PANE_HEIGHT.toDouble()
 
         val content = VBox()
-        val inputLabel = InspectorVariableLabel(actionManager, systemViewModel, Visibility.INPUT)
-        val inputList = InspectorVariableList(actionManager, systemViewModel, Visibility.INPUT)
-        val outputLabel = InspectorVariableLabel(actionManager, systemViewModel, Visibility.OUTPUT)
-        val outputList = InspectorVariableList(actionManager, systemViewModel, Visibility.OUTPUT)
+        val inputLabel = InspectorVariableLabel(actionManager, System, Visibility.INPUT)
+        val inputList = InspectorVariableList(actionManager, System, Visibility.INPUT)
+        val outputLabel = InspectorVariableLabel(actionManager, System, Visibility.OUTPUT)
+        val outputList = InspectorVariableList(actionManager, System, Visibility.OUTPUT)
 
         content.children
             .addAll(inputLabel.control, inputList.control, outputLabel.control, outputList.control)
@@ -97,14 +97,14 @@ class AutomatonVariablePaneBuilder(actionManager: ActionManager, systemViewModel
 
 /**
  * Represents a type of [AbstractInspectorBuilder] of an [Inspector][org.gecko.view.inspector.Inspector] for
- * an [EdgeViewModel]. Adds to the list of
+ * an [Edge]. Adds to the list of
  * [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorKindPicker], two
  * [InspectorEdgeStateLabel]s for the source- and target-states, an [InspectorPriorityLabel] and an
  * [InspectorContractComboBox].
  */
-class EdgeInspectorBuilder(actionManager: ActionManager, viewModel: EdgeViewModel) :
-    AbstractInspectorBuilder<EdgeViewModel?>(actionManager, viewModel) {
+class EdgeInspectorBuilder(actionManager: ActionManager, viewModel: Edge) :
+    AbstractInspectorBuilder<Edge?>(actionManager, viewModel) {
     init {
         // Kind
         addInspectorElement(InspectorKindPicker(actionManager, viewModel))
@@ -137,13 +137,13 @@ class EdgeInspectorBuilder(actionManager: ActionManager, viewModel: EdgeViewMode
 
 
 /**
- * Represents a type of [AbstractInspectorBuilder] of an [Inspector] for a [RegionViewModel]. Adds to
+ * Represents a type of [AbstractInspectorBuilder] of an [Inspector] for a [Region]. Adds to
  * the list of [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorRegionColorItem] and an
  * [InspectorContractItem].
  */
-class RegionInspectorBuilder(actionManager: ActionManager, viewModel: RegionViewModel) :
-    AbstractInspectorBuilder<RegionViewModel?>(actionManager, viewModel) {
+class RegionInspectorBuilder(actionManager: ActionManager, viewModel: Region) :
+    AbstractInspectorBuilder<Region?>(actionManager, viewModel) {
     init {
         // Color
         addInspectorElement(InspectorRegionColorItem(actionManager, viewModel))
@@ -161,7 +161,7 @@ class RegionInspectorBuilder(actionManager: ActionManager, viewModel: RegionView
  * a [StateViewModel]. Adds to the list of
  * [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorLabel] for each
- * [RegionViewModel] of the [StateViewModel], an [InspectorSetStartStateButton] and an
+ * [Region] of the [StateViewModel], an [InspectorSetStartStateButton] and an
  * [InspectorContractList].
  */
 class StateInspectorBuilder(actionManager: ActionManager, viewModel: StateViewModel) :
@@ -187,13 +187,13 @@ class StateInspectorBuilder(actionManager: ActionManager, viewModel: StateViewMo
 
 /**
  * Represents a type of [AbstractInspectorBuilder] of an [Inspector][org.gecko.view.inspector.Inspector] for
- * a [PortViewModel]. Adds to the list of
+ * a [Port]. Adds to the list of
  * [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorVisibilityPicker] and an
  * [InspectorTypeLabel].
  */
-class VariableBlockInspectorBuilder(actionManager: ActionManager, viewModel: PortViewModel) :
-    AbstractInspectorBuilder<PortViewModel?>(actionManager, viewModel) {
+class VariableBlockInspectorBuilder(actionManager: ActionManager, viewModel: Port) :
+    AbstractInspectorBuilder<Port?>(actionManager, viewModel) {
     init {
         // Visibility
         addInspectorElement(InspectorVisibilityPicker(actionManager, viewModel))
@@ -211,14 +211,14 @@ class VariableBlockInspectorBuilder(actionManager: ActionManager, viewModel: Por
 
 /**
  * Represents a type of [AbstractInspectorBuilder] of an [Inspector][org.gecko.view.inspector.Inspector] for
- * a [SystemViewModel]. Adds to the list of
+ * a [System]. Adds to the list of
  * [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorOpenSystemButton] and two
- * [InspectorVariableList]s for input- and output-[PortViewModel][org.gecko.viewmodel.PortViewModel]s of the
- * [SystemViewModel].
+ * [InspectorVariableList]s for input- and output-[PortViewModel][org.gecko.viewmodel.Port]s of the
+ * [System].
  */
-class SystemInspectorBuilder(actionManager: ActionManager, viewModel: SystemViewModel) :
-    AbstractInspectorBuilder<SystemViewModel?>(actionManager, viewModel) {
+class SystemInspectorBuilder(actionManager: ActionManager, viewModel: System) :
+    AbstractInspectorBuilder<System?>(actionManager, viewModel) {
     init {
         // Open system button
         addInspectorElement(InspectorOpenSystemButton(actionManager, viewModel))

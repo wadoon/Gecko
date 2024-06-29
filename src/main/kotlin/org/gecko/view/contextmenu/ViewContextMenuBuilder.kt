@@ -100,8 +100,8 @@ open class ViewContextMenuBuilder {
             selectMenuItem.disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
-                        { editorViewModel!!.containedPositionableViewModelElementsProperty.isEmpty() },
-                        editorViewModel!!.containedPositionableViewModelElementsProperty
+                        { editorViewModel!!.viewableElements.isEmpty() },
+                        editorViewModel!!.viewableElements
                     )
                 )
         }

@@ -2,13 +2,13 @@ package org.gecko.actions
 
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.Kind
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ChangeKindEdgeViewModelActionTest {
-    private var edge: EdgeViewModel? = null
+class ChangeKindEdgeActionTest {
+    private var edge: Edge? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 

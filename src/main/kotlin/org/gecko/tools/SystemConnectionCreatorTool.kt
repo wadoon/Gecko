@@ -10,20 +10,20 @@ import org.gecko.view.views.ViewElementPane
 import org.gecko.view.views.viewelement.PortViewElement
 import org.gecko.view.views.viewelement.SystemViewElement
 import org.gecko.view.views.viewelement.VariableBlockViewElement
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 
 /**
  * A concrete representation of a system-connection-creating-[Tool], utilized for connecting a source- and a
- * destination-[PortViewModel] through a
+ * destination-[Port] through a
  * [SystemConnectionViewModel][org.gecko.viewmodel.SystemConnectionViewModel]. Holds the
- * source-[PortViewModel].
+ * source-[Port].
  */
 class SystemConnectionCreatorTool(actionManager: ActionManager) :
     Tool(actionManager, ToolType.CONNECTION_CREATOR, false) {
-    var previousPortViewModel: PortViewModel?
+    var previousPort: Port?
 
     init {
-        previousPortViewModel = null
+        previousPort = null
     }
 
     override fun visitView(pane: ViewElementPane) {
@@ -57,12 +57,12 @@ class SystemConnectionCreatorTool(actionManager: ActionManager) :
         systemViewElement.onMouseClicked = null
     }
 
-    fun setPortViewModel(viewModel: PortViewModel?) {
-        if (previousPortViewModel != null) {
+    fun setPortViewModel(viewModel: Port?) {
+        if (previousPort != null) {
             val createAction: Action = actionManager.actionFactory
-                .createCreateSystemConnection(previousPortViewModel!!, viewModel!!)
+                .createCreateSystemConnection(previousPort!!, viewModel!!)
             actionManager.run(createAction)
         }
-        previousPortViewModel = viewModel
+        previousPort = viewModel
     }
 }

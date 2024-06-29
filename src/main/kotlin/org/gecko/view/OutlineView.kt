@@ -10,11 +10,11 @@ import tornadofx.treeview
  * @author Alexander Weigl
  * @version 1 (20.06.24)
  */
-class OutlineView(val viewModel: GeckoViewModel) : UIComponent("Outline") {
+class OutlineView(val viewModel: GModel) : UIComponent("Outline") {
     override val root = treeview(SystemItem(viewModel.root)) {}
 }
 
-class SystemItem(val sys: SystemViewModel) : TreeItem<String>("") {
+class SystemItem(val sys: System) : TreeItem<String>("") {
     init {
         populate()
         sys.nameProperty.onChange { _, _ -> populate() }
@@ -37,7 +37,7 @@ class SystemItem(val sys: SystemViewModel) : TreeItem<String>("") {
     }
 }
 
-class AutomataItem(val auto: AutomatonViewModel) : TreeItem<String>("") {
+class AutomataItem(val auto: Automaton) : TreeItem<String>("") {
     init {
         populate()
         auto.nameProperty.onChange { _, _ -> populate() }
@@ -64,7 +64,7 @@ class AutomataItem(val auto: AutomatonViewModel) : TreeItem<String>("") {
     }
 }
 
-class PortItem(val it: PortViewModel) : TreeItem<String>("") {
+class PortItem(val it: Port) : TreeItem<String>("") {
     init {
         populate()
         it.nameProperty.onChange { old, new -> populate() }

@@ -1,7 +1,7 @@
 package org.gecko.lint
 
 import javafx.scene.control.Label
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.onListChange
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
@@ -48,7 +48,7 @@ open class IssuesView : UIComponent("IssuesView") {
     }
 }
 
-class ModelIssuesView(val geckoViewModel: GeckoViewModel) : UIComponent("Model Issues") {
+class ModelIssuesView(val gModel: GModel) : UIComponent("Model Issues") {
     val issuesView = IssuesView()
     override val root = issuesView.root
 }

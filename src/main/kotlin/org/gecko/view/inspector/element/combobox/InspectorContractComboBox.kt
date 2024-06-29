@@ -4,9 +4,9 @@ import javafx.event.EventHandler
 import javafx.scene.control.ComboBox
 import org.gecko.actions.ActionManager
 import org.gecko.view.inspector.element.InspectorElement
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 
-class InspectorContractComboBox(actionManager: ActionManager, edge: EdgeViewModel) : ComboBox<String>(),
+class InspectorContractComboBox(actionManager: ActionManager, edge: Edge) : ComboBox<String>(),
     InspectorElement<ComboBox<String>> {
     init {
         prefWidth = PREF_WIDTH.toDouble()

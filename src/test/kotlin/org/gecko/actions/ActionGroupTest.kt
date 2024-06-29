@@ -1,22 +1,22 @@
 package org.gecko.actions
 
 import javafx.scene.paint.Color
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.GModel
+import org.gecko.viewmodel.Region
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 internal class ActionGroupTest {
-    val geckoViewModel = GeckoViewModel()
-    var actionManager: ActionManager = ActionManager(geckoViewModel)
-    var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    val viewModelFactory = geckoViewModel.viewModelFactory
-    val rootSystemViewModel = geckoViewModel.root
-    var region1: RegionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
-    var region2: RegionViewModel = viewModelFactory.createRegion(rootSystemViewModel)
+    val gModel = GModel()
+    var actionManager: ActionManager = ActionManager(gModel)
+    var actionFactory: ActionFactory = ActionFactory(gModel)
+    val viewModelFactory = gModel.viewModelFactory
+    val rootSystemViewModel = gModel.root
+    var region1: Region = viewModelFactory.createRegion(rootSystemViewModel)
+    var region2: Region = viewModelFactory.createRegion(rootSystemViewModel)
 
     init {
-        geckoViewModel.switchEditor(rootSystemViewModel, true)
+        gModel.switchEditor(rootSystemViewModel, true)
     }
 
     @Test

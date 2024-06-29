@@ -1,6 +1,6 @@
 package org.gecko.io
 
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
@@ -11,12 +11,12 @@ class ProjectFileSerializerTest {
     val projectFileParser = ProjectFileParser()
     val projectFileSerializerForOneLevel: ProjectFileSerializer
     val projectFileSerializerForTree: ProjectFileSerializer
-    val oneLevelGeckoViewModel = GeckoViewModel()
-    val oneLevelRoot = oneLevelGeckoViewModel.root
-    val oneLevelFactory = oneLevelGeckoViewModel.viewModelFactory
+    val oneLevelGModel = GModel()
+    val oneLevelRoot = oneLevelGModel.root
+    val oneLevelFactory = oneLevelGModel.viewModelFactory
 
-    val emptyGeckoViewModel = GeckoViewModel()
-    val treeGeckoViewModel = GeckoViewModel()
+    val emptyGModel = GModel()
+    val treeGModel = GModel()
 
     var NON_NULL_AUTOMATON_JSON: String = "\"automaton\":{"
     var NON_NULL_START_STATE_JSON: String = "\"startState\":{"
@@ -52,8 +52,8 @@ class ProjectFileSerializerTest {
         oneLevelFactory.createEdgeViewModelIn(oneLevelRoot, state1, state2)
 
 
-        val treeRoot = treeGeckoViewModel.root
-        val treeFactory = treeGeckoViewModel.viewModelFactory
+        val treeRoot = treeGModel.root
+        val treeFactory = treeGModel.viewModelFactory
 
         val child1 = treeFactory.createSystem(treeRoot)
         child1.name = "child1"
@@ -76,15 +76,15 @@ class ProjectFileSerializerTest {
         val child3 = treeFactory.createSystem(child2)
         child1.name = "child3"
 
-        projectFileSerializerForOneLevel = ProjectFileSerializer(oneLevelGeckoViewModel)
-        projectFileSerializerForTree = ProjectFileSerializer(treeGeckoViewModel)
+        projectFileSerializerForOneLevel = ProjectFileSerializer(oneLevelGModel)
+        projectFileSerializerForTree = ProjectFileSerializer(treeGModel)
     }
 
 
     @Test
     fun writeToFileEmpty() {
         val fileForEmpty = File("build/tmp/emptyGecko.json").absoluteFile
-        val projectFileSerializerForEmpty = ProjectFileSerializer(emptyGeckoViewModel)
+        val projectFileSerializerForEmpty = ProjectFileSerializer(emptyGModel)
         projectFileSerializerForEmpty.writeToFile(fileForEmpty)
 
         val parsedEmptyGeckoViewModel = projectFileParser.parse(fileForEmpty)

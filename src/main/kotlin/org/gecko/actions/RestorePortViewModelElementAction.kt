@@ -1,27 +1,27 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.PortViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.GModel
+import org.gecko.viewmodel.Port
+import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of an [Action] that restores a deleted [PortViewModel] in a given
- * [SystemViewModel].
+ * A concrete representation of an [Action] that restores a deleted [Port] in a given
+ * [System].
  */
 class RestorePortViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
-    val portViewModel: PortViewModel,
-    val system: SystemViewModel
+    val gModel: GModel,
+    val Port: Port,
+    val system: System
 ) : Action() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        system.addPort(portViewModel)
-        geckoViewModel.addViewModelElement(portViewModel)
+        system.addPort(Port)
+        gModel.addViewModelElement(Port)
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return DeletePortViewModelElementAction(geckoViewModel, portViewModel, system)
+        return DeletePortViewModelElementAction(gModel, Port, system)
     }
 }

@@ -9,7 +9,7 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.shortcuts.Shortcuts
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.System
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
@@ -18,7 +18,7 @@ import org.gecko.viewmodel.SystemViewModel
  */
 class SystemViewElementContextMenuBuilder(
     actionManager: ActionManager,
-    val systemViewModel: SystemViewModel,
+    val System: System,
     geckoView: GeckoView
 ) : ViewContextMenuBuilder(actionManager, geckoView) {
     override fun build(): ContextMenu {
@@ -31,7 +31,7 @@ class SystemViewElementContextMenuBuilder(
         openSystemMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
                 actionManager.actionFactory.createViewSwitchAction(
-                    systemViewModel, false
+                    System, false
                 )
             )
         }
@@ -40,7 +40,7 @@ class SystemViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeleteAction(systemViewModel)
+                actionManager.actionFactory.createDeleteAction(System)
             )
         }
 

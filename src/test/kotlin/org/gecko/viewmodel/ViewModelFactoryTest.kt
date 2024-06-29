@@ -8,49 +8,49 @@ import org.gecko.util.TestHelper
 import org.junit.jupiter.api.*
 
 internal class ViewModelFactoryTest {
-    var geckoViewModel: GeckoViewModel = TestHelper.createGeckoViewModel()
-    var viewModelFactory: ViewModelFactory = geckoViewModel.viewModelFactory
-    var root: SystemViewModel = geckoViewModel.currentEditor!!.currentSystem
-    var systemViewModel1: SystemViewModel = viewModelFactory.createSystem(root)
-    var systemViewModel2: SystemViewModel = viewModelFactory.createSystem(root)
-    var systemViewModel11: SystemViewModel = viewModelFactory.createSystem(systemViewModel1)
-    var stateViewModel1: StateViewModel = viewModelFactory.createState(systemViewModel1)
-    var stateViewModel2: StateViewModel = viewModelFactory.createState(systemViewModel1)
+    var gModel: GModel = TestHelper.createGeckoViewModel()
+    var viewModelFactory: ViewModelFactory = gModel.viewModelFactory
+    var root: System = gModel.currentEditor!!.currentSystem
+    var System1: System = viewModelFactory.createSystem(root)
+    var System2: System = viewModelFactory.createSystem(root)
+    var System11: System = viewModelFactory.createSystem(System1)
+    var stateViewModel1: StateViewModel = viewModelFactory.createState(System1)
+    var stateViewModel2: StateViewModel = viewModelFactory.createState(System1)
 
     @Test
     fun testModelStructure() {
-        Assertions.assertTrue(root.subSystems.contains(systemViewModel1))
-        Assertions.assertTrue(systemViewModel1.subSystems.contains(systemViewModel11))
+        Assertions.assertTrue(root.subSystems.contains(System1))
+        Assertions.assertTrue(System1.subSystems.contains(System11))
     }
 
     @Test
     @Throws(ModelException::class)
     fun testAddPorts() {
-        val portViewModel1 = viewModelFactory.createPort(systemViewModel1)
-        val portViewModel2 = viewModelFactory.createPort(systemViewModel1)
-        Assertions.assertTrue(systemViewModel1.ports.contains(portViewModel1))
-        Assertions.assertTrue(systemViewModel1.ports.contains(portViewModel2))
-        Assertions.assertTrue(systemViewModel1.portsProperty.contains(portViewModel1))
-        Assertions.assertTrue(systemViewModel1.portsProperty.contains(portViewModel2))
+        val portViewModel1 = viewModelFactory.createPort(System1)
+        val portViewModel2 = viewModelFactory.createPort(System1)
+        Assertions.assertTrue(System1.ports.contains(portViewModel1))
+        Assertions.assertTrue(System1.ports.contains(portViewModel2))
+        Assertions.assertTrue(System1.portsProperty.contains(portViewModel1))
+        Assertions.assertTrue(System1.portsProperty.contains(portViewModel2))
     }
 
     @Test
     fun testModelToViewModel() {
         Assertions.assertEquals(
-            systemViewModel1,
-            systemViewModel1
+            System1,
+            System1
         )
         Assertions.assertEquals(
-            systemViewModel11, systemViewModel11
+            System11, System11
         )
     }
 
     @Test
     @Throws(ModelException::class)
     fun testAddSystemConnectionBetweenPorts() {
-        val portViewModel1 = viewModelFactory.createPort(systemViewModel1)
+        val portViewModel1 = viewModelFactory.createPort(System1)
         portViewModel1.visibility = (Visibility.OUTPUT)
-        val portViewModel2 = viewModelFactory.createPort(systemViewModel2)
+        val portViewModel2 = viewModelFactory.createPort(System2)
         val systemConnectionViewModel =
             viewModelFactory.createSystemConnectionViewModelIn(root, portViewModel1, portViewModel2)
         Assertions.assertTrue(root.connections.contains(systemConnectionViewModel))
@@ -64,17 +64,17 @@ internal class ViewModelFactoryTest {
     @Throws(MissingViewModelElementException::class, ModelException::class)
     fun testAddSystemConnectionFrom() {
         Assertions.assertTrue(root.connections.isEmpty())
-        val portViewModel1 = viewModelFactory.createPort(systemViewModel1)
+        val portViewModel1 = viewModelFactory.createPort(System1)
         portViewModel1.visibility = (Visibility.OUTPUT)
-        val portViewModel2 = viewModelFactory.createPort(systemViewModel2)
+        val portViewModel2 = viewModelFactory.createPort(System2)
         viewModelFactory.createSystemConnectionViewModelIn(root, portViewModel1, portViewModel2)
         Assertions.assertEquals(1, root.connections.size)
     }
 
     @Test
     fun testStatesInSystem() {
-        Assertions.assertTrue(systemViewModel1.automaton.states.contains(stateViewModel1))
-        Assertions.assertTrue(systemViewModel1.automaton.states.contains(stateViewModel2))
+        Assertions.assertTrue(System1.automaton.states.contains(stateViewModel1))
+        Assertions.assertTrue(System1.automaton.states.contains(stateViewModel2))
     }
 
     @Test
@@ -92,11 +92,11 @@ internal class ViewModelFactoryTest {
     @Throws(ModelException::class)
     fun testAddEdgesToSystem() {
         val edgeViewModel1 =
-            viewModelFactory.createEdgeViewModelIn(systemViewModel1, stateViewModel1, stateViewModel2)
+            viewModelFactory.createEdgeViewModelIn(System1, stateViewModel1, stateViewModel2)
         val edgeViewModel2 =
-            viewModelFactory.createEdgeViewModelIn(systemViewModel1, stateViewModel1, stateViewModel1)
-        Assertions.assertTrue(systemViewModel1.automaton.edges.contains(edgeViewModel1))
-        Assertions.assertTrue(systemViewModel1.automaton.edges.contains(edgeViewModel2))
+            viewModelFactory.createEdgeViewModelIn(System1, stateViewModel1, stateViewModel1)
+        Assertions.assertTrue(System1.automaton.edges.contains(edgeViewModel1))
+        Assertions.assertTrue(System1.automaton.edges.contains(edgeViewModel2))
         Assertions.assertEquals(stateViewModel2, edgeViewModel1.destination)
         Assertions.assertEquals(stateViewModel1, edgeViewModel2.destination)
         Assertions.assertEquals(stateViewModel1, edgeViewModel1.source)

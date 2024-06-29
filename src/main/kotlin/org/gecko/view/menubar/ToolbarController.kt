@@ -19,7 +19,7 @@ import org.gecko.tools.ToolType
 import org.gecko.view.GeckoView
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.PositionableViewModelElement
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.javafx.FontIcon
@@ -40,7 +40,7 @@ import tornadofx.*
 class ToolbarController(
     private val manager: GeckoManager,
     private val view: GeckoView,
-    val model: GeckoViewModel,
+    val model: GModel,
     private val actionManager: ActionManager
 ) : View() {
 

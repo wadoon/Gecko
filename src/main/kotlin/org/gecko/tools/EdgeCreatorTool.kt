@@ -12,7 +12,7 @@ import org.gecko.viewmodel.StateViewModel
 
 /**
  * A concrete representation of an edge-creating-[Tool], utilized for connecting a source- and a
- * destination-[StateViewModel] through an [org.gecko.viewmodel.EdgeViewModel]. Holds the
+ * destination-[StateViewModel] through an [org.gecko.viewmodel.Edge]. Holds the
  * source-[StateViewModel].
  */
 class EdgeCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolType.EDGE_CREATOR, false) {

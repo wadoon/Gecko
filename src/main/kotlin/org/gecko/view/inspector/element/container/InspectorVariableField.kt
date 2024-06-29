@@ -10,14 +10,14 @@ import org.gecko.view.inspector.element.button.InspectorRemoveVariableButton
 import org.gecko.view.inspector.element.combobox.InspectorTypeComboBox
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.view.inspector.element.textfield.InspectorRenameField
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 
 /**
  * Represents a type of [VBox] implementing the [InspectorElement] interface. Holds a reference to a
- * [PortViewModel] and contains an [InspectorRenameField], an [InspectorRemoveVariableButton] and an
+ * [Port] and contains an [InspectorRenameField], an [InspectorRemoveVariableButton] and an
  * {link InspectorTypeField}.
  */
-class InspectorVariableField(actionManager: ActionManager, val viewModel: PortViewModel) : VBox(),
+class InspectorVariableField(actionManager: ActionManager, val viewModel: Port) : VBox(),
     InspectorElement<VBox> {
 
     init {

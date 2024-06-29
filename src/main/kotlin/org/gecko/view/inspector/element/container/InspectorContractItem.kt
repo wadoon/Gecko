@@ -11,13 +11,13 @@ import org.gecko.view.inspector.element.button.InspectorCollapseContractButton
 import org.gecko.view.inspector.element.button.InspectorRemoveContractButton
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.view.inspector.element.textfield.*
-import org.gecko.viewmodel.ContractViewModel
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Contract
+import org.gecko.viewmodel.Region
 import org.gecko.viewmodel.StateViewModel
 
 /**
  * Represents a type of [VBox] implementing the [InspectorElement] interface. Holds a reference to a
- * [ContractViewModel] and provides separate constructors for both a contract item of a
+ * [Contract] and provides separate constructors for both a contract item of a
  * state-specific-[Inspector][org.gecko.view.inspector.Inspector] and a
  * region-specific-[Inspector][org.gecko.view.inspector.Inspector]. The [InspectorContractItem] contains thus
  * [InspectorPreconditionField]s, [InspectorPostconditionField]s and an {link InspectorInvariantField} in
@@ -25,17 +25,17 @@ import org.gecko.viewmodel.StateViewModel
  */
 
 class InspectorContractItem : VBox, InspectorElement<VBox> {
-    var viewModel: ContractViewModel? = null
+    var viewModel: Contract? = null
 
     /**
      * Constructor for the State contract item.
      *
      * @param actionManager     Action manager
      * @param stateViewModel    State view model
-     * @param contractViewModel Contract view model
+     * @param Contract Contract view model
      */
-    constructor(actionManager: ActionManager, stateViewModel: StateViewModel?, contractViewModel: ContractViewModel) {
-        this.viewModel = contractViewModel
+    constructor(actionManager: ActionManager, stateViewModel: StateViewModel?, Contract: Contract) {
+        this.viewModel = Contract
 
         // Contract fields:
         val contractFields: MutableList<InspectorAreaField> = ArrayList()
@@ -43,7 +43,7 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
         val contractConditions = GridPane()
 
         val preConditionLabel = InspectorLabel(ResourceHandler.Companion.pre_condition)
-        val preConditionField: InspectorAreaField = InspectorPreconditionField(actionManager, contractViewModel)
+        val preConditionField: InspectorAreaField = InspectorPreconditionField(actionManager, Contract)
         contractFields.add(preConditionField)
         preConditionField.prefWidthProperty().bind(widthProperty().subtract(InspectorElement.Companion.FIELD_OFFSET))
         contractConditions.add(preConditionLabel, 0, 0)
@@ -52,7 +52,7 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
 
         val postConditionLabel =
             InspectorLabel(ResourceHandler.Companion.post_condition)
-        val postConditionField: InspectorAreaField = InspectorPostconditionField(actionManager, contractViewModel)
+        val postConditionField: InspectorAreaField = InspectorPostconditionField(actionManager, Contract)
         contractFields.add(postConditionField)
         postConditionField.prefWidthProperty().bind(widthProperty().subtract(InspectorElement.Companion.FIELD_OFFSET))
         contractConditions.add(postConditionLabel, 0, 1)
@@ -65,8 +65,8 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
         contractNameBox.children
             .addAll(
                 InspectorCollapseContractButton(contractFields),
-                InspectorRenameField(actionManager, contractViewModel), deleteButtonSpacer,
-                InspectorRemoveContractButton(actionManager, stateViewModel, contractViewModel)
+                InspectorRenameField(actionManager, Contract), deleteButtonSpacer,
+                InspectorRemoveContractButton(actionManager, stateViewModel, Contract)
             )
 
         // Build the contract item
@@ -77,21 +77,21 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
      * Constructor for the Region contract item.
      *
      * @param actionManager   Action manager
-     * @param regionViewModel Region view model
+     * @param Region Region view model
      */
-    constructor(actionManager: ActionManager, regionViewModel: RegionViewModel) {
+    constructor(actionManager: ActionManager, Region: Region) {
         val regionConditions = GridPane()
         addContractItem(
             ResourceHandler.Companion.pre_condition,
-            InspectorPreconditionField(actionManager, regionViewModel.contract), 0, regionConditions
+            InspectorPreconditionField(actionManager, Region.contract), 0, regionConditions
         )
         addContractItem(
             ResourceHandler.Companion.post_condition,
-            InspectorPostconditionField(actionManager, regionViewModel.contract), 1, regionConditions
+            InspectorPostconditionField(actionManager, Region.contract), 1, regionConditions
         )
         addContractItem(
             ResourceHandler.Companion.invariant,
-            InspectorInvariantField(actionManager, regionViewModel), 2, regionConditions
+            InspectorInvariantField(actionManager, Region), 2, regionConditions
         )
 
         // Build the contract item

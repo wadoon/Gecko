@@ -1,26 +1,26 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 
 /**
- * A concrete representation of an [Action] that changes the invariant of a [RegionViewModel], which it
+ * A concrete representation of an [Action] that changes the invariant of a [Region], which it
  * holds a reference to. Additionally, holds the old and new [invariants][String]s of the region for undo/redo
  * purposes
  */
 class ChangeInvariantViewModelElementAction internal constructor(
-    val regionViewModel: RegionViewModel,
+    val Region: Region,
     val newInvariant: String
 ) : Action() {
-    val oldInvariant: String = regionViewModel.invariant.value
+    val oldInvariant: String = Region.invariant.value
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        regionViewModel.invariant.value = newInvariant
+        Region.invariant.value = newInvariant
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeInvariantViewModelElementAction(regionViewModel, oldInvariant)
+        return actionFactory.createChangeInvariantViewModelElementAction(Region, oldInvariant)
     }
 }

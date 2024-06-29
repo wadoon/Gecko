@@ -1,7 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -9,7 +9,7 @@ internal class ChangeInvariantViewModelElementActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()
     val actionManager: ActionManager = ActionManager(geckoViewModel)
     val actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    val region1: RegionViewModel
+    val region1: Region
 
     init {
         val viewModelFactory = geckoViewModel.viewModelFactory

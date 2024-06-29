@@ -1,17 +1,17 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.ContractViewModel
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Contract
+import org.gecko.viewmodel.Edge
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ChangeContractEdgeViewModelActionTest {
+class ChangeContractEdgeActionTest {
     val geckoViewModel = TestHelper.createGeckoViewModel()
     val actionManager: ActionManager = ActionManager(geckoViewModel)
     val actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    val edge: EdgeViewModel
-    val contractViewModel: ContractViewModel
+    val edge: Edge
+    val Contract: Contract
 
     init {
         val viewModelFactory = geckoViewModel.viewModelFactory
@@ -22,20 +22,20 @@ class ChangeContractEdgeViewModelActionTest {
         val stateViewModel2 = viewModelFactory.createState(rootSystemViewModel)
 
         edge = viewModelFactory.createEdgeViewModelIn(rootSystemViewModel, stateViewModel1, stateViewModel2)
-        contractViewModel = viewModelFactory.createContractViewModelIn(stateViewModel1)
+        Contract = viewModelFactory.createContractViewModelIn(stateViewModel1)
     }
 
     @Test
     fun run() {
-        val changeContractAction = actionFactory.createChangeContractEdge(edge, contractViewModel)
+        val changeContractAction = actionFactory.createChangeContractEdge(edge, Contract)
         actionManager.run(changeContractAction)
-        Assertions.assertEquals(contractViewModel, edge.contract)
-        Assertions.assertEquals(contractViewModel, edge.contract)
+        Assertions.assertEquals(Contract, edge.contract)
+        Assertions.assertEquals(Contract, edge.contract)
     }
 
     @Test
     fun undoAction() {
-        val changeContractAction = actionFactory.createChangeContractEdge(edge, contractViewModel)
+        val changeContractAction = actionFactory.createChangeContractEdge(edge, Contract)
         actionManager.run(changeContractAction)
         actionManager.undo()
         Assertions.assertNull(edge.contract)

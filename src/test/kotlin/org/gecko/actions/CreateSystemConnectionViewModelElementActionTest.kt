@@ -2,8 +2,8 @@ package org.gecko.actions
 
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.PortViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Port
+import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -12,12 +12,12 @@ internal class CreateSystemConnectionViewModelElementActionTest {
     private val geckoViewModel = TestHelper.createGeckoViewModel()
     private var actionManager: ActionManager = ActionManager(geckoViewModel)
     private var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    private var parent: SystemViewModel = geckoViewModel.root
+    private var parent: System = geckoViewModel.root
     private val viewModelFactory = geckoViewModel.viewModelFactory
     private val system1 = viewModelFactory.createSystem(parent)
     private val system2 = viewModelFactory.createSystem(parent)
-    private var port1: PortViewModel = viewModelFactory.createPort(system1)
-    private var port2: PortViewModel = viewModelFactory.createPort(system2)
+    private var port1: Port = viewModelFactory.createPort(system1)
+    private var port2: Port = viewModelFactory.createPort(system2)
 
     @Test
     fun run() {

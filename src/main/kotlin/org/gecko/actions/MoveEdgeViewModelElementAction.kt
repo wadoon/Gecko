@@ -10,58 +10,58 @@ import org.gecko.viewmodel.*
  * [delta value][Point2D].
  */
 class MoveEdgeViewModelElementAction : Action {
-    val geckoViewModel: GeckoViewModel
+    val gModel: GModel
     val editorViewModel: EditorViewModel
-    val edgeViewModel: EdgeViewModel
+    val Edge: Edge
     val elementScalerBlock: ElementScalerBlock
     var delta: Point2D? = null
     var stateViewModel: StateViewModel? = null
     var previousStateViewModel: StateViewModel? = null
-    var contractViewModel: ContractViewModel? = null
-    var previousContractViewModel: ContractViewModel? = null
+    var Contract: Contract? = null
+    var previousContract: Contract? = null
 
     internal constructor(
-        geckoViewModel: GeckoViewModel, edgeViewModel: EdgeViewModel, elementScalerBlock: ElementScalerBlock,
+        gModel: GModel, Edge: Edge, elementScalerBlock: ElementScalerBlock,
         delta: Point2D?
     ) {
-        this.geckoViewModel = geckoViewModel
-        this.editorViewModel = geckoViewModel.currentEditor!!
-        this.edgeViewModel = edgeViewModel
+        this.gModel = gModel
+        this.editorViewModel = gModel.currentEditor!!
+        this.Edge = Edge
         this.elementScalerBlock = elementScalerBlock
         this.delta = delta
     }
 
     internal constructor(
-        geckoViewModel: GeckoViewModel, edgeViewModel: EdgeViewModel, elementScalerBlock: ElementScalerBlock,
-        stateViewModel: StateViewModel?, contractViewModel: ContractViewModel?
+        gModel: GModel, Edge: Edge, elementScalerBlock: ElementScalerBlock,
+        stateViewModel: StateViewModel?, Contract: Contract?
     ) {
-        this.geckoViewModel = geckoViewModel
-        this.editorViewModel = geckoViewModel.currentEditor!!
-        this.edgeViewModel = edgeViewModel
+        this.gModel = gModel
+        this.editorViewModel = gModel.currentEditor!!
+        this.Edge = Edge
         this.elementScalerBlock = elementScalerBlock
         this.stateViewModel = stateViewModel
-        this.contractViewModel = contractViewModel
+        this.Contract = Contract
     }
 
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         previousStateViewModel =
-            if (elementScalerBlock.index == 0) edgeViewModel.source else edgeViewModel.destination
+            if (elementScalerBlock.index == 0) Edge.source else Edge.destination
         if (stateViewModel == null) {
             stateViewModel = attemptRelocation()
             if (stateViewModel == null || stateViewModel == previousStateViewModel) {
-                edgeViewModel.setBindings()
+                Edge.setBindings()
                 return false
             }
         }
 
         if (elementScalerBlock.index == 0) {
-            edgeViewModel.source = (stateViewModel!!)
-            previousContractViewModel = edgeViewModel.contract
-            edgeViewModel.contract = contractViewModel
+            Edge.source = (stateViewModel!!)
+            previousContract = Edge.contract
+            Edge.contract = Contract
         } else {
-            edgeViewModel.destination = (stateViewModel!!)
+            Edge.destination = (stateViewModel!!)
         }
 
         elementScalerBlock.updatePosition()
@@ -70,8 +70,8 @@ class MoveEdgeViewModelElementAction : Action {
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
         return actionFactory.createMoveEdgeViewModelElementAction(
-            edgeViewModel, elementScalerBlock,
-            previousStateViewModel, previousContractViewModel
+            Edge, elementScalerBlock,
+            previousStateViewModel, previousContract
         )
     }
 

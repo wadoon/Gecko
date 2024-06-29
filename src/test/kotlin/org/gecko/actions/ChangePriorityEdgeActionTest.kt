@@ -1,12 +1,12 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ChangePriorityEdgeViewModelActionTest {
-    private var edge: EdgeViewModel? = null
+class ChangePriorityEdgeActionTest {
+    private var edge: Edge? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 

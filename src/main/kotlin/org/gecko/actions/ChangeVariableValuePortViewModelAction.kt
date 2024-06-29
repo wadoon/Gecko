@@ -1,10 +1,10 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 
 class ChangeVariableValuePortViewModelAction internal constructor(
-    val portViewModel: PortViewModel,
+    val Port: Port,
     newValue: String?
 ) : Action() {
     var newValue: String?
@@ -12,7 +12,7 @@ class ChangeVariableValuePortViewModelAction internal constructor(
 
     init {
         this.newValue = newValue
-        this.oldValue = portViewModel.value!!
+        this.oldValue = Port.value!!
     }
 
     @Throws(ModelException::class)
@@ -20,11 +20,11 @@ class ChangeVariableValuePortViewModelAction internal constructor(
         if (newValue == null || newValue!!.isEmpty()) {
             newValue = null
         }
-        portViewModel.value = newValue
+        Port.value = newValue
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createChangeVariableValuePortViewModelAction(portViewModel, oldValue)
+        return actionFactory.createChangeVariableValuePortViewModelAction(Port, oldValue)
     }
 }

@@ -4,7 +4,7 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import org.gecko.actions.ActionManager
 import org.gecko.view.inspector.element.container.InspectorContractItem
-import org.gecko.viewmodel.ContractViewModel
+import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.StateViewModel
 
 /**
@@ -15,15 +15,15 @@ class InspectorContractList(actionManager: ActionManager, stateViewModel: StateV
     init {
         minHeight = MIN_HEIGHT
         val items: ObservableList<InspectorContractItem> = super.items
-        val contractViewModels: ObservableList<ContractViewModel> = stateViewModel.contractsProperty
+        val Contracts: ObservableList<Contract> = stateViewModel.contractsProperty
 
         // Initialize inspector items
-        for (contractViewModel in contractViewModels) {
+        for (contractViewModel in Contracts) {
             items.add(InspectorContractItem(actionManager, stateViewModel, contractViewModel))
         }
 
         // Create a listener for contractViewModels changes and update inspector items accordingly
-        val contractViewModelListener = ListChangeListener { change: ListChangeListener.Change<out ContractViewModel> ->
+        val contractViewModelListener = ListChangeListener { change: ListChangeListener.Change<out Contract> ->
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (item in change.addedSubList) {
@@ -40,7 +40,7 @@ class InspectorContractList(actionManager: ActionManager, stateViewModel: StateV
             }
         }
 
-        contractViewModels.addListener(contractViewModelListener)
+        Contracts.addListener(contractViewModelListener)
     }
 
     companion object {

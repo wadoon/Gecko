@@ -1,6 +1,6 @@
 package org.gecko.actions
 
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.StateViewModel
 
 /**
@@ -8,7 +8,7 @@ import org.gecko.viewmodel.StateViewModel
  * [SystemViewModel]. Additionally, holds the previous start-[StateViewModel].
  */
 data class SetStartStateViewModelElementAction(
-    val geckoViewModel: GeckoViewModel, val stateViewModel: StateViewModel, val value: Boolean
+    val gModel: GModel, val stateViewModel: StateViewModel, val value: Boolean
 ) : Action() {
     override fun run(): Boolean {
         stateViewModel.isStartState = value
@@ -16,5 +16,5 @@ data class SetStartStateViewModelElementAction(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory) =
-        SetStartStateViewModelElementAction(geckoViewModel, stateViewModel, value)
+        SetStartStateViewModelElementAction(gModel, stateViewModel, value)
 }

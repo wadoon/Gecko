@@ -1,14 +1,14 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.StateViewModel
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ContractViewModelTest {
+class ContractTest {
     private var stateViewModel: StateViewModel? = null
-    private var edge: EdgeViewModel? = null
+    private var edge: Edge? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
 

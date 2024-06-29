@@ -8,8 +8,8 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.VBox
 import org.gecko.actions.ActionManager
 import org.gecko.view.inspector.element.InspectorElement
-import org.gecko.viewmodel.PortViewModel
-import org.gecko.viewmodel.SystemViewModel
+import org.gecko.viewmodel.Port
+import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
 
 /**
@@ -17,29 +17,29 @@ import org.gecko.viewmodel.Visibility
  */
 class InspectorVariableList(
     val actionManager: ActionManager,
-    val viewModel: SystemViewModel,
+    val viewModel: System,
     val visibility: Visibility
 ) : InspectorElement<VBox> {
-    val view = TableView<PortViewModel>()
+    val view = TableView<Port>()
     override val control: VBox = VBox(view)
 
     init {
         val ports = FilteredList(
             viewModel.portsProperty
-        ) { port: PortViewModel -> port.visibility == visibility }
+        ) { port: Port -> port.visibility == visibility }
         view.itemsProperty().set(ports)
 
 
         //viewModel.getPortsProperty().addListener(this::onPortsListChanged);
         //viewModel.getPorts().stream().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
         //viewModel.getPorts().forEach(port -> port.getVisibilityProperty().addListener(this::onVisibilityChanged));
-        val colName = TableColumn<PortViewModel, String>("Name")
+        val colName = TableColumn<Port, String>("Name")
         colName.sortType = TableColumn.SortType.ASCENDING
-        colName.setCellValueFactory { tcf: TableColumn.CellDataFeatures<PortViewModel, String> -> tcf.value.nameProperty }
+        colName.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> -> tcf.value.nameProperty }
 
-        val colDatatype = TableColumn<PortViewModel, String>("Type")
+        val colDatatype = TableColumn<Port, String>("Type")
         colDatatype.sortType = TableColumn.SortType.ASCENDING
-        colDatatype.setCellValueFactory { tcf: TableColumn.CellDataFeatures<PortViewModel, String> -> tcf.value.typeProperty }
+        colDatatype.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> -> tcf.value.typeProperty }
 
         view.columns.setAll(colName, colDatatype)
 

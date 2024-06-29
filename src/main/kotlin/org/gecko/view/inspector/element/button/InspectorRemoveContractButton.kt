@@ -5,17 +5,17 @@ import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.ContractViewModel
+import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.StateViewModel
 
 /**
- * Represents a type of [AbstractInspectorButton] used for removing a [ContractViewModel] from a
+ * Represents a type of [AbstractInspectorButton] used for removing a [Contract] from a
  * [StateViewModel].
  */
 class InspectorRemoveContractButton(
     actionManager: ActionManager,
     stateViewModel: StateViewModel?,
-    contractViewModel: ContractViewModel?
+    Contract: Contract?
 ) : AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)
@@ -24,7 +24,7 @@ class InspectorRemoveContractButton(
             parent.requestFocus()
             actionManager.run(
                 actionManager.actionFactory
-                    .createDeleteContractViewModelAction(stateViewModel!!, contractViewModel)
+                    .createDeleteContractViewModelAction(stateViewModel!!, Contract)
             )
         }
     }

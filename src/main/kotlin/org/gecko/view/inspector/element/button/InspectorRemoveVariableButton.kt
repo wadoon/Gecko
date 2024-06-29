@@ -5,19 +5,19 @@ import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.PortViewModel
+import org.gecko.viewmodel.Port
 
 /**
- * Represents a type of [AbstractInspectorButton] used for removing a [PortViewModel].
+ * Represents a type of [AbstractInspectorButton] used for removing a [Port].
  */
-class InspectorRemoveVariableButton(actionManager: ActionManager, portViewModel: PortViewModel?) :
+class InspectorRemoveVariableButton(actionManager: ActionManager, Port: Port?) :
     AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)
         tooltip = Tooltip(ResourceHandler.inspector_remove_variable)
         onAction = EventHandler { _: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeleteAction(portViewModel!!)
+                actionManager.actionFactory.createDeleteAction(Port!!)
             )
         }
     }

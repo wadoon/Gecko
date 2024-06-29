@@ -13,15 +13,15 @@ import javafx.scene.layout.GridPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.Region
 import org.gecko.viewmodel.StateViewModel
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [RegionViewModel].
+ * [Region].
  */
 
-class RegionViewElement(override val target: RegionViewModel) : BlockViewElement(target), ViewElement<RegionViewModel> {
+class RegionViewElement(override val target: Region) : BlockViewElement(target), ViewElement<Region> {
     val nameProperty: StringProperty = SimpleStringProperty()
     val colorProperty: Property<Color> = SimpleObjectProperty()
     val invariantProperty: StringProperty = SimpleStringProperty()

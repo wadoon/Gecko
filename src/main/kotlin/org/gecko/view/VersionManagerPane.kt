@@ -7,7 +7,7 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.Priority
 import org.gecko.viewmodel.AutoNaming
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.VariantGroup
 import org.gecko.viewmodel.onListChange
 import org.kordamp.ikonli.javafx.FontIcon
@@ -18,7 +18,7 @@ import tornadofx.*
  * @author Alexander Weigl
  * @version 1 (23.05.24)
  */
-class VersionManagerPane(val model: GeckoViewModel) : UIComponent("Versions & Variants") {
+class VersionManagerPane(val model: GModel) : UIComponent("Versions & Variants") {
     var tree by singleAssign<TreeView<String>>()
     override val root = vbox {
         hbox {
@@ -115,7 +115,7 @@ class VersionManagerPane(val model: GeckoViewModel) : UIComponent("Versions & Va
 
 sealed class VVTreeItems : TreeItem<String>()
 
-private class RootItem(model: GeckoViewModel) : VVTreeItems() {
+private class RootItem(model: GModel) : VVTreeItems() {
     init {
         value = "root"
         for (g in model.knownVariantGroups.sortedBy { it.name }) {

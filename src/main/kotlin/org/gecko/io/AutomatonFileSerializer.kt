@@ -10,7 +10,7 @@ import java.util.*
  * The AutomatonFileSerializer is used to export a project to a sys file. When exporting, it transforms features unique
  * to Gecko, such as regions, kinds and priorities, to be compatible with the sys file format.
  */
-class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
+class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     lateinit var out: PrintWriter
 
     override fun writeToStream(w: Writer) {
@@ -36,13 +36,13 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
     }
 
 
-    private fun serializeAutomata(model: GeckoViewModel) =
+    private fun serializeAutomata(model: GModel) =
         model.allSystems.forEach { serializeAutomaton(it) }
 
-    private fun serializeSystems(model: GeckoViewModel) =
+    private fun serializeSystems(model: GModel) =
         model.allSystems.forEach { serializeSystem(it) }
 
-    private fun serializeAutomaton(system: SystemViewModel) {
+    private fun serializeAutomaton(system: System) {
         val automaton = system.automaton
 
         out.format(AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT, system.name)
@@ -53,13 +53,13 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         }
         automaton.states.forEach { state -> this.serializeStateContracts(state, automaton) }
         out.write("\n")
-        val relevantEdges = automaton.edges.filter { edge: EdgeViewModel -> edge.contract != null }
+        val relevantEdges = automaton.edges.filter { edge: Edge -> edge.contract != null }
         relevantEdges.forEach { edge -> this.serializeTransition(edge) }
         out.write("}")
         out.write("\n")
     }
 
-    private fun serializeStateContracts(state: StateViewModel, automaton: AutomatonViewModel) {
+    private fun serializeStateContracts(state: StateViewModel, automaton: Automaton) {
         //Edges are used so much here because contracts don't have priorities or kinds and only states can be in regions
         val relevantRegions = automaton.getRegionsWithState(state)
         val edges = automaton.getOutgoingEdges(state).filter { it.contract != null }
@@ -67,7 +67,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
             return
         }
         //Creating new contracts to not alter the model
-        val newContracts: MutableMap<EdgeViewModel, ContractViewModel> = HashMap()
+        val newContracts: MutableMap<Edge, Contract> = HashMap()
         for (edge in edges) {
             val newContract = applyRegionsToContract(relevantRegions, edge.contract!!)
             try {
@@ -113,7 +113,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
     }
 
     @Throws(ModelException::class)
-    fun applyKindToContract(contract: ContractViewModel, kind: Kind) {
+    fun applyKindToContract(contract: Contract, kind: Kind) {
         when (kind) {
             Kind.MISS -> {
                 contract.preCondition.value = contract.preCondition.not().value
@@ -126,12 +126,12 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
     }
 
     private fun applyRegionsToContract(
-        relevantRegions: List<RegionViewModel>,
-        contract: ContractViewModel
-    ): ContractViewModel {
-        val newContract: ContractViewModel
+        relevantRegions: List<Region>,
+        contract: Contract
+    ): Contract {
+        val newContract: Contract
         try {
-            newContract = ContractViewModel(contract.name, contract.preCondition, contract.postCondition)
+            newContract = Contract(contract.name, contract.preCondition, contract.postCondition)
         } catch (e: ModelException) {
             throw RuntimeException("Failed to build contract out of other valid contracts", e)
         }
@@ -144,7 +144,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         return newContract
     }
 
-    private fun andConditions(regions: List<RegionViewModel>): Pair<Condition, Condition> {
+    private fun andConditions(regions: List<Region>): Pair<Condition, Condition> {
         val c = regions.first()
         val first = c.contract
 
@@ -170,17 +170,17 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         return newPre to newPost
     }
 
-    private fun serializeContract(contract: ContractViewModel) {
+    private fun serializeContract(contract: Contract) {
         out.write(INDENT)
         out.format(SERIALIZED_CONTRACT, contract.name, contract.preCondition, contract.postCondition)
     }
 
-    private fun serializeTransition(edge: EdgeViewModel) {
+    private fun serializeTransition(edge: Edge) {
         out.write(INDENT)
         out.format(SERIALIZED_TRANSITION, edge.source.name, edge.destination.name, getContractName(edge))
     }
 
-    private fun serializeSystem(system: SystemViewModel) {
+    private fun serializeSystem(system: System) {
         out.format(SERIALIZED_SYSTEM, system.name)
 
         if (system.ports.isNotEmpty()) {
@@ -203,10 +203,10 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         out.write("\n")
     }
 
-    private fun serializeConnections(system: SystemViewModel) =
+    private fun serializeConnections(system: System) =
         system.connections.forEach { this.serializeConnection(it, system) }
 
-    private fun serializeConnection(connection: SystemConnectionViewModel, parent: SystemViewModel) {
+    private fun serializeConnection(connection: SystemConnectionViewModel, parent: System) {
         val startSystem = serializeSystemReference(parent, connection.source!!)
         val startPort = connection.source?.name
         val endSystem = serializeSystemReference(parent, connection.destination!!)
@@ -215,7 +215,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         out.format(SERIALIZED_CONNECTION, startSystem, startPort, endSystem, endPort)
     }
 
-    private fun serializeSystemReference(parent: SystemViewModel?, v: PortViewModel): String {
+    private fun serializeSystemReference(parent: System?, v: Port): String {
         return if (parent!!.ports.contains(v)) {
             AutomatonFileVisitor.SELF_REFERENCE_TOKEN
         } else {
@@ -223,18 +223,18 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
         }
     }
 
-    private fun serializeIo(system: SystemViewModel) {
+    private fun serializeIo(system: System) {
         val orderedVariables = system.ports.sorted(Comparator.comparing { it.visibility })
         orderedVariables.forEach { this.serializeVariable(it) }
     }
 
-    private fun serializeChildren(system: SystemViewModel) =
+    private fun serializeChildren(system: System) =
         system.subSystems.forEach { this.serializeChild(it) }
 
-    private fun serializeChild(system: SystemViewModel): String =
+    private fun serializeChild(system: System): String =
         String.format(INDENT + SERIALIZED_STATE, system.name, system.name)
 
-    private fun serializeVariable(variable: PortViewModel): String {
+    private fun serializeVariable(variable: Port): String {
         var output = ""
         output += INDENT + when (variable.visibility) {
             Visibility.INPUT -> SERIALIZED_INPUT
@@ -251,7 +251,7 @@ class AutomatonFileSerializer(val model: GeckoViewModel) : FileSerializer {
     private fun serializeCode(code: String) =
         out.write(INDENT + AutomatonFileVisitor.CODE_BEGIN + code + AutomatonFileVisitor.CODE_END)
 
-    private fun getContractName(edge: EdgeViewModel): String {
+    private fun getContractName(edge: Edge): String {
         val name = edge.contract?.name
         if (edge.kind == Kind.HIT) {
             return name!!

@@ -30,10 +30,10 @@ import kotlin.error
 
 /**
  * Represents the View component of a Gecko project. Holds a [ViewFactory], a current [EditorView] and a
- * reference to the [GeckoViewModel]. Contains methods for managing the [EditorView] shown in the graphic
+ * reference to the [GModel]. Contains methods for managing the [EditorView] shown in the graphic
  * editor.
  */
-class GeckoView(val manager: GeckoManager, var viewModel: GeckoViewModel) : View() {
+class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
     val viewFactory: ViewFactory = ViewFactory(viewModel.actionManager, this)
     val currentViewProperty: Property<EditorView?> = nullableObjectProperty()
     val openedViews: MutableList<EditorView> = ArrayList()

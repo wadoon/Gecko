@@ -18,14 +18,14 @@ import kotlin.math.*
 
 /**
  * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which encapsulates
- * an [EdgeViewModel].
+ * an [Edge].
  */
 
-class EdgeViewElement(edgeViewModel: EdgeViewModel) :
-    ConnectionViewElement(listOf(edgeViewModel.startPoint, edgeViewModel.endPoint)),
-    ViewElement<EdgeViewModel> {
-    override val target: EdgeViewModel
-    val contractProperty: Property<ContractViewModel> = objectProperty(ContractViewModel())
+class EdgeViewElement(Edge: Edge) :
+    ConnectionViewElement(listOf(Edge.startPoint, Edge.endPoint)),
+    ViewElement<Edge> {
+    override val target: Edge
+    val contractProperty: Property<Contract> = objectProperty(Contract())
     val priorityProperty: IntegerProperty = intProperty()
     val kindProperty: Property<Kind> = objectProperty(Kind.HIT)
 
@@ -35,35 +35,35 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
     val label: Label = Label()
 
     init {
-        contractProperty.bind(edgeViewModel.contractProperty)
-        priorityProperty.bind(edgeViewModel.priorityProperty)
-        kindProperty.bind(edgeViewModel.kindProperty)
-        this.target = edgeViewModel
-        edgeViewModel.startPointProperty.onChange { _: Point2D?, n: Point2D? ->
+        contractProperty.bind(Edge.contractProperty)
+        priorityProperty.bind(Edge.priorityProperty)
+        kindProperty.bind(Edge.kindProperty)
+        this.target = Edge
+        Edge.startPointProperty.onChange { _: Point2D?, n: Point2D? ->
             pathSource[0] = n
         }
 
-        edgeViewModel.endPointProperty.onChange { _: Point2D?, n: Point2D? ->
+        Edge.endPointProperty.onChange { _: Point2D?, n: Point2D? ->
             pathSource[1] = n
         }
 
 
-        label.text = edgeViewModel.representation
+        label.text = Edge.representation
 
         val updateLabelPosition =
             ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> calculateLabelPosition() }
         label.heightProperty().addListener(updateLabelPosition)
         label.widthProperty().addListener(updateLabelPosition)
-        edgeViewModel.startPointProperty.addListener(updateLabelPosition)
-        edgeViewModel.endPointProperty.addListener(updateLabelPosition)
+        Edge.startPointProperty.addListener(updateLabelPosition)
+        Edge.endPointProperty.addListener(updateLabelPosition)
 
         val updateLabel =
-            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> label.text = edgeViewModel.representation }
+            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> label.text = Edge.representation }
 
-        val contract = edgeViewModel.contract
+        val contract = Edge.contract
         contract?.nameProperty?.addListener(updateLabel)
-        contractProperty.addListener { _: ObservableValue<out ContractViewModel>?, _: ContractViewModel?, newValue: ContractViewModel? ->
-            label.text = edgeViewModel.representation
+        contractProperty.addListener { _: ObservableValue<out Contract>?, _: Contract?, newValue: Contract? ->
+            label.text = Edge.representation
             newValue?.nameProperty?.addListener(updateLabel)
         }
         priorityProperty.addListener(updateLabel)
@@ -71,8 +71,8 @@ class EdgeViewElement(edgeViewModel: EdgeViewModel) :
 
         pane.children.add(label)
 
-        isLoopProperty.bind(edgeViewModel.isLoopProperty.and(edgeViewModel.isCurrentlyModified.not()))
-        orientationProperty.bind(edgeViewModel.orientationProperty)
+        isLoopProperty.bind(Edge.isLoopProperty.and(Edge.isCurrentlyModified.not()))
+        orientationProperty.bind(Edge.orientationProperty)
 
         isLoopProperty.addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, _: Boolean? -> calculateLabelPosition() }
         constructVisualization()

@@ -32,30 +32,30 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         return SelectableViewElementDecorator(newStateViewElement)
     }
 
-    fun createViewElementFrom(regionViewModel: RegionViewModel): ViewElement<*> {
-        val newRegionViewElement = RegionViewElement(regionViewModel)
+    fun createViewElementFrom(Region: Region): ViewElement<*> {
+        val newRegionViewElement = RegionViewElement(Region)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            RegionViewElementContextMenuBuilder(actionManager, regionViewModel, geckoView)
+            RegionViewElementContextMenuBuilder(actionManager, Region, geckoView)
         setContextMenu(newRegionViewElement, contextMenuBuilder)
         return BlockElementScalerViewElementDecorator(SelectableViewElementDecorator(newRegionViewElement))
     }
 
-    fun createViewElementFrom(portViewModel: PortViewModel): ViewElement<*> {
-        val newVariableBlockViewElement = VariableBlockViewElement(portViewModel)
+    fun createViewElementFrom(Port: Port): ViewElement<*> {
+        val newVariableBlockViewElement = VariableBlockViewElement(Port)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            VariableBlockViewElementContextMenuBuilder(actionManager, portViewModel, geckoView)
+            VariableBlockViewElementContextMenuBuilder(actionManager, Port, geckoView)
         setContextMenu(newVariableBlockViewElement, contextMenuBuilder)
 
         return SelectableViewElementDecorator(newVariableBlockViewElement)
     }
 
-    fun createViewElementFrom(edgeViewModel: EdgeViewModel): ViewElement<*> {
-        val newEdgeViewElement = EdgeViewElement(edgeViewModel)
+    fun createViewElementFrom(Edge: Edge): ViewElement<*> {
+        val newEdgeViewElement = EdgeViewElement(Edge)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            EdgeViewElementContextMenuBuilder(actionManager, edgeViewModel, geckoView)
+            EdgeViewElementContextMenuBuilder(actionManager, Edge, geckoView)
         setContextMenu(newEdgeViewElement.pane, contextMenuBuilder)
 
         return ConnectionElementScalerViewElementDecorator(newEdgeViewElement)
@@ -72,11 +72,11 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         return ConnectionElementScalerViewElementDecorator(newSystemConnectionViewElement)
     }
 
-    fun createViewElementFrom(systemViewModel: SystemViewModel): ViewElement<*> {
-        val newSystemViewElement = SystemViewElement(systemViewModel)
+    fun createViewElementFrom(System: System): ViewElement<*> {
+        val newSystemViewElement = SystemViewElement(System)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            SystemViewElementContextMenuBuilder(actionManager, systemViewModel, geckoView)
+            SystemViewElementContextMenuBuilder(actionManager, System, geckoView)
         setContextMenu(newSystemViewElement, contextMenuBuilder)
 
         return SelectableViewElementDecorator(newSystemViewElement)

@@ -9,7 +9,7 @@ import org.gecko.viewmodel.StateViewModel
 
 /**
  * Represents a type of [AbstractInspectorButton] used for adding a
- * [ContractViewModel][org.gecko.viewmodel.ContractViewModel] to a given [StateViewModel].
+ * [ContractViewModel][org.gecko.viewmodel.Contract] to a given [StateViewModel].
  */
 class InspectorAddContractButton(actionManager: ActionManager, stateViewModel: StateViewModel) :
     AbstractInspectorButton() {

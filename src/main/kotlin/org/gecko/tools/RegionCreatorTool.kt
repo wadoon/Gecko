@@ -10,7 +10,7 @@ import org.gecko.viewmodel.BlockViewModelElement
 
 /**
  * A concrete representation of a region-creating-[AreaTool], utilized for creating a
- * rectangle-formed-[RegionViewModel][org.gecko.viewmodel.RegionViewModel]. Holds the [Color] of the drawn
+ * rectangle-formed-[RegionViewModel][org.gecko.viewmodel.Region]. Holds the [Color] of the drawn
  * region.
  */
 class RegionCreatorTool(actionManager: ActionManager) : AreaTool(actionManager, ToolType.REGION_CREATOR, false) {

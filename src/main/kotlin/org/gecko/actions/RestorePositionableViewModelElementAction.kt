@@ -1,7 +1,7 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.GeckoViewModel
+import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.PositionableViewModelElement
 
 /**
@@ -9,7 +9,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  * in the current [EditorViewModel][org.gecko.viewmodel.EditorViewModel].
  */
 class RestorePositionableViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
+    val gModel: GModel,
     val actionGroup: ActionGroup?,
     deletedElements: Set<PositionableViewModelElement>?
 ) : Action() {
@@ -17,15 +17,15 @@ class RestorePositionableViewModelElementAction internal constructor(
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        val undoAction = actionGroup!!.getUndoAction(geckoViewModel.actionManager.actionFactory)
+        val undoAction = actionGroup!!.getUndoAction(gModel.actionManager.actionFactory)
         if (!undoAction!!.run()) {
             return false
         }
-        val elementsToRestoreFromCurrentEditor = geckoViewModel.currentEditor!!
-            .containedPositionableViewModelElementsProperty
+        val elementsToRestoreFromCurrentEditor = gModel.currentEditor!!
+            .viewableElements
             .filter { deletedElements.contains(it) }
             .toSet()
-        val actionManager = geckoViewModel.actionManager
+        val actionManager = gModel.actionManager
         actionManager.run(
             actionManager.actionFactory.createSelectAction(elementsToRestoreFromCurrentEditor, true)
         )

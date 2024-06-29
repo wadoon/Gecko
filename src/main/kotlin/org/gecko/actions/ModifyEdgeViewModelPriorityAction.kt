@@ -1,25 +1,25 @@
 package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.EdgeViewModel
+import org.gecko.viewmodel.Edge
 
 /**
- * A concrete representation of an [Action] that changes the priority of an [EdgeViewModel]. Holds the old
+ * A concrete representation of an [Action] that changes the priority of an [Edge]. Holds the old
  * and new priorities of the edge.
  */
 class ModifyEdgeViewModelPriorityAction internal constructor(
-    val edgeViewModel: EdgeViewModel,
+    val Edge: Edge,
     val newPriority: Int
 ) : Action() {
-    val oldPriority = edgeViewModel.priority
+    val oldPriority = Edge.priority
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        edgeViewModel.priority = newPriority
+        Edge.priority = newPriority
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createModifyEdgeViewModelPriorityAction(edgeViewModel, oldPriority)
+        return actionFactory.createModifyEdgeViewModelPriorityAction(Edge, oldPriority)
     }
 }

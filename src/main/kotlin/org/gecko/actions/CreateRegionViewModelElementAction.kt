@@ -3,35 +3,35 @@ package org.gecko.actions
 import javafx.geometry.Point2D
 import javafx.scene.paint.Color
 import org.gecko.exceptions.GeckoException
-import org.gecko.viewmodel.GeckoViewModel
-import org.gecko.viewmodel.RegionViewModel
+import org.gecko.viewmodel.GModel
+import org.gecko.viewmodel.Region
 
 /**
- * A concrete representation of an [Action] that creates a [RegionViewModel] in the
+ * A concrete representation of an [Action] that creates a [Region] in the
  * current-[SystemViewModel] through the [org.gecko.viewmodel.ViewModelFactory] of the
- * [GeckoViewModel]. Additionally, holds the current [EditorViewModel][org.gecko.viewmodel.EditorViewModel]
+ * [GModel]. Additionally, holds the current [EditorViewModel][org.gecko.viewmodel.EditorViewModel]
  * for setting the correct size and position for the created region.
  */
 class CreateRegionViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
+    val gModel: GModel,
     val position: Point2D,
     val size: Point2D,
     val color: Color?
 ) : Action() {
-    lateinit var createdRegion: RegionViewModel
+    lateinit var createdRegion: Region
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        val currentParentSystem = geckoViewModel.currentEditor!!.currentSystem
-        createdRegion = geckoViewModel.viewModelFactory.createRegion(currentParentSystem)
+        val currentParentSystem = gModel.currentEditor!!.currentSystem
+        createdRegion = gModel.viewModelFactory.createRegion(currentParentSystem)
         createdRegion.position = position
         createdRegion.size = size
         if (color != null) {
             createdRegion.color = (color)
         }
-        val actionManager = geckoViewModel.actionManager
+        val actionManager = gModel.actionManager
         actionManager.run(actionManager.actionFactory.createSelectAction(createdRegion, true))
-        geckoViewModel.currentEditor!!.updateRegions()
+        gModel.currentEditor!!.updateRegions()
         return true
     }
 

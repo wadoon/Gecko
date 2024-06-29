@@ -4,32 +4,32 @@ import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.*
 
 /**
- * A concrete representation of an [Action] that removes a [RegionViewModel] from the [GeckoViewModel]
+ * A concrete representation of an [Action] that removes a [Region] from the [GModel]
  * and its target-[org.gecko.model.Region] from the given [Automaton].
  */
 class DeleteRegionViewModelElementAction internal constructor(
-    val geckoViewModel: GeckoViewModel,
-    val regionViewModel: RegionViewModel,
-    val automaton: AutomatonViewModel
+    val gModel: GModel,
+    val Region: Region,
+    val automaton: Automaton
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        automaton.removeRegion(regionViewModel)
-        val states: List<StateViewModel> = ArrayList(regionViewModel.statesProperty)
+        automaton.removeRegion(Region)
+        val states: List<StateViewModel> = ArrayList(Region.statesProperty)
 
         for (state in states) {
-            regionViewModel.removeState(state)
+            Region.removeState(state)
         }
 
-        geckoViewModel.deleteViewModelElement(regionViewModel)
-        geckoViewModel.currentEditor!!.updateRegions()
+        gModel.deleteViewModelElement(Region)
+        gModel.currentEditor!!.updateRegions()
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestoreRegionViewModelElementAction(geckoViewModel, regionViewModel, automaton)
+        return RestoreRegionViewModelElementAction(gModel, Region, automaton)
     }
 
     override val target: PositionableViewModelElement
-        get() = regionViewModel
+        get() = Region
 }

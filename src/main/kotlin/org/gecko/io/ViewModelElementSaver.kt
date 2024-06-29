@@ -8,16 +8,16 @@ import org.gecko.viewmodel.*
  * creating for each of them a [ViewModelPropertiesContainer], depending on the attributes of the corresponding
  * [PositionableViewModelElement].
  */
-class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
+class ViewModelElementSaver(val gModel: GModel) {
     val viewModelProperties: MutableList<ViewModelPropertiesContainer> = arrayListOf()
     val startStates: MutableList<StartStateContainer> = arrayListOf()
 
-    fun getViewModelProperties(root: SystemViewModel): List<ViewModelPropertiesContainer> {
+    fun getViewModelProperties(root: System): List<ViewModelPropertiesContainer> {
         gatherSystemAttributes(root)
         return this.viewModelProperties
     }
 
-    fun gatherSystemAttributes(system: SystemViewModel) {
+    fun gatherSystemAttributes(system: System) {
         for (variable in system.ports) {
             this.savePortViewModelProperties(variable)
         }
@@ -58,7 +58,7 @@ class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
         viewModelProperties.add(stateViewModelContainer)
     }
 
-    fun saveRegionViewModelProperties(region: RegionViewModel) {
+    fun saveRegionViewModelProperties(region: Region) {
         val regionViewModelContainer = this.getCoordinateContainer(region)
 
         val color = region.color
@@ -69,7 +69,7 @@ class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
         viewModelProperties.add(regionViewModelContainer)
     }
 
-    fun saveSystemViewModelProperties(system: SystemViewModel) {
+    fun saveSystemViewModelProperties(system: System) {
         val systemViewModelContainer = this.getCoordinateContainer((system))
         viewModelProperties.add(systemViewModelContainer)
     }
@@ -79,12 +79,12 @@ class ViewModelElementSaver(val geckoViewModel: GeckoViewModel) {
         viewModelProperties.add(systemConnectionViewModelContainer)
     }
 
-    fun saveEdgeModelProperties(edge: EdgeViewModel) {
+    fun saveEdgeModelProperties(edge: Edge) {
         val edgeViewModelContainer = this.getCoordinateContainer(edge)
         viewModelProperties.add(edgeViewModelContainer)
     }
 
-    fun savePortViewModelProperties(variable: PortViewModel) {
+    fun savePortViewModelProperties(variable: Port) {
         val variableViewModelContainer = this.getCoordinateContainer(variable)
         viewModelProperties.add(variableViewModelContainer)
     }
