@@ -1,6 +1,9 @@
 package org.gecko.viewmodel
 
-import javafx.beans.property.*
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.DoubleProperty
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
@@ -21,7 +24,7 @@ import kotlin.math.min
 /**
  * Represents the view model correspondent to an [EditorView][org.gecko.view.views.EditorView], holding relevant
  * items like the [ActionManager], the current- and parent-[SystemsViewModel][System]s, the
- * contained [PositionableViewModelElement]s, the [SelectionManager] and others, updating the view model of
+ * contained [PositionableElement]s, the [SelectionManager] and others, updating the view model of
  * the Gecko project.
  */
 class EditorViewModel(
@@ -30,16 +33,16 @@ class EditorViewModel(
     val parentSystem: System?,
     val isAutomatonEditor: Boolean,
 ) : Openable {
-    val viewableElementsProperty = listProperty<PositionableViewModelElement>()
-    var viewableElements by viewableElementsProperty
+    val viewableElementsProperty = listProperty<PositionableElement>()
+    val viewableElements: ObservableList<PositionableElement> by viewableElementsProperty
 
     val tools: MutableList<List<Tool>> = FXCollections.observableArrayList()
     val selectionManager = SelectionManager()
-    val pivotProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
-    val zoomScaleProperty: DoubleProperty = SimpleDoubleProperty(DEFAULT_ZOOM_SCALE)
-    val needsRefocusProperty: BooleanProperty = SimpleBooleanProperty(false)
+    val pivotProperty: Property<Point2D> = objectProperty(Point2D.ZERO)
+    val zoomScaleProperty: DoubleProperty = doubleProperty(DEFAULT_ZOOM_SCALE)
+    val needsRefocusProperty: BooleanProperty = booleanProperty(false)
     val currentToolProperty = SimpleObjectProperty<Tool>()
-    val focusedElementProperty = SimpleObjectProperty<PositionableViewModelElement>()
+    val focusedElementProperty = SimpleObjectProperty<PositionableElement>()
 
     init {
         initializeTools()
@@ -52,34 +55,26 @@ class EditorViewModel(
     }
 
     fun updateRegions() {
-//        val automaton:  = currentSystem.automaton
-//        val regionViewModels = containedPositionableViewModelElementsProperty
-//            .filter { it.target in automaton.regions }
-//            .map { it as RegionViewModel }
-//            .toSet()
-//        val stateViewModels = containedPositionableViewModelElementsProperty
-//            .filter { it.target in automaton.states }
-//            .map { it as StateViewModel? }
-//            .toSet()
-//        for (regionViewModel in regionViewModels) {
-//            regionViewModel.clearStates()
-//            for (stateViewModel in stateViewModels) {
-//                regionViewModel.checkStateInRegion(stateViewModel!!)
-//                regionViewModel.updateTarget()
-//            }
-//        }
+        val regions = currentSystem.automaton.regions
+        val states = currentSystem.automaton.states
+        for (r in regions) {
+            r.states.clear()
+            for (stateViewModel in states) {
+                r.checkStateInRegion(stateViewModel)
+            }
+        }
     }
 
     /**
-     * Returns the [Region]s that contain the given [StateViewModel] by checking if the state is in
+     * Returns the [Region]s that contain the given [State] by checking if the state is in
      * set of states of the region.
      *
-     * @param stateViewModel the [StateViewModel] to get the containing [Region]s for
-     * @return the [Region]s that contain the given [StateViewModel]
+     * @param state the [State] to get the containing [Region]s for
+     * @return the [Region]s that contain the given [State]
      */
-    fun getRegions(stateViewModel: StateViewModel): List<Region> {
+    fun getRegions(state: State): List<Region> {
         val regions = currentSystem.automaton.regions
-        return regions.filter { it.box.contains(stateViewModel.box) }
+        return regions.filter { it.checkStateInRegion(state) }
     }
 
     var currentTool: Tool by currentToolProperty
@@ -94,7 +89,7 @@ class EditorViewModel(
         return tools.flatten().find { it.toolType == toolType }
     }
 
-    var focusedElement: PositionableViewModelElement?
+    var focusedElement: PositionableElement?
         get() = focusedElementProperty.value
         set(focusedElement) {
             focusedElementProperty.value = focusedElement
@@ -162,8 +157,8 @@ class EditorViewModel(
         zoom(factor, pivotProperty.value)
     }
 
-    fun getElementsByName(name: String): List<PositionableViewModelElement> {
-        val matches: MutableList<PositionableViewModelElement> = ArrayList()
+    fun getElementsByName(name: String): List<PositionableElement> {
+        val matches: MutableList<PositionableElement> = ArrayList()
         //val visitor: PositionableViewModelElementVisitor<*> = ViewElementSearchVisitor(name)
         /*containedPositionableViewModelElementsProperty.forEach( { element: PositionableViewModelElement ->
             val searchResult = element.accept(visitor) as PositionableViewModelElement?
@@ -180,9 +175,9 @@ class EditorViewModel(
      * @param bound the area in world coordinates
      * @return the elements that are in the given area
      */
-    fun getElementsInArea(bound: Bounds): Set<PositionableViewModelElement> {
+    fun getElementsInArea(bound: Bounds): Set<PositionableElement> {
         return viewableElementsProperty
-            .filter { element: PositionableViewModelElement ->
+            .filter { element: PositionableElement ->
                 if (element.size == Point2D.ZERO) {
                     return@filter false
                 }
@@ -199,17 +194,17 @@ class EditorViewModel(
         const val DEFAULT_ZOOM_STEP = 1.1
 
         fun updateStateRegionList(
-            stateViewModel: StateViewModel, region: Region,
-            change: ListChangeListener.Change<out StateViewModel>, Regions: ObservableList<Region>
+            state: State, region: Region,
+            change: ListChangeListener.Change<out State>, Regions: ObservableList<Region>
         ) {
             while (change.next()) {
                 if (change.wasAdded()) {
-                    if (change.addedSubList.contains(stateViewModel)) {
+                    if (change.addedSubList.contains(state)) {
                         Regions.add(region)
                     }
                 }
                 if (change.wasRemoved()) {
-                    if (change.removed.contains(stateViewModel)) {
+                    if (change.removed.contains(state)) {
                         Regions.remove(region)
                     }
                 }

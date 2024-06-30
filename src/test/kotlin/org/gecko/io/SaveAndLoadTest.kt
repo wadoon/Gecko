@@ -44,7 +44,7 @@ class ProjectFileSerializerTest {
 
         oneLevelFactory.createRegion(oneLevelRoot)
         val regionWithStates = oneLevelFactory.createRegion(oneLevelRoot)
-        regionWithStates.addState(oneLevelFactory.createState(oneLevelRoot))
+        regionWithStates.states.add(oneLevelFactory.createState(oneLevelRoot))
 
         val state1 = oneLevelFactory.createState(oneLevelRoot)
         val state2 = oneLevelFactory.createState(oneLevelRoot)
@@ -61,7 +61,7 @@ class ProjectFileSerializerTest {
         port1.visibility = (Visibility.OUTPUT)
         port1.name = "treeVar1"
         val region1 = treeFactory.createRegion(child1)
-        region1.addState(treeFactory.createState(child1))
+        region1.states.add(treeFactory.createState(child1))
 
         val child2 = treeFactory.createSystem(treeRoot)
         child1.name = "child2"
@@ -69,7 +69,7 @@ class ProjectFileSerializerTest {
         port2.visibility = (Visibility.INPUT)
         port2.name = "treeVar2"
         val region2 = treeFactory.createRegion(child2)
-        region2.addState(treeFactory.createState(child2))
+        region2.states.add(treeFactory.createState(child2))
 
         treeFactory.createSystemConnectionViewModelIn(treeRoot, port1, port2)
 

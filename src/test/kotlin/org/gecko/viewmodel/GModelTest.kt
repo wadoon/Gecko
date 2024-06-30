@@ -42,7 +42,7 @@ internal class GModelTest {
     fun switchEditorInitializeElements2() {
         gModel.switchEditor(rootSystem, true)
         val editorViewModel = gModel.currentEditor
-        Assertions.assertTrue(editorViewModel!!.viewableElementsProperty.contains(stateViewModel))
+        Assertions.assertTrue(editorViewModel!!.viewableElementsProperty.contains(state))
         Assertions.assertFalse(
             editorViewModel.viewableElementsProperty.contains(childSystem1)
         )
@@ -53,7 +53,7 @@ internal class GModelTest {
     private var rootSystem: System
     private var childSystem1: System
     private var childSystem2: System
-    private var stateViewModel: StateViewModel
+    private var state: State
 
     init {
         gModel = GModel()
@@ -65,6 +65,6 @@ internal class GModelTest {
         childSystem2 = viewModelFactory.createSystem(
             rootSystem
         )
-        stateViewModel = viewModelFactory.createState(rootSystem)
+        state = viewModelFactory.createState(rootSystem)
     }
 }

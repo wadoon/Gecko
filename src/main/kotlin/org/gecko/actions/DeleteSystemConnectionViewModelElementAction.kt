@@ -3,17 +3,17 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.PositionableViewModelElement
-import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.PositionableElement
+import org.gecko.viewmodel.SystemConnection
 import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of an [Action] that removes a [SystemConnectionViewModel] from a given
+ * A concrete representation of an [Action] that removes a [SystemConnection] from a given
  * [org.gecko.viewmodel.System].
  */
 class DeleteSystemConnectionViewModelElementAction internal constructor(
     val gModel: GModel,
-    val systemConnectionViewModel: SystemConnectionViewModel,
+    val systemConnectionViewModel: SystemConnection,
     val system: System
 ) : AbstractPositionableViewModelElementAction() {
     @Throws(GeckoException::class)
@@ -26,10 +26,10 @@ class DeleteSystemConnectionViewModelElementAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestoreSystemConnectionViewModelElementAction(gModel, systemConnectionViewModel, system)
+        return RestoreSystemConnectionAction(gModel, systemConnectionViewModel, system)
     }
 
-    override val target: PositionableViewModelElement
+    override val target: PositionableElement
         get() = systemConnectionViewModel
 }
 

@@ -2,16 +2,16 @@ package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
  * A concrete representation of an [Action] that selects and focuses on a {link PositionableViewModelElement}.
  */
 class FocusPositionableViewModelElementAction internal constructor(
     val editorViewModel: EditorViewModel,
-    positionableViewModelElement: PositionableViewModelElement
+    positionableElement: PositionableElement
 ) : Action() {
-    val element = positionableViewModelElement
+    val element = positionableElement
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {

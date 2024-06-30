@@ -26,11 +26,11 @@ import tornadofx.setValue
 data class System(
     val codeProperty: SimpleStringProperty = SimpleStringProperty(""),
     val portsProperty: ListProperty<Port> = SimpleListProperty(FXCollections.observableArrayList())
-) : BlockViewModelElement(), Inspectable {
-    val allElements: MutableList<PositionableViewModelElement>
+) : BlockElement(), Inspectable {
+    val allElements: MutableList<PositionableElement>
         get() {
             val allElements =
-                ArrayList<PositionableViewModelElement>(subSystems.size + portsProperty.size + connections.size)
+                ArrayList<PositionableElement>(subSystems.size + portsProperty.size + connections.size)
             allElements.addAll(subSystems)
             allElements.addAll(portsProperty)
             allElements.addAll(connections)
@@ -48,7 +48,7 @@ data class System(
         return SelectableViewElementDecorator(newSystemViewElement)
     }
 
-    val connectionsProperty = listProperty<SystemConnectionViewModel>()
+    val connectionsProperty = listProperty<SystemConnection>()
     val connections by connectionsProperty
 
     var parent: System? = null
@@ -86,8 +86,8 @@ data class System(
     }
 
 
-    fun removeConnection(con: SystemConnectionViewModel) = connectionsProperty.remove(con)
-    fun addConnection(con: SystemConnectionViewModel) = connections.add(con)
+    fun removeConnection(con: SystemConnection) = connectionsProperty.remove(con)
+    fun addConnection(con: SystemConnection) = connections.add(con)
 
     fun getChildByName(name: String): System? =
         subSystems.firstOrNull { it.name == name }

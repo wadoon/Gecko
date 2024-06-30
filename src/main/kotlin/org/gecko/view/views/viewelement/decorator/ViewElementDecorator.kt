@@ -3,14 +3,14 @@ package org.gecko.view.views.viewelement.decorator
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import org.gecko.view.views.viewelement.ViewElement
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
  * An abstract representation of a [ViewElement] implementation following the decorator pattern and targeting a
- * decorated [ViewElement], which can be selected and encapsulates a [PositionableViewModelElement].
+ * decorated [ViewElement], which can be selected and encapsulates a [PositionableElement].
  */
 abstract class ViewElementDecorator(val decoratorTarget: ViewElement<*>) :
-    ViewElement<PositionableViewModelElement?> {
+    ViewElement<PositionableElement?> {
     override var isSelected = false
 
     override val zPriority: Int

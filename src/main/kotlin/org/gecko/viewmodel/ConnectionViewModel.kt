@@ -4,7 +4,7 @@ import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 
 /**
- * Provides methods for managing the edge points of connection-type [PositionableViewModelElement]s that must be
+ * Provides methods for managing the edge points of connection-type [PositionableElement]s that must be
  * implemented by concrete such elements.
  */
 interface ConnectionViewModel {

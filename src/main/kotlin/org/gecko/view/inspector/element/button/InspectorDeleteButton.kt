@@ -5,12 +5,12 @@ import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.shortcuts.Shortcuts
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
- * Represents a type of [AbstractInspectorButton] used for deleting a [PositionableViewModelElement].
+ * Represents a type of [AbstractInspectorButton] used for deleting a [PositionableElement].
  */
-class InspectorDeleteButton(actionManager: ActionManager, elementToRemove: PositionableViewModelElement?) :
+class InspectorDeleteButton(actionManager: ActionManager, elementToRemove: PositionableElement?) :
     AbstractInspectorButton() {
     init {
         onAction = EventHandler { event ->

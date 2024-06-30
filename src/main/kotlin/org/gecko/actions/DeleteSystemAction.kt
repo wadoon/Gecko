@@ -1,9 +1,7 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.GeckoException
-
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 import org.gecko.viewmodel.System
 
 /**
@@ -13,7 +11,7 @@ import org.gecko.viewmodel.System
 class DeleteSystemAction(
     val gModel: GModel, val system: System, val parentSystem: System
 ) : AbstractPositionableViewModelElementAction() {
-    @Throws(GeckoException::class)
+
     override fun run(): Boolean {
         parentSystem.subSystems.remove(system)
         gModel.deleteViewModelElement(system)
@@ -21,9 +19,9 @@ class DeleteSystemAction(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestoreSystemViewModelElementAction(gModel, system)
+        return RestoreSystemAction(gModel, parentSystem, system)
     }
 
-    override val target: PositionableViewModelElement
+    override val target: PositionableElement
         get() = system
 }

@@ -3,15 +3,15 @@ package org.gecko.view.views.viewelement
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.scene.Node
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
  * Provides methods used in the visualization of an element in the view. Any such view element corresponds to a
  * view-model element, which is why the interface is generic, encapsulating a type of
- * [PositionableViewModelElement]. Concrete visitors must implement this interface to define specific behavior for
+ * [PositionableElement]. Concrete visitors must implement this interface to define specific behavior for
  * each view element.
  */
-interface ViewElement<T : PositionableViewModelElement?> {
+interface ViewElement<T : PositionableElement?> {
     /**
      * Draw the element and returns a javafx node representing the element.
      *

@@ -20,16 +20,16 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of a [State] model element. A [StateViewModel] is described by a set of
+ * Represents an abstraction of a [State] model element. A [State] is described by a set of
  * [Contract]s and can target either a regular or a start-[State]. Contains methods for managing
  * the afferent data and updating the target-[State].
  */
-data class StateViewModel(
+data class State(
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty(false),
     val contractsProperty: ListProperty<Contract> = SimpleListProperty(FXCollections.observableArrayList()),
     val incomingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
     val outgoingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
-) : BlockViewModelElement(), Inspectable {
+) : BlockElement(), Inspectable {
     var isStartState by isStartStateProperty
     var contracts by contractsProperty
     var incomingEdges by incomingEdgesProperty

@@ -19,7 +19,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.gecko.viewmodel.Port
-import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.SystemConnection
 import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
 import kotlin.math.min
@@ -128,10 +128,10 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         } else if (Port.visibility == Visibility.OUTPUT) {
             outputPortsAligner.children.add(portViewElement)
         }
-        Port.incomingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.incomingConnections.addListener { change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
-        Port.outgoingConnections.addListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.outgoingConnections.addListener { change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
@@ -150,10 +150,10 @@ class SystemViewElement(System: System) : BlockViewElement(System),
             inputPortsAligner.children.remove(portViewElement)
             outputPortsAligner.children.remove(portViewElement)
         }
-        Port.incomingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.incomingConnections.removeListener { change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
-        Port.outgoingConnections.removeListener { change: ListChangeListener.Change<out SystemConnectionViewModel> ->
+        Port.outgoingConnections.removeListener { change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
@@ -256,7 +256,7 @@ class SystemViewElement(System: System) : BlockViewElement(System),
     }
 
     fun getOtherPortY(Port: Port): Double {
-        val connections: List<SystemConnectionViewModel> =
+        val connections: List<SystemConnection> =
             if (Port.visibility == Visibility.INPUT) Port.incomingConnections
             else Port.outgoingConnections
         var minY = Double.MAX_VALUE
@@ -278,7 +278,7 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         this.onEdgePointsChanged(change)
     }
 
-    fun onConnectionChanged(change: ListChangeListener.Change<out SystemConnectionViewModel>) {
+    fun onConnectionChanged(change: ListChangeListener.Change<out SystemConnection>) {
         while (change.next()) {
 
             if (change.wasAdded()) {
@@ -309,7 +309,7 @@ class SystemViewElement(System: System) : BlockViewElement(System),
 
     fun addPortPositionListeners() {
         for (portViewModel in portsProperty) {
-            val connections: MutableList<SystemConnectionViewModel> = ArrayList(
+            val connections: MutableList<SystemConnection> = ArrayList(
                 portViewModel!!.incomingConnections
             )
             connections.addAll(portViewModel.outgoingConnections)

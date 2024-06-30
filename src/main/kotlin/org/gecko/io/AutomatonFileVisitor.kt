@@ -216,13 +216,13 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
     }
 
-    private fun buildContract(state: StateViewModel, contract: PrepostContext?): Contract {
+    private fun buildContract(state: State, contract: PrepostContext?): Contract {
         val c = buildContract(state, contract!!.pre.text, contract.post.text)
         c.name = contract.name.text
         return c
     }
 
-    private fun buildContract(state: StateViewModel, pre: String, post: String): Contract {
+    private fun buildContract(state: State, pre: String, post: String): Contract {
         val newContract = Contract()
         val preCondition = Condition(pre)
         val postCondition = Condition(post)

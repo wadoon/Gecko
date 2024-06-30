@@ -18,9 +18,9 @@ class DeleteActionsHelper(val gModel: GModel, val parentSystem: System) {
     }
 
     fun visit(Region: Region): List<AbstractPositionableViewModelElementAction> =
-        listOf(DeleteRegionViewModelElementAction(gModel, Region, parentSystem.automaton))
+        listOf(DeleteRegionAction(gModel, Region, parentSystem.automaton))
 
-    fun visit(systemConnectionViewModel: SystemConnectionViewModel) = listOf(
+    fun visit(systemConnectionViewModel: SystemConnection) = listOf(
         DeleteSystemConnectionViewModelElementAction(gModel, systemConnectionViewModel, parentSystem)
     )
 
@@ -28,13 +28,13 @@ class DeleteActionsHelper(val gModel: GModel, val parentSystem: System) {
         DeleteEdgeViewModelElementAction(gModel, Edge, parentSystem.automaton)
     )
 
-    fun visit(stateViewModel: StateViewModel) = parentSystem.automaton.edges
-        .filter { it.source == stateViewModel || (it.destination == stateViewModel) }
+    fun visit(state: State) = parentSystem.automaton.edges
+        .filter { it.source == state || (it.destination == state) }
         .map { visit(it) }
         .flatten() + listOf(
         DeleteStateViewModelElementAction(
             gModel,
-            stateViewModel,
+            state,
             parentSystem
         )
     )
@@ -74,14 +74,14 @@ class DeleteActionsHelper(val gModel: GModel, val parentSystem: System) {
         return systemConnections.flatMap { visit(it) }
     }
 
-    fun visit(element: PositionableViewModelElement) = when (element) {
+    fun visit(element: PositionableElement) = when (element) {
         is Automaton -> visit(element)
         is Port -> visit(element)
         is System -> visit(element)
         is Region -> visit(element)
         is Edge -> visit(element)
-        is SystemConnectionViewModel -> visit(element)
-        is StateViewModel -> visit(element)
+        is SystemConnection -> visit(element)
+        is State -> visit(element)
         else -> error("Unkown element ${element.javaClass}")
     }
 }

@@ -13,13 +13,12 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignM
 import org.kordamp.ikonli.materialdesign2.MaterialDesignR
-import java.util.function.Consumer
 
 /**
  * Represents a builder for floating UI elements in the view, like different kinds of [Button]s and
@@ -96,7 +95,7 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         val matchesLabel = Label()
         matchesLabel.textFill = Color.BLACK
 
-        val matches: MutableList<PositionableViewModelElement> = ArrayList()
+        val matches: MutableList<PositionableElement> = ArrayList()
         val searchTextField = TextField()
         searchTextField.promptText = ResourceHandler.search
 
@@ -104,8 +103,8 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
 
         searchTextField.onAction = EventHandler<ActionEvent> { e: ActionEvent? ->
             editorViewModel.selectionManager.deselectAll()
-            val oldSearchMatches: List<PositionableViewModelElement> = ArrayList(matches)
-            oldSearchMatches.forEach { o: PositionableViewModelElement -> matches.remove(o) }
+            val oldSearchMatches: List<PositionableElement> = ArrayList(matches)
+            oldSearchMatches.forEach { o: PositionableElement -> matches.remove(o) }
             matches.addAll(editorViewModel.getElementsByName(searchTextField.text))
             if (!matches.isEmpty()) {
                 actionManager.run(
@@ -144,7 +143,7 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
     }
 
     fun searchNextResult(
-        matches: List<PositionableViewModelElement>,
+        matches: List<PositionableElement>,
         matchesLabel: Label,
         backwardButton: Button,
         forwardButton: Button,

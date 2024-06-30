@@ -2,14 +2,14 @@ package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
- * A concrete representation of an [Action] that selects a set of [PositionableViewModelElement]s.
+ * A concrete representation of an [Action] that selects a set of [PositionableElement]s.
  */
 class SelectAction internal constructor(
     editorViewModel: EditorViewModel,
-    elements: Iterable<PositionableViewModelElement>,
+    elements: Iterable<PositionableElement>,
     val newSelection: Boolean
 ) : Action() {
     val selectionManager = editorViewModel.selectionManager

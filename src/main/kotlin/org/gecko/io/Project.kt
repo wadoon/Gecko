@@ -25,7 +25,7 @@ data class StartStateContainer(var systemId: UInt = 0u, var startStateName: Stri
 
 /**
  * Encapsulates [GeckoViewModel][org.gecko.viewmodel.GModel]-specific data for a
- * [PositionableViewModelElement][org.gecko.viewmodel.PositionableViewModelElement], useful for the restoration of
+ * [PositionableViewModelElement][org.gecko.viewmodel.PositionableElement], useful for the restoration of
  * the [org.gecko.view.GeckoView] after parsing an external file.
  */
 class ViewModelPropertiesContainer(

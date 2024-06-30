@@ -23,11 +23,11 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         )
     }*/
 
-    fun createViewElementFrom(stateViewModel: StateViewModel): ViewElement<*> {
-        val newStateViewElement = StateViewElement(stateViewModel)
+    fun createViewElementFrom(state: State): ViewElement<*> {
+        val newStateViewElement = StateViewElement(state)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            StateViewElementContextMenuBuilder(actionManager, stateViewModel, geckoView)
+            StateViewElementContextMenuBuilder(actionManager, state, geckoView)
         setContextMenu(newStateViewElement, contextMenuBuilder)
         return SelectableViewElementDecorator(newStateViewElement)
     }
@@ -61,7 +61,7 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         return ConnectionElementScalerViewElementDecorator(newEdgeViewElement)
     }
 
-    fun createViewElementFrom(systemConnectionViewModel: SystemConnectionViewModel): ViewElement<*> {
+    fun createViewElementFrom(systemConnectionViewModel: SystemConnection): ViewElement<*> {
         val newSystemConnectionViewElement =
             SystemConnectionViewElement(systemConnectionViewModel)
 

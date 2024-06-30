@@ -2,16 +2,16 @@ package org.gecko.actions
 
 import org.gecko.exceptions.ModelException
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 import org.gecko.viewmodel.System
 import org.junit.jupiter.api.*
 
-internal class DeleteStateViewModelElementActionTest {
+internal class DeleteStateElementActionTest {
     private var geckoViewModel = TestHelper.createGeckoViewModel()
 
     private var actionManager: ActionManager = ActionManager(geckoViewModel)
     private var actionFactory: ActionFactory = ActionFactory(geckoViewModel)
-    private var elements: Set<PositionableViewModelElement>
+    private var elements: Set<PositionableElement>
     private var rootSystem: System = geckoViewModel.root
 
     init {

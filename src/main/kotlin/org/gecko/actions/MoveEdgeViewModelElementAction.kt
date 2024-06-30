@@ -15,8 +15,8 @@ class MoveEdgeViewModelElementAction : Action {
     val Edge: Edge
     val elementScalerBlock: ElementScalerBlock
     var delta: Point2D? = null
-    var stateViewModel: StateViewModel? = null
-    var previousStateViewModel: StateViewModel? = null
+    var state: State? = null
+    var previousState: State? = null
     var Contract: Contract? = null
     var previousContract: Contract? = null
 
@@ -33,35 +33,35 @@ class MoveEdgeViewModelElementAction : Action {
 
     internal constructor(
         gModel: GModel, Edge: Edge, elementScalerBlock: ElementScalerBlock,
-        stateViewModel: StateViewModel?, Contract: Contract?
+        state: State?, Contract: Contract?
     ) {
         this.gModel = gModel
         this.editorViewModel = gModel.currentEditor!!
         this.Edge = Edge
         this.elementScalerBlock = elementScalerBlock
-        this.stateViewModel = stateViewModel
+        this.state = state
         this.Contract = Contract
     }
 
 
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        previousStateViewModel =
+        previousState =
             if (elementScalerBlock.index == 0) Edge.source else Edge.destination
-        if (stateViewModel == null) {
-            stateViewModel = attemptRelocation()
-            if (stateViewModel == null || stateViewModel == previousStateViewModel) {
+        if (state == null) {
+            state = attemptRelocation()
+            if (state == null || state == previousState) {
                 Edge.setBindings()
                 return false
             }
         }
 
         if (elementScalerBlock.index == 0) {
-            Edge.source = (stateViewModel!!)
+            Edge.source = (state!!)
             previousContract = Edge.contract
             Edge.contract = Contract
         } else {
-            Edge.destination = (stateViewModel!!)
+            Edge.destination = (state!!)
         }
 
         elementScalerBlock.updatePosition()
@@ -71,15 +71,15 @@ class MoveEdgeViewModelElementAction : Action {
     override fun getUndoAction(actionFactory: ActionFactory): Action {
         return actionFactory.createMoveEdgeViewModelElementAction(
             Edge, elementScalerBlock,
-            previousStateViewModel, previousContract
+            previousState, previousContract
         )
     }
 
-    fun attemptRelocation(): StateViewModel? {
+    fun attemptRelocation(): State? {
         return getStateViewModelAt(elementScalerBlock.layoutPosition.add(delta))
     }
 
-    fun getStateViewModelAt(point: Point2D): StateViewModel? {
+    fun getStateViewModelAt(point: Point2D): State? {
         for (state in editorViewModel.currentSystem.automaton.states) {
             if (point.x > state.position.x && point.x < state.position.x + state.size.x && point.y > state.position.y && point.y < state.position.y + state.size.y) {
                 return state

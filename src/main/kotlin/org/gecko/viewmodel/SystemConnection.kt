@@ -13,16 +13,16 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of a [SystemConnection] model element. A [SystemConnectionViewModel] is
+ * Represents an abstraction of a [SystemConnection] model element. A [SystemConnection] is
  * described by a source- and a destination-[Port]. Contains methods for managing the afferent data and
  * updating the target-[SystemConnection].
  */
 
 
-data class SystemConnectionViewModel(
+data class SystemConnection(
     val sourceProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
     val destinationProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
-) : PositionableViewModelElement(), ConnectionViewModel {
+) : PositionableElement(), ConnectionViewModel {
     override val edgePoints = listProperty<Point2D>()
 
     override val children: Sequence<Element>
@@ -78,7 +78,7 @@ data class SystemConnectionViewModel(
 fun isConnectingAllowed(
     source: Port, destination: Port, sourceSystem: System?,
     destinationSystem: System?, parentSystem: System?,
-    systemConnection: SystemConnectionViewModel?
+    systemConnection: SystemConnection?
 ): Boolean {
     if (sourceSystem == null || destinationSystem == null || parentSystem == null) {
         return false

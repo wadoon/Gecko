@@ -5,7 +5,6 @@ import javafx.beans.property.Property
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.geometry.BoundingBox
-import javafx.geometry.Bounds
 import javafx.scene.paint.Color
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
@@ -23,18 +22,18 @@ import java.util.*
 
 /**
  * Represents an abstraction of a [Region] model element. A [Region] is described by a
- * [Color], a set of [StateViewModel]s, a [Contract] and an invariant. Contains methods for
+ * [Color], a set of [State]s, a [Contract] and an invariant. Contains methods for
  * managing the afferent data and updating the target-[Region].
  */
-data class Region(val contract: Contract) : BlockViewModelElement(), Inspectable {
+data class Region(val contract: Contract) : BlockElement(), Inspectable {
     val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
     var color: Color by colorProperty
 
     val invariantProperty = SimpleObjectProperty(Condition(""))
     var invariant: Condition by invariantProperty
 
-    val statesProperty = listProperty<StateViewModel>()
-    var states: ObservableList<StateViewModel> by statesProperty
+    val statesProperty = listProperty<State>()
+    var states: ObservableList<State> by statesProperty
 
     override fun asJson() = super.asJson().apply {
         add("color", color.asJson())
@@ -48,18 +47,6 @@ data class Region(val contract: Contract) : BlockViewModelElement(), Inspectable
         val green = random.nextInt(MAXIMUM_RGB_COLOR_VALUE)
         val blue = random.nextInt(MAXIMUM_RGB_COLOR_VALUE)
         color = Color.rgb(red, green, blue, 0.5)
-    }
-
-    fun addState(state: StateViewModel) {
-        statesProperty.add(state)
-    }
-
-    fun removeState(state: StateViewModel) {
-        statesProperty.remove(state)
-    }
-
-    fun clearStates() {
-        statesProperty.clear()
     }
 
     override val children: Sequence<Element>
@@ -78,22 +65,14 @@ data class Region(val contract: Contract) : BlockViewModelElement(), Inspectable
      *
      * @param state the state to check
      */
-    fun checkStateInRegion(state: StateViewModel) {
-        val regionBound: Bounds =
-            BoundingBox(position.x, position.y, size.x, size.y)
-        val stateBound: Bounds =
-            BoundingBox(
-                state.position.x, state.position.y, state.size.x,
-                state.size.y
-            )
+    fun checkStateInRegion(state: State): Boolean {
+        val regionBound = BoundingBox(position.x, position.y, size.x, size.y)
+        val stateBound = BoundingBox(state.position.x, state.position.y, state.size.x, state.size.y)
         if (regionBound.intersects(stateBound)) {
-            addState(state)
+            states.add(state)
+            return true
         }
-    }
-
-    fun includes(state: StateViewModel): Boolean {
-        TODO()
-        return true
+        return false
     }
 
     companion object {

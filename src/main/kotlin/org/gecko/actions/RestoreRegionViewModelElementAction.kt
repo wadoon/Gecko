@@ -19,11 +19,11 @@ class RestoreRegionViewModelElementAction internal constructor(
     override fun run(): Boolean {
         automaton.addRegion(Region)
         gModel.addViewModelElement(Region)
-        gModel.currentEditor!!.updateRegions()
+        gModel.currentEditor.updateRegions()
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return DeleteRegionViewModelElementAction(gModel, Region, automaton)
+        return DeleteRegionAction(gModel, Region, automaton)
     }
 }

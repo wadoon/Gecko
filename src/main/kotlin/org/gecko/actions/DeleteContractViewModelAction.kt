@@ -3,10 +3,10 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.Edge
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 class DeleteContractViewModelAction internal constructor(
-    val parent: StateViewModel,
+    val parent: State,
     val Contract: Contract?
 ) : Action() {
     var edgesWithContract: Set<Edge> = setOf()

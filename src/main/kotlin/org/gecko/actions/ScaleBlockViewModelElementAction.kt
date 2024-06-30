@@ -3,23 +3,23 @@ package org.gecko.actions
 import javafx.geometry.Point2D
 import org.gecko.exceptions.GeckoException
 import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
-import org.gecko.viewmodel.BlockViewModelElement
+import org.gecko.viewmodel.BlockElement
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * A concrete representation of an [Action] that scales a  [BlockViewModelElement] by a
+ * A concrete representation of an [Action] that scales a  [BlockElement] by a
  * [delta value][Point2D] using an [ElementScalerBlock].
  */
 class ScaleBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
-    val element: BlockViewModelElement
+    val element: BlockElement
     val elementScalerBlock: ElementScalerBlock?
     var size: Point2D? = null
     var position: Point2D? = null
     var isPreviousScale = false
 
     internal constructor(
-        editorViewModel: EditorViewModel, element: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?,
+        editorViewModel: EditorViewModel, element: BlockElement, elementScalerBlock: ElementScalerBlock?,
         position: Point2D?, size: Point2D?, isPreviousScale: Boolean
     ) {
         this.editorViewModel = editorViewModel
@@ -32,7 +32,7 @@ class ScaleBlockViewModelElementAction : Action {
 
     internal constructor(
         editorViewModel: EditorViewModel,
-        element: BlockViewModelElement,
+        element: BlockElement,
         elementScalerBlock: ElementScalerBlock?
     ) {
         this.editorViewModel = editorViewModel

@@ -8,15 +8,15 @@ import org.gecko.actions.Action
 import org.gecko.actions.ActionManager
 import org.gecko.view.views.ViewElementPane
 import org.gecko.view.views.viewelement.StateViewElement
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * A concrete representation of an edge-creating-[Tool], utilized for connecting a source- and a
- * destination-[StateViewModel] through an [org.gecko.viewmodel.Edge]. Holds the
- * source-[StateViewModel].
+ * destination-[State] through an [org.gecko.viewmodel.Edge]. Holds the
+ * source-[State].
  */
 class EdgeCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolType.EDGE_CREATOR, false) {
-    var source: StateViewModel?
+    var source: State?
 
     init {
         source = null

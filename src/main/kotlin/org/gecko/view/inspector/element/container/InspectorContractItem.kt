@@ -13,7 +13,7 @@ import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.view.inspector.element.textfield.*
 import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.Region
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [VBox] implementing the [InspectorElement] interface. Holds a reference to a
@@ -31,10 +31,10 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
      * Constructor for the State contract item.
      *
      * @param actionManager     Action manager
-     * @param stateViewModel    State view model
+     * @param state    State view model
      * @param Contract Contract view model
      */
-    constructor(actionManager: ActionManager, stateViewModel: StateViewModel?, Contract: Contract) {
+    constructor(actionManager: ActionManager, state: State?, Contract: Contract) {
         this.viewModel = Contract
 
         // Contract fields:
@@ -66,7 +66,7 @@ class InspectorContractItem : VBox, InspectorElement<VBox> {
             .addAll(
                 InspectorCollapseContractButton(contractFields),
                 InspectorRenameField(actionManager, Contract), deleteButtonSpacer,
-                InspectorRemoveContractButton(actionManager, stateViewModel, Contract)
+                InspectorRemoveContractButton(actionManager, state, Contract)
             )
 
         // Build the contract item

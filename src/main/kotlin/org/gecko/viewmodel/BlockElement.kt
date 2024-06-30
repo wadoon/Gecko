@@ -13,10 +13,10 @@ import kotlin.math.min
 
 /**
  * Represents an abstraction of a view model element that has a rectangular shape in a Gecko project. A
- * [BlockViewModelElement] has a name. Contains methods for moving and scaling the element.
+ * [BlockElement] has a name. Contains methods for moving and scaling the element.
  */
 
-abstract class BlockViewModelElement : PositionableViewModelElement(), Renamable {
+abstract class BlockElement : PositionableElement(), Renamable {
     override val nameProperty: StringProperty = SimpleStringProperty("")
     override var name: String by nameProperty
 
@@ -25,7 +25,7 @@ abstract class BlockViewModelElement : PositionableViewModelElement(), Renamable
 
     /**
      * Manipulates the position and size of the element, so that the two points are two diagonally opposite corners of
-     * the [BlockViewModelElement].
+     * the [BlockElement].
      *
      * @param firstCornerPoint  the first corner point
      * @param secondCornerPoint the second corner point that is diagonally opposite to the first corner point

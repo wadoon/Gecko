@@ -99,7 +99,7 @@ class ViewElementPane(val evm: EditorViewModel) {
         orderChildren()
     }
 
-    fun findViewElement(element: PositionableViewModelElement?) =
+    fun findViewElement(element: PositionableElement?) =
         elements.firstOrNull { e -> e.target == element }
 
     fun focusWorldCoordinates(worldCoords: Point2D) {

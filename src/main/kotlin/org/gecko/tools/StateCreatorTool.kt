@@ -9,7 +9,7 @@ import org.gecko.view.views.ViewElementPane
 
 /**
  * A concrete representation of a state-creating-[Tool], utilized for creating a
- * [StateViewModel][org.gecko.viewmodel.StateViewModel].
+ * [StateViewModel][org.gecko.viewmodel.State].
  */
 class StateCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolType.STATE_CREATOR, false) {
     override fun visitView(pane: ViewElementPane) {

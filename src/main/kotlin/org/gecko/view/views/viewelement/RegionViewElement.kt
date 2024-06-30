@@ -14,7 +14,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.Region
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
@@ -25,7 +25,7 @@ class RegionViewElement(override val target: Region) : BlockViewElement(target),
     val nameProperty: StringProperty = SimpleStringProperty()
     val colorProperty: Property<Color> = SimpleObjectProperty()
     val invariantProperty: StringProperty = SimpleStringProperty()
-    val states: MutableList<StateViewModel> = ArrayList()
+    val states: MutableList<State> = ArrayList()
     override var isSelected: Boolean = false
 
     init {
@@ -50,7 +50,7 @@ class RegionViewElement(override val target: Region) : BlockViewElement(target),
         nameProperty.bind(target.nameProperty)
         colorProperty.bind(target.colorProperty)
         invariantProperty.bind(target.invariant.valueProperty)
-        val listener = ListChangeListener { change: ListChangeListener.Change<out StateViewModel> ->
+        val listener = ListChangeListener { change: ListChangeListener.Change<out State> ->
             while (change.next()) {
                 if (change.wasAdded()) {
                     states.addAll(change.addedSubList)

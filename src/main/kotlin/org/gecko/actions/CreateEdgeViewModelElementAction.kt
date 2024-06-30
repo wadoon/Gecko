@@ -3,17 +3,17 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * A concrete representation of an [Action] that creates an [Edge] in the
- * current-[SystemViewModel] with given source- and destination-[StateViewModel]s through the
+ * current-[SystemViewModel] with given source- and destination-[State]s through the
  * [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GModel].
  */
 class CreateEdgeViewModelElementAction internal constructor(
     val gModel: GModel,
-    val source: StateViewModel,
-    val destination: StateViewModel
+    val source: State,
+    val destination: State
 ) : Action() {
     lateinit var createdEdge: Edge
 

@@ -4,12 +4,12 @@ import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
- * Represents a type of [AbstractInspectorButton] used for focusing on a [PositionableViewModelElement].
+ * Represents a type of [AbstractInspectorButton] used for focusing on a [PositionableElement].
  */
-class InspectorFocusButton(actionManager: ActionManager, element: PositionableViewModelElement?) :
+class InspectorFocusButton(actionManager: ActionManager, element: PositionableElement?) :
     AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)

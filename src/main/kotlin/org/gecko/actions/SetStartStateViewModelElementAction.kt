@@ -1,20 +1,20 @@
 package org.gecko.actions
 
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
- * A concrete representation of an [Action] that sets a [StateViewModel] as start state in the current
- * [SystemViewModel]. Additionally, holds the previous start-[StateViewModel].
+ * A concrete representation of an [Action] that sets a [State] as start state in the current
+ * [SystemViewModel]. Additionally, holds the previous start-[State].
  */
 data class SetStartStateViewModelElementAction(
-    val gModel: GModel, val stateViewModel: StateViewModel, val value: Boolean
+    val gModel: GModel, val state: State, val value: Boolean
 ) : Action() {
     override fun run(): Boolean {
-        stateViewModel.isStartState = value
+        state.isStartState = value
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory) =
-        SetStartStateViewModelElementAction(gModel, stateViewModel, value)
+        SetStartStateViewModelElementAction(gModel, state, value)
 }

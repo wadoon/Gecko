@@ -2,7 +2,6 @@ package org.gecko.actions
 
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.*
-import java.util.stream.Collectors
 
 /**
  * A concrete representation of an [Action] that changes the visibility of a [Port], which it holds
@@ -67,14 +66,14 @@ class ChangeVisibilityPortViewModelAction : Action {
         return ActionGroup(deleteActions)
     }
 
-    private fun getSystemConnectionViewModels(system: System): Set<SystemConnectionViewModel> =
+    private fun getSystemConnectionViewModels(system: System): Set<SystemConnection> =
         system.connections
             .filter { it.source == Port || it.destination == Port }
             .toSet()
 
     private fun getSystemConnectionDeleteActions(system: System): List<Action> =
         getSystemConnectionViewModels(system)
-            .map { systemConnectionViewModel: SystemConnectionViewModel? ->
+            .map { systemConnectionViewModel: SystemConnection? ->
                 DeleteSystemConnectionViewModelElementAction(
                     gModel,
                     systemConnectionViewModel!!, system

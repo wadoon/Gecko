@@ -59,7 +59,7 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
         out.write("\n")
     }
 
-    private fun serializeStateContracts(state: StateViewModel, automaton: Automaton) {
+    private fun serializeStateContracts(state: State, automaton: Automaton) {
         //Edges are used so much here because contracts don't have priorities or kinds and only states can be in regions
         val relevantRegions = automaton.getRegionsWithState(state)
         val edges = automaton.getOutgoingEdges(state).filter { it.contract != null }
@@ -206,7 +206,7 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     private fun serializeConnections(system: System) =
         system.connections.forEach { this.serializeConnection(it, system) }
 
-    private fun serializeConnection(connection: SystemConnectionViewModel, parent: System) {
+    private fun serializeConnection(connection: SystemConnection, parent: System) {
         val startSystem = serializeSystemReference(parent, connection.source!!)
         val startPort = connection.source?.name
         val endSystem = serializeSystemReference(parent, connection.destination!!)

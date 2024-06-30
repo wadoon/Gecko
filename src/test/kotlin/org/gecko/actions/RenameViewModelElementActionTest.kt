@@ -1,14 +1,14 @@
 package org.gecko.actions
 
 import org.gecko.util.TestHelper
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class RenameViewModelElementActionTest {
     private var actionManager: ActionManager
     private var actionFactory: ActionFactory
-    private var stateViewModel: StateViewModel
+    private var state: State
 
     init {
         val geckoViewModel = TestHelper.createGeckoViewModel()
@@ -16,28 +16,28 @@ class RenameViewModelElementActionTest {
         actionFactory = ActionFactory(geckoViewModel)
         val viewModelFactory = geckoViewModel.viewModelFactory
         val systemViewModel = geckoViewModel.root
-        stateViewModel = viewModelFactory.createState(systemViewModel)
+        state = viewModelFactory.createState(systemViewModel)
     }
 
     @Test
     fun run() {
         val renameAction: Action = actionFactory.createRenameViewModelElementAction(
-            stateViewModel, NEW_NAME
+            state, NEW_NAME
         )
         actionManager.run(renameAction)
-        Assertions.assertEquals(NEW_NAME, stateViewModel.name)
+        Assertions.assertEquals(NEW_NAME, state.name)
     }
 
     @Test
     fun undoAction() {
         val renameAction: Action = actionFactory.createRenameViewModelElementAction(
-            stateViewModel, NEW_NAME_2
+            state, NEW_NAME_2
         )
-        val beforeChangeName = stateViewModel.name
+        val beforeChangeName = state.name
         actionManager.run(renameAction)
-        Assertions.assertEquals(NEW_NAME_2, stateViewModel.name)
+        Assertions.assertEquals(NEW_NAME_2, state.name)
         actionManager.undo()
-        Assertions.assertEquals(beforeChangeName, stateViewModel.name)
+        Assertions.assertEquals(beforeChangeName, state.name)
     }
 
     companion object {

@@ -8,18 +8,18 @@ import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
-import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.SystemConnection
 import org.gecko.viewmodel.Visibility
 import tornadofx.getValue
 import tornadofx.setValue
 
 /**
  * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which encapsulates
- * an [SystemConnectionViewModel].
+ * an [SystemConnection].
  */
 
-class SystemConnectionViewElement(override val target: SystemConnectionViewModel) :
-    ConnectionViewElement(target.edgePoints), ViewElement<SystemConnectionViewModel> {
+class SystemConnectionViewElement(override val target: SystemConnection) :
+    ConnectionViewElement(target.edgePoints), ViewElement<SystemConnection> {
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()
     var visibility by visibilityProperty
 

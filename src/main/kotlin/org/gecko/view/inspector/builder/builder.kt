@@ -23,10 +23,10 @@ import org.gecko.viewmodel.*
 
 /**
  * An abstract representation of a generic builder for an [Inspector] that corresponds to a
- * [PositionableViewModelElement]. Holds a reference to the [ActionManager], which allows for operations to
+ * [PositionableElement]. Holds a reference to the [ActionManager], which allows for operations to
  * be run from the inspector, and a list of [InspectorElement]s, which are added to a built [Inspector].
  */
-abstract class AbstractInspectorBuilder<T : PositionableViewModelElement?> protected constructor(
+abstract class AbstractInspectorBuilder<T : PositionableElement?> protected constructor(
     val actionManager: ActionManager,
     val viewModel: T
 ) {
@@ -158,14 +158,14 @@ class RegionInspectorBuilder(actionManager: ActionManager, viewModel: Region) :
 
 /**
  * Represents a type of [AbstractInspectorBuilder] of an [Inspector][org.gecko.view.inspector.Inspector] for
- * a [StateViewModel]. Adds to the list of
+ * a [State]. Adds to the list of
  * [InspectorElement][org.gecko.view.inspector.element.InspectorElement]s, which are added to a built
  * [Inspector][org.gecko.view.inspector.Inspector], the following: an [InspectorLabel] for each
- * [Region] of the [StateViewModel], an [InspectorSetStartStateButton] and an
+ * [Region] of the [State], an [InspectorSetStartStateButton] and an
  * [InspectorContractList].
  */
-class StateInspectorBuilder(actionManager: ActionManager, viewModel: StateViewModel) :
-    AbstractInspectorBuilder<StateViewModel>(actionManager, viewModel) {
+class StateInspectorBuilder(actionManager: ActionManager, viewModel: State) :
+    AbstractInspectorBuilder<State>(actionManager, viewModel) {
     init {
         // Region label
         addInspectorElement(InspectorLabel(ResourceHandler.region_plural))

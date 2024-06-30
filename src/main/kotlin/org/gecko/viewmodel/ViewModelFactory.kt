@@ -31,10 +31,10 @@ class ViewModelFactory(
      * If no start state is set in the parent system, the new state will be set as the start state.
      */
     @Throws(ModelException::class)
-    fun createState(parentSystem: System): StateViewModel =
+    fun createState(parentSystem: System): State =
         createState(parentSystem.automaton)
 
-    fun createState(parentSystem: Automaton): StateViewModel {
+    fun createState(parentSystem: Automaton): State {
         val result = parentSystem.createState()
         gModel.addViewModelElement(result)
         return result
@@ -56,7 +56,7 @@ class ViewModelFactory(
 //    }
 
     @Throws(ModelException::class)
-    fun createEdgeViewModelIn(parentSystem: System, source: StateViewModel, destination: StateViewModel)
+    fun createEdgeViewModelIn(parentSystem: System, source: State, destination: State)
             : Edge {
         val result = Edge(source, destination)
         parentSystem.automaton.edges.add(result)
@@ -92,8 +92,8 @@ class ViewModelFactory(
     @Throws(ModelException::class)
     fun createSystemConnectionViewModelIn(
         parentSystem: System, source: Port, destination: Port
-    ): SystemConnectionViewModel {
-        val result = SystemConnectionViewModel()
+    ): SystemConnection {
+        val result = SystemConnection()
         result.source = source
         result.destination = destination
         parentSystem.connections.add(result)
@@ -201,16 +201,16 @@ class ViewModelFactory(
     }
 
     @Throws(ModelException::class)
-    fun createContractViewModelIn(stateViewModel: StateViewModel): Contract {
+    fun createContractViewModelIn(state: State): Contract {
         val result = Contract()
-        stateViewModel.addContract(result)
+        state.addContract(result)
         return result
     }
 
     val newViewModelElementId: Int
         get() = viewModelElementId++
 
-    fun updateStartState(state: StateViewModel) {
+    fun updateStartState(state: State) {
         val root = gModel.root
         val parentSystem = findSystemWithState(root, state)
         /*if (parentSystem != null && state == parentSystem.automaton.startState) {
@@ -219,7 +219,7 @@ class ViewModelFactory(
         }*/
     }
 
-    fun findSystemWithState(parentSystem: System, state: StateViewModel): System? {
+    fun findSystemWithState(parentSystem: System, state: State): System? {
         if (parentSystem.automaton.states.contains(state)) {
             return parentSystem
         }
@@ -251,7 +251,7 @@ class ViewModelFactory(
 
     fun setSystemConnectionEdgePoints(
         parentSystem: System, source: Port, destination: Port,
-        result: SystemConnectionViewModel
+        result: SystemConnection
     ) {
         val sourceIsPort = isPort(parentSystem, source)
         val destIsPort = isPort(parentSystem, destination)

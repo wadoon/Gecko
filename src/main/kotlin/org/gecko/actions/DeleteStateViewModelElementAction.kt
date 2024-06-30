@@ -5,12 +5,12 @@ import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.*
 
 /**
- * A concrete representation of an [Action] that removes a [StateViewModel] from the [GModel]
+ * A concrete representation of an [Action] that removes a [State] from the [GModel]
  * and its target-[State] from the given [Automaton].
  */
 class DeleteStateViewModelElementAction internal constructor(
     val gModel: GModel,
-    val stateViewModel: StateViewModel,
+    val state: State,
     val System: System
 ) : AbstractPositionableViewModelElementAction() {
     val editorViewModel: EditorViewModel = gModel.currentEditor!!
@@ -27,22 +27,22 @@ class DeleteStateViewModelElementAction internal constructor(
 
         // remove from region if it is in one
         val regionViewModels = editorViewModel.viewableElementsProperty
-            .filter { element: PositionableViewModelElement -> automaton.regions.contains(element) }
-            .map { element: PositionableViewModelElement -> element as Region }
+            .filter { element: PositionableElement -> automaton.regions.contains(element) }
+            .map { element: PositionableElement -> element as Region }
             .toSet()
 
-        regionViewModels.forEach { it.removeState(stateViewModel) }
+        regionViewModels.forEach { it.states.remove(state) }
 
-        automaton.removeState(stateViewModel)
-        gModel.deleteViewModelElement(stateViewModel)
+        automaton.removeState(state)
+        gModel.deleteViewModelElement(state)
         return true
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return RestoreStateViewModelElementAction(gModel, stateViewModel, System, wasStartState)
+        return RestoreStateAction(gModel, state, System)
     }
 
 
     override val target
-        get() = stateViewModel
+        get() = state
 }

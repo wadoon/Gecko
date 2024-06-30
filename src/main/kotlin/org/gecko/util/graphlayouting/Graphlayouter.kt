@@ -7,9 +7,9 @@ import org.eclipse.elk.core.RecursiveGraphLayoutEngine
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.util.BasicProgressMonitor
 import org.eclipse.elk.graph.ElkNode
-import org.gecko.viewmodel.BlockViewModelElement
+import org.gecko.viewmodel.BlockElement
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 import org.gecko.viewmodel.System
 
 /**
@@ -52,7 +52,7 @@ class Graphlayouter(val viewModel: GModel) {
     }
 
     fun applySystemLayoutToViewModel(root: ElkNode?, viewModel: System) {
-        val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(viewModel))
+        val children: MutableList<BlockElement> = ArrayList(getChildSystemViewModels(viewModel))
         children.addAll(viewModel.ports)
         for (child in children) {
             applyLayoutToNode(root, child)
@@ -65,7 +65,7 @@ class Graphlayouter(val viewModel: GModel) {
         }
     }
 
-    fun applyLayoutToNode(root: ElkNode?, viewModel: BlockViewModelElement) {
+    fun applyLayoutToNode(root: ElkNode?, viewModel: BlockElement) {
         val node = findNodeById(root, viewModel.hashCode())!!
         viewModel.position = Point2D(node.x, node.y)
         viewModel.size = Point2D(node.width, node.height)
@@ -77,7 +77,7 @@ class Graphlayouter(val viewModel: GModel) {
     fun getChildSystemViewModels(System: System): List<System> =
         System.subSystems
 
-    fun getStates(System: System): List<StateViewModel> = System
+    fun getStates(System: System): List<State> = System
         .automaton
         .states
 }

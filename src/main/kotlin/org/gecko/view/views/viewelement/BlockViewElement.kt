@@ -3,14 +3,14 @@ package org.gecko.view.views.viewelement
 
 import javafx.geometry.Point2D
 import javafx.scene.layout.Pane
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 import org.gecko.viewmodel.listProperty
 
 /**
  * An abstract representation of a [Pane] view element, that is an element with a rectangular shape in a Gecko
  * project. Contains a list of [edge point][Point2D]s.
  */
-abstract class BlockViewElement(positionableViewModelElement: PositionableViewModelElement) : Pane() {
+abstract class BlockViewElement(positionableElement: PositionableElement) : Pane() {
     val edgePoints = listProperty<Point2D>()
 
     init {
@@ -20,17 +20,17 @@ abstract class BlockViewElement(positionableViewModelElement: PositionableViewMo
         }
 
         // Auto calculate new edge points on size and position changes
-        positionableViewModelElement.sizeProperty.addListener { _, _, _ ->
-            calculateEdgePoints(positionableViewModelElement)
+        positionableElement.sizeProperty.addListener { _, _, _ ->
+            calculateEdgePoints(positionableElement)
         }
-        positionableViewModelElement.positionProperty.addListener { _, _, _ ->
-            calculateEdgePoints(positionableViewModelElement)
+        positionableElement.positionProperty.addListener { _, _, _ ->
+            calculateEdgePoints(positionableElement)
         }
 
-        calculateEdgePoints(positionableViewModelElement)
+        calculateEdgePoints(positionableElement)
     }
 
-    fun calculateEdgePoints(target: PositionableViewModelElement) {
+    fun calculateEdgePoints(target: PositionableElement) {
         val position = target.position
         val width = target.size.x
         val height = target.size.y

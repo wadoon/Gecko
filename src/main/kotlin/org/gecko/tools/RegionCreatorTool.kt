@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import org.gecko.actions.ActionManager
-import org.gecko.viewmodel.BlockViewModelElement
+import org.gecko.viewmodel.BlockElement
 
 /**
  * A concrete representation of a region-creating-[AreaTool], utilized for creating a
@@ -25,8 +25,8 @@ class RegionCreatorTool(actionManager: ActionManager) : AreaTool(actionManager, 
     }
 
     override fun onAreaCreated(event: MouseEvent, worldBounds: Bounds) {
-        if (worldBounds.width < BlockViewModelElement.Companion.MIN_WIDTH
-            || worldBounds.height < BlockViewModelElement.Companion.MIN_HEIGHT
+        if (worldBounds.width < BlockElement.Companion.MIN_WIDTH
+            || worldBounds.height < BlockElement.Companion.MIN_HEIGHT
         ) {
             return
         }

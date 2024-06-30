@@ -21,10 +21,10 @@ val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)
  */
 data class Automaton(
     //val portsProperty: ListProperty<PortViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
-    val statesProperty: ListProperty<StateViewModel> = SimpleListProperty(FXCollections.observableArrayList()),
+    val statesProperty: ListProperty<State> = SimpleListProperty(FXCollections.observableArrayList()),
     val edgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
     val regionsProperty: ListProperty<Region> = SimpleListProperty(FXCollections.observableArrayList()),
-) : BlockViewModelElement(), Openable {
+) : BlockElement(), Openable {
     val edges by edgesProperty
 
     //var ports by portsProperty
@@ -41,7 +41,7 @@ data class Automaton(
         add("regions", regions.asJsonArray())
     }
 
-    val allElements: MutableList<PositionableViewModelElement>
+    val allElements: MutableList<PositionableElement>
         get() = (states + edges + regions).toMutableList()
 
     override val children: Sequence<Element>
@@ -63,18 +63,18 @@ data class Automaton(
 
     fun removeEdge(target: Edge) = edges.remove(target)
     fun removeRegion(target: Region) = regions.remove(target)
-    fun removeState(s: StateViewModel) = states.remove(s)
-    fun getOutgoingEdges(state: StateViewModel) = edges.filter { it.source == state }
-    fun getStateByName(startName: String?): StateViewModel? = states.firstOrNull { it.name == startName }
-    fun createEdge(start: StateViewModel, end: StateViewModel): Edge =
+    fun removeState(s: State) = states.remove(s)
+    fun getOutgoingEdges(state: State) = edges.filter { it.source == state }
+    fun getStateByName(startName: String?): State? = states.firstOrNull { it.name == startName }
+    fun createEdge(start: State, end: State): Edge =
         Edge(start, end).also {
             edges.add(it)
             start.outgoingEdges.add(it)
             end.incomingEdges.add(it)
         }
 
-    fun createState(): StateViewModel = StateViewModel().also { states.add(it) }
-    fun getRegionsWithState(state: StateViewModel): List<Region> = regions.filter { it.includes(state) }
+    fun createState(): State = State().also { states.add(it) }
+    fun getRegionsWithState(state: State): List<Region> = regions.filter { it.checkStateInRegion(state) }
     fun addRegion(target: Region) = regionsProperty.add(target)
     fun addEdge(edge: Edge) = edges.add(edge)
 

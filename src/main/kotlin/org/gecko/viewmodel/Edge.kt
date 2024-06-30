@@ -19,25 +19,25 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of an [Edge] model element. An [Edge] is described by a source- and a
- * destination-[StateViewModel]. It is also associated with one of the start-[StateViewModel]'s
+ * destination-[State]. It is also associated with one of the start-[State]'s
  * [Contract]s, has a priority and a [Kind], which informs about how the associated
  * [Contract] is handled. Contains methods for managing the afferent data and updating the
  * target-[Edge].
  */
-class Edge(src: StateViewModel, dst: StateViewModel) : PositionableViewModelElement(), Inspectable {
+class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
     val kindProperty: ObjectProperty<Kind> = SimpleObjectProperty(Kind.HIT)
     val priorityProperty: IntegerProperty = SimpleIntegerProperty(0)
     val contractProperty: ObjectProperty<Contract?> = nullableObjectProperty()
-    val sourceProperty: ObjectProperty<StateViewModel> = objectProperty(src)
-    val destinationProperty: ObjectProperty<StateViewModel> = objectProperty(dst)
+    val sourceProperty: ObjectProperty<State> = objectProperty(src)
+    val destinationProperty: ObjectProperty<State> = objectProperty(dst)
     val isLoopProperty: BooleanProperty = SimpleBooleanProperty(false)
     val orientationProperty: IntegerProperty = SimpleIntegerProperty(0)
 
     var priority: Int by priorityProperty
     var kind: Kind by kindProperty
     var contract: Contract? by contractProperty
-    var source: StateViewModel by sourceProperty
-    var destination: StateViewModel by destinationProperty
+    var source: State by sourceProperty
+    var destination: State by destinationProperty
 
     override fun asJson() = super.asJson().apply {
         addProperty("source", source.name)

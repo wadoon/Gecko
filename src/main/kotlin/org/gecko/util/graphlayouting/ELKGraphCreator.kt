@@ -12,7 +12,7 @@ import org.gecko.viewmodel.*
 internal class ELKGraphCreator(val viewModel: GModel) {
     fun createSystemElkGraph(system: System): ElkNode {
         val root = ElkGraphUtil.createGraph()
-        val children: MutableList<BlockViewModelElement> = ArrayList(getChildSystemViewModels(system))
+        val children: MutableList<BlockElement> = ArrayList(getChildSystemViewModels(system))
         children.addAll(system.ports)
         for (child in children) {
             createElkNode(root, child)
@@ -37,7 +37,7 @@ internal class ELKGraphCreator(val viewModel: GModel) {
         return root
     }
 
-    fun createElkNode(parent: ElkNode, block: BlockViewModelElement) {
+    fun createElkNode(parent: ElkNode, block: BlockElement) {
         val node = ElkGraphUtil.createNode(parent)
         node.x = block.position.x
         node.y = block.position.y
@@ -53,14 +53,14 @@ internal class ELKGraphCreator(val viewModel: GModel) {
     fun getAutomatonEdges(System: System): List<Edge> =
         System.automaton.edges
 
-    fun getConnectionViewModels(System: System): List<SystemConnectionViewModel> =
+    fun getConnectionViewModels(System: System): List<SystemConnection> =
         System.connections
 
-    fun getStates(System: System): List<StateViewModel> {
+    fun getStates(System: System): List<State> {
         return System.automaton.states
     }
 
-    fun findNode(graph: ElkNode, element: BlockViewModelElement) =
+    fun findNode(graph: ElkNode, element: BlockElement) =
         graph.children.firstOrNull { e: ElkNode -> e.identifier == element.hashCode().toString() }
 
     fun findPortOrSystemNode(graph: ElkNode, parentSystem: System, element: Port): ElkNode? {

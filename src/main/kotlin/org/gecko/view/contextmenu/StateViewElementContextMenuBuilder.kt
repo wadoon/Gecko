@@ -8,7 +8,7 @@ import javafx.scene.control.SeparatorMenuItem
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
@@ -17,7 +17,7 @@ import org.gecko.viewmodel.StateViewModel
  */
 class StateViewElementContextMenuBuilder(
     actionManager: ActionManager,
-    val stateViewModel: StateViewModel,
+    val state: State,
     geckoView: GeckoView
 ) : ViewContextMenuBuilder(actionManager, geckoView) {
     override fun build(): ContextMenu {
@@ -27,17 +27,17 @@ class StateViewElementContextMenuBuilder(
 
         // State editing commands:
         val startStateMenuItem = MenuItem(ResourceHandler.Companion.set_start_state)
-        startStateMenuItem.isDisable = stateViewModel.isStartState
+        startStateMenuItem.isDisable = state.isStartState
         startStateMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createSetStartStateViewModelElementAction(stateViewModel)
+                actionManager.actionFactory.createSetStartStateViewModelElementAction(state)
             )
         }
 
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createDeleteAction(stateViewModel)
+                actionManager.actionFactory.createDeleteAction(state)
             )
         }
 

@@ -8,7 +8,7 @@ import javafx.scene.control.SeparatorMenuItem
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.SystemConnectionViewModel
+import org.gecko.viewmodel.SystemConnection
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
@@ -17,7 +17,7 @@ import org.gecko.viewmodel.SystemConnectionViewModel
  */
 class SystemConnectionViewElementContextMenuBuilder(
     actionManager: ActionManager,
-    val systemConnectionViewModel: SystemConnectionViewModel,
+    val systemConnectionViewModel: SystemConnection,
     geckoView: GeckoView
 ) : ViewContextMenuBuilder(actionManager, geckoView) {
     override fun build(): ContextMenu {

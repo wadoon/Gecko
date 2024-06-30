@@ -14,8 +14,8 @@ internal class ViewModelFactoryTest {
     var System1: System = viewModelFactory.createSystem(root)
     var System2: System = viewModelFactory.createSystem(root)
     var System11: System = viewModelFactory.createSystem(System1)
-    var stateViewModel1: StateViewModel = viewModelFactory.createState(System1)
-    var stateViewModel2: StateViewModel = viewModelFactory.createState(System1)
+    var state1: State = viewModelFactory.createState(System1)
+    var state2: State = viewModelFactory.createState(System1)
 
     @Test
     fun testModelStructure() {
@@ -73,34 +73,34 @@ internal class ViewModelFactoryTest {
 
     @Test
     fun testStatesInSystem() {
-        Assertions.assertTrue(System1.automaton.states.contains(stateViewModel1))
-        Assertions.assertTrue(System1.automaton.states.contains(stateViewModel2))
+        Assertions.assertTrue(System1.automaton.states.contains(state1))
+        Assertions.assertTrue(System1.automaton.states.contains(state2))
     }
 
     @Test
     @Throws(ModelException::class)
     fun testAddContractsToState() {
-        val contractViewModel1 = viewModelFactory.createContractViewModelIn(stateViewModel1)
-        val contractViewModel2 = viewModelFactory.createContractViewModelIn(stateViewModel1)
-        Assertions.assertTrue(stateViewModel1.contracts.contains(contractViewModel1))
-        Assertions.assertTrue(stateViewModel1.contracts.contains(contractViewModel2))
-        Assertions.assertTrue(stateViewModel1.contractsProperty.contains(contractViewModel1))
-        Assertions.assertTrue(stateViewModel1.contractsProperty.contains(contractViewModel2))
+        val contractViewModel1 = viewModelFactory.createContractViewModelIn(state1)
+        val contractViewModel2 = viewModelFactory.createContractViewModelIn(state1)
+        Assertions.assertTrue(state1.contracts.contains(contractViewModel1))
+        Assertions.assertTrue(state1.contracts.contains(contractViewModel2))
+        Assertions.assertTrue(state1.contractsProperty.contains(contractViewModel1))
+        Assertions.assertTrue(state1.contractsProperty.contains(contractViewModel2))
     }
 
     @Test
     @Throws(ModelException::class)
     fun testAddEdgesToSystem() {
         val edgeViewModel1 =
-            viewModelFactory.createEdgeViewModelIn(System1, stateViewModel1, stateViewModel2)
+            viewModelFactory.createEdgeViewModelIn(System1, state1, state2)
         val edgeViewModel2 =
-            viewModelFactory.createEdgeViewModelIn(System1, stateViewModel1, stateViewModel1)
+            viewModelFactory.createEdgeViewModelIn(System1, state1, state1)
         Assertions.assertTrue(System1.automaton.edges.contains(edgeViewModel1))
         Assertions.assertTrue(System1.automaton.edges.contains(edgeViewModel2))
-        Assertions.assertEquals(stateViewModel2, edgeViewModel1.destination)
-        Assertions.assertEquals(stateViewModel1, edgeViewModel2.destination)
-        Assertions.assertEquals(stateViewModel1, edgeViewModel1.source)
-        Assertions.assertEquals(stateViewModel1, edgeViewModel2.source)
+        Assertions.assertEquals(state2, edgeViewModel1.destination)
+        Assertions.assertEquals(state1, edgeViewModel2.destination)
+        Assertions.assertEquals(state1, edgeViewModel1.source)
+        Assertions.assertEquals(state1, edgeViewModel2.source)
     }
     /*
         @Test

@@ -5,13 +5,13 @@ import javafx.event.EventHandler
 import javafx.scene.control.Tooltip
 import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [AbstractInspectorButton] used for adding a
- * [ContractViewModel][org.gecko.viewmodel.Contract] to a given [StateViewModel].
+ * [ContractViewModel][org.gecko.viewmodel.Contract] to a given [State].
  */
-class InspectorAddContractButton(actionManager: ActionManager, stateViewModel: StateViewModel) :
+class InspectorAddContractButton(actionManager: ActionManager, state: State) :
     AbstractInspectorButton() {
     init {
         styleClass.add(STYLE)
@@ -20,7 +20,7 @@ class InspectorAddContractButton(actionManager: ActionManager, stateViewModel: S
         prefWidth = WIDTH.toDouble()
         onAction = EventHandler { event: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory.createCreateContractViewModelElementAction(stateViewModel)
+                actionManager.actionFactory.createCreateContractViewModelElementAction(state)
             )
         }
     }

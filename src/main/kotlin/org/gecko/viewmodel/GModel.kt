@@ -19,17 +19,17 @@ import java.util.function.Consumer
 /**
  * Represents the ViewModel component of a Gecko project, which connects the Model and View. Holds a
  * [ViewModelFactory] and a reference to the [GeckoModel], as well as the current [EditorViewModel]
- * and a list of all opened [EditorViewModel]s. Maps all [PositionableViewModelElement]s to their
+ * and a list of all opened [EditorViewModel]s. Maps all [PositionableElement]s to their
  * corresponding [Element]s from Model. Contains methods for managing the [EditorViewModel] and the retained
- * [PositionableViewModelElement]s.
+ * [PositionableElement]s.
  */
 class GModel(var root: System = System()) : Element() {
     val actionManager = ActionManager(this)
-    val currentEditorProperty: ObjectProperty<EditorViewModel?> = nullableObjectProperty()
-    var currentEditor by currentEditorProperty
+    val currentEditorProperty: ObjectProperty<EditorViewModel> = SimpleObjectProperty()
+    var currentEditor: EditorViewModel by currentEditorProperty
 
-    val openedEditorsProperty: SetProperty<EditorViewModel> = setProperty()
-    var openedEditors by openedEditorsProperty
+    val openedEditorsProperty: ListProperty<EditorViewModel> = listProperty()
+    val openedEditors by openedEditorsProperty
 
     val knownVariantGroupsProperty = listProperty<VariantGroup>()
     val knownVariantGroups: ObservableList<VariantGroup> by knownVariantGroupsProperty
@@ -70,47 +70,48 @@ class GModel(var root: System = System()) : Element() {
      * @param isAutomatonEditor   true if the editor should be an automaton editor, false if it should be a system
      * editor
      */
-    fun switchEditor(nextSystem: System, isAutomatonEditor: Boolean) {
-        openedEditorsProperty
+    fun switchEditor(nextSystem: System, isAutomatonEditor: Boolean): EditorViewModel {
+        return openedEditorsProperty
             .firstOrNull { (it.currentSystem == nextSystem && it.isAutomatonEditor == isAutomatonEditor) }
-            ?.let { this.currentEditor = it }
+            ?.let { this.currentEditor = it; it }
             ?: setupNewEditorViewModel(nextSystem, isAutomatonEditor)
     }
 
-    fun setupNewEditorViewModel(nextSystem: System, isAutomatonEditor: Boolean) {
+    fun setupNewEditorViewModel(nextSystem: System, isAutomatonEditor: Boolean): EditorViewModel {
         var parent: System? = null
         if (nextSystem.parent != null) {
             parent = nextSystem.parent
         }
-        val editorViewModel = viewModelFactory.createEditorViewModel(nextSystem, parent, isAutomatonEditor)
-        openedEditorsProperty.add(editorViewModel)
-        currentEditor = editorViewModel
+        val editorModel = viewModelFactory.createEditorViewModel(nextSystem, parent, isAutomatonEditor)
+        openedEditorsProperty.add(editorModel)
+        currentEditor = editorModel
+        return editorModel
     }
 
     /**
-     * Adds a new [PositionableViewModelElement] to the [GModel]. The element is mapped to its
-     * corresponding [Element] from the model. The [PositionableViewModelElement] is then added to the
+     * Adds a new [PositionableElement] to the [GModel]. The element is mapped to its
+     * corresponding [Element] from the model. The [PositionableElement] is then added to the
      * correct [EditorViewModel].
      *
-     * @param element the [PositionableViewModelElement] to add
+     * @param element the [PositionableElement] to add
      */
-    fun addViewModelElement(element: PositionableViewModelElement) {
+    fun addViewModelElement(element: PositionableElement) {
         updateEditors()
     }
 
     /**
-     * Deletes a [PositionableViewModelElement] from the [GModel]. The element is removed from the
+     * Deletes a [PositionableElement] from the [GModel]. The element is removed from the
      * mapping and from all [EditorViewModel]s. The selection managers of the editors are updated and the element
      * is removed from the editor that displays it.
      *
-     * @param element the [PositionableViewModelElement] to delete
+     * @param element the [PositionableElement] to delete
      */
-    fun deleteViewModelElement(element: PositionableViewModelElement) {
+    fun deleteViewModelElement(element: PositionableElement) {
         updateSelectionManagers(element)
         updateEditors()
     }
 
-    fun updateSelectionManagers(removedElement: PositionableViewModelElement) {
+    fun updateSelectionManagers(removedElement: PositionableElement) {
         openedEditorsProperty.forEach(
             Consumer { editorViewModel: EditorViewModel ->
                 editorViewModel.selectionManager.updateSelections(
@@ -120,14 +121,10 @@ class GModel(var root: System = System()) : Element() {
     }
 
     fun updateEditors() {
-        openedEditorsProperty.forEach { this.updateEditor(it) }
+        openedEditors.forEach { addPositionableViewModelElementsToEditor(it) }
         // TODO
         //val editorViewModelsToDelete = openedEditorsProperty.filter { it.currentSystem == }
         //openedEditorsProperty.removeAll(editorViewModelsToDelete)
-    }
-
-    fun updateEditor(editorViewModel: EditorViewModel) {
-        addPositionableViewModelElementsToEditor(editorViewModel)
     }
 
     fun addPositionableViewModelElementsToEditor(editorViewModel: EditorViewModel) {
@@ -154,7 +151,7 @@ class GModel(var root: System = System()) : Element() {
         add("globalDefines", globalDefines.asJsonArray())
         addProperty("globalCode", globalCode)
         add("openedEditors", openedEditors.map { it.currentSystem.name }.asJsonArray())
-        addProperty("currentEditor", currentEditor?.currentSystem?.name)
+        addProperty("currentEditor", currentEditor.currentSystem.name)
     }
 
     fun initFromMap(map: JsonObject) {
@@ -183,7 +180,7 @@ fun JsonObject.initSystemViewModel(): System = System().also {
         .map { it.asJsonObject }
         .map { it["source"].asString to it["destination"].asString }
         .map { (s, d) -> it.getVariableByName(s) to it.getVariableByName(d) }
-        .map { (s, d) -> SystemConnectionViewModel().also { it.source = s; it.destination = d } }
+        .map { (s, d) -> SystemConnection().also { it.source = s; it.destination = d } }
     it.connections.setAll(wp)
 
     initBlockViewElement(it, this)
@@ -209,7 +206,7 @@ fun initEdges(map: JsonObject, avm: Automaton) = Edge(
 ).also {
     it.priority = map["priority"].asInt
     it.kind = Kind.valueOf(map["kind"].asString ?: "HIT")
-    it.contract = map["contract"]?.asJsonObject?.initContract()
+    it.contract = map["contract"]?.asJsonObjectOrNull?.initContract()
 }
 
 fun initRegions(m: JsonObject): Region {
@@ -223,7 +220,7 @@ fun initRegions(m: JsonObject): Region {
 }
 
 fun initState(m: JsonObject) =
-    StateViewModel().also {
+    State().also {
         initBlockViewElement(it, m)
         it.isStartState = m["isStartState"].asBoolean ?: false
         it.contracts.setAll(m["contracts"].mapOfJsonObjects(::initContracts))
@@ -245,12 +242,12 @@ fun initPortViewModel(a: JsonObject): Port = Port().also {
     it.visibility = Visibility.valueOf(a["visibility"].asString)
 }
 
-fun initBlockViewElement(it: BlockViewModelElement, m: JsonObject) {
+fun initBlockViewElement(it: BlockElement, m: JsonObject) {
     it.name = m["name"].asString
     initPositionableViewElement(it, m)
 }
 
-fun initPositionableViewElement(it: PositionableViewModelElement, m: JsonObject) {
+fun initPositionableViewElement(it: PositionableElement, m: JsonObject) {
     fun JsonElement.asPoint2D() = asJsonObject.let {
         Point2D(it["x"].asDouble, it["y"].asDouble)
     }
@@ -312,6 +309,12 @@ fun <T> ObservableList<T>.onListChange(op: (ListChangeListener.Change<out T>) ->
 fun <T> ObservableSet<T>.onChange(op: (SetChangeListener.Change<out T>) -> Unit) = apply {
     addListener(SetChangeListener { op(it) })
 }
+
+private val JsonElement.asJsonObjectOrNull: JsonObject?
+    get() = when (this) {
+        is JsonObject -> this
+        else -> null
+    }
 
 val builtinTypes: List<String> = listOf(
     "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "float",

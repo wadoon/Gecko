@@ -2,12 +2,12 @@ package org.gecko.actions
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.Edge
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ContractTest {
-    private var stateViewModel: StateViewModel? = null
+    private var state: State? = null
     private var edge: Edge? = null
     private var actionManager: ActionManager? = null
     private var actionFactory: ActionFactory? = null
@@ -20,33 +20,33 @@ class ContractTest {
         val rootSystemViewModel =
             geckoViewModel.root
 
-        stateViewModel = viewModelFactory.createState(rootSystemViewModel)
+        state = viewModelFactory.createState(rootSystemViewModel)
         val stateViewModel2 = viewModelFactory.createState(rootSystemViewModel)
 
-        edge = viewModelFactory.createEdgeViewModelIn(rootSystemViewModel, stateViewModel!!, stateViewModel2)
+        edge = viewModelFactory.createEdgeViewModelIn(rootSystemViewModel, state!!, stateViewModel2)
     }
 
     @Test
     fun createNewContract() {
         val createContractAction: Action = actionFactory!!.createCreateContractViewModelElementAction(
-            stateViewModel!!
+            state!!
         )
         actionManager!!.run(createContractAction)
-        Assertions.assertEquals(1, stateViewModel!!.contracts.size)
+        Assertions.assertEquals(1, state!!.contracts.size)
         actionManager!!.undo()
-        Assertions.assertEquals(0, stateViewModel!!.contracts.size)
+        Assertions.assertEquals(0, state!!.contracts.size)
         actionManager!!.redo()
-        Assertions.assertEquals(1, stateViewModel!!.contracts.size)
+        Assertions.assertEquals(1, state!!.contracts.size)
     }
 
     @Test
     fun assignContractToEdge() {
         val createContractAction: Action = actionFactory!!.createCreateContractViewModelElementAction(
-            stateViewModel!!
+            state!!
         )
         actionManager!!.run(createContractAction)
-        Assertions.assertEquals(1, stateViewModel!!.contracts.size)
-        val contractViewModel = stateViewModel!!.contracts.first()
+        Assertions.assertEquals(1, state!!.contracts.size)
+        val contractViewModel = state!!.contracts.first()
         val assignContractAction = actionFactory!!.createChangeContractEdge(edge!!, contractViewModel)
         actionManager!!.run(assignContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
@@ -56,23 +56,23 @@ class ContractTest {
     @Test
     fun deleteContract() {
         val createContractAction: Action = actionFactory!!.createCreateContractViewModelElementAction(
-            stateViewModel!!
+            state!!
         )
         actionManager!!.run(createContractAction)
-        Assertions.assertEquals(1, stateViewModel!!.contracts.size)
-        val contractViewModel = stateViewModel!!.contracts.first()
+        Assertions.assertEquals(1, state!!.contracts.size)
+        val contractViewModel = state!!.contracts.first()
 
         val assignContractAction = actionFactory!!.createChangeContractEdge(edge!!, contractViewModel)
         actionManager!!.run(assignContractAction)
         Assertions.assertEquals(contractViewModel, edge!!.contract)
 
         val deleteContractAction: Action =
-            actionFactory!!.createDeleteContractViewModelAction(stateViewModel!!, contractViewModel)
+            actionFactory!!.createDeleteContractViewModelAction(state!!, contractViewModel)
         actionManager!!.run(deleteContractAction)
-        Assertions.assertEquals(0, stateViewModel!!.contracts.size)
+        Assertions.assertEquals(0, state!!.contracts.size)
 
         actionManager!!.run(deleteContractAction.getUndoAction(actionFactory!!)!!)
-        Assertions.assertEquals(1, stateViewModel!!.contracts.size)
+        Assertions.assertEquals(1, state!!.contracts.size)
         Assertions.assertEquals(edge!!.contract, contractViewModel)
     }
 }

@@ -3,7 +3,7 @@ package org.gecko.actions
 import javafx.geometry.Point2D
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 
 /**
  * A concrete representation of an [Action] that moves a set of {link PositionableViewModelElement}s with a given
@@ -11,7 +11,7 @@ import org.gecko.viewmodel.PositionableViewModelElement
  */
 class MoveBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
-    var elementsToMove: Set<PositionableViewModelElement>?
+    var elementsToMove: Set<PositionableElement>?
     val delta: Point2D
 
     internal constructor(editorViewModel: EditorViewModel, delta: Point2D) {
@@ -22,7 +22,7 @@ class MoveBlockViewModelElementAction : Action {
 
     internal constructor(
         editorViewModel: EditorViewModel,
-        elementsToMove: Set<PositionableViewModelElement>?,
+        elementsToMove: Set<PositionableElement>?,
         delta: Point2D
     ) {
         this.editorViewModel = editorViewModel

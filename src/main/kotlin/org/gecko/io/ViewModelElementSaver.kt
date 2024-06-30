@@ -6,7 +6,7 @@ import org.gecko.viewmodel.*
 /**
  * Performs operations for every [Model-Element][org.gecko.model.Element] from the subtree of a [System],
  * creating for each of them a [ViewModelPropertiesContainer], depending on the attributes of the corresponding
- * [PositionableViewModelElement].
+ * [PositionableElement].
  */
 class ViewModelElementSaver(val gModel: GModel) {
     val viewModelProperties: MutableList<ViewModelPropertiesContainer> = arrayListOf()
@@ -53,7 +53,7 @@ class ViewModelElementSaver(val gModel: GModel) {
         }
     }
 
-    fun saveStateViewModelProperties(state: StateViewModel) {
+    fun saveStateViewModelProperties(state: State) {
         val stateViewModelContainer = this.getCoordinateContainer(state)
         viewModelProperties.add(stateViewModelContainer)
     }
@@ -74,7 +74,7 @@ class ViewModelElementSaver(val gModel: GModel) {
         viewModelProperties.add(systemViewModelContainer)
     }
 
-    fun saveSystemConnectionViewModelProperties(systemConnection: SystemConnectionViewModel) {
+    fun saveSystemConnectionViewModelProperties(systemConnection: SystemConnection) {
         val systemConnectionViewModelContainer = this.getCoordinateContainer((systemConnection))
         viewModelProperties.add(systemConnectionViewModelContainer)
     }
@@ -89,7 +89,7 @@ class ViewModelElementSaver(val gModel: GModel) {
         viewModelProperties.add(variableViewModelContainer)
     }
 
-    fun getCoordinateContainer(element: PositionableViewModelElement): ViewModelPropertiesContainer {
+    fun getCoordinateContainer(element: PositionableElement): ViewModelPropertiesContainer {
         val container = ViewModelPropertiesContainer()
         //container.elementId = element.hashCode()
         container.id = element.hashCode()

@@ -15,7 +15,7 @@ import org.gecko.viewmodel.Port
 /**
  * A concrete representation of a system-connection-creating-[Tool], utilized for connecting a source- and a
  * destination-[Port] through a
- * [SystemConnectionViewModel][org.gecko.viewmodel.SystemConnectionViewModel]. Holds the
+ * [SystemConnectionViewModel][org.gecko.viewmodel.SystemConnection]. Holds the
  * source-[Port].
  */
 class SystemConnectionCreatorTool(actionManager: ActionManager) :

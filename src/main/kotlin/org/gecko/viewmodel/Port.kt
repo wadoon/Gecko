@@ -23,12 +23,12 @@ data class Port(
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty(Visibility.STATE),
     val typeProperty: StringProperty = SimpleStringProperty("int"),
     val valueProperty: StringProperty = SimpleStringProperty("")
-) : BlockViewModelElement(), Inspectable {
+) : BlockElement(), Inspectable {
     val systemPortPositionProperty = SimpleObjectProperty(Point2D.ZERO)
     val systemPortSizeProperty = SimpleObjectProperty(Point2D.ZERO)
 
-    val incomingConnections = listProperty<SystemConnectionViewModel>()
-    val outgoingConnections = listProperty<SystemConnectionViewModel>()
+    val incomingConnections = listProperty<SystemConnection>()
+    val outgoingConnections = listProperty<SystemConnection>()
 
     val systemPositionProperty = SimpleObjectProperty(Point2D.ZERO)
     val systemPortOffsetProperty = SimpleObjectProperty(Point2D.ZERO)
@@ -54,19 +54,19 @@ data class Port(
         systemPortSizeProperty.value = size
     }
 
-    fun addIncomingConnection(connection: SystemConnectionViewModel) {
+    fun addIncomingConnection(connection: SystemConnection) {
         incomingConnections.add(connection)
     }
 
-    fun removeIncomingConnection(connection: SystemConnectionViewModel) {
+    fun removeIncomingConnection(connection: SystemConnection) {
         incomingConnections.remove(connection)
     }
 
-    fun addOutgoingConnection(connection: SystemConnectionViewModel) {
+    fun addOutgoingConnection(connection: SystemConnection) {
         outgoingConnections.add(connection)
     }
 
-    fun removeOutgoingConnection(connection: SystemConnectionViewModel) {
+    fun removeOutgoingConnection(connection: SystemConnection) {
         outgoingConnections.remove(connection)
     }
 

@@ -7,13 +7,13 @@ import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
 
 /**
- * A concrete representation of an [Action] that moves a [SystemConnectionViewModel] with a given
+ * A concrete representation of an [Action] that moves a [SystemConnection] with a given
  * [delta value][Point2D].
  */
 class MoveSystemConnectionViewModelElementAction : Action {
     val gModel: GModel
     val editorViewModel: EditorViewModel
-    val systemConnectionViewModel: SystemConnectionViewModel?
+    val systemConnectionViewModel: SystemConnection?
     val elementScalerBlock: ElementScalerBlock
     var delta: Point2D? = null
     var Port: Port? = null
@@ -23,7 +23,7 @@ class MoveSystemConnectionViewModelElementAction : Action {
 
     internal constructor(
         gModel: GModel,
-        systemConnectionViewModel: SystemConnectionViewModel?,
+        systemConnectionViewModel: SystemConnection?,
         elementScalerBlock: ElementScalerBlock,
         delta: Point2D?
     ) {
@@ -36,7 +36,7 @@ class MoveSystemConnectionViewModelElementAction : Action {
 
     internal constructor(
         gModel: GModel,
-        systemConnectionViewModel: SystemConnectionViewModel?,
+        systemConnectionViewModel: SystemConnection?,
         elementScalerBlock: ElementScalerBlock,
         Port: Port?,
         isVariableBlock: Boolean

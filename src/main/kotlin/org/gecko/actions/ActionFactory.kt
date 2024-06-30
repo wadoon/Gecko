@@ -56,11 +56,11 @@ class ActionFactory(val gModel: GModel) {
     }*/
 
     fun createCreateContractViewModelElementAction(
-        stateViewModel: StateViewModel
-    ) = CreateContractViewModelElementAction(gModel, stateViewModel)
+        state: State
+    ) = CreateContractViewModelElementAction(gModel, state)
 
     fun createCreateEdgeViewModelElementAction(
-        source: StateViewModel?, destination: StateViewModel?
+        source: State?, destination: State?
     ) = CreateEdgeViewModelElementAction(gModel, source!!, destination!!)
 
     fun createCreatePortViewModelElementAction(parentSystem: System) =
@@ -80,14 +80,14 @@ class ActionFactory(val gModel: GModel) {
 
     fun createVariable(position: Point2D) = CreateVariableAction(gModel, position)
 
-    fun createDeleteContractViewModelAction(parent: StateViewModel, Contract: Contract?) =
+    fun createDeleteContractViewModelAction(parent: State, Contract: Contract?) =
         DeleteContractViewModelAction(parent, Contract)
 
     fun createDeleteAction(
-        element: PositionableViewModelElement
+        element: PositionableElement
     ) = DeletePositionableViewModelElementAction(gModel, element)
 
-    fun createDeleteAction(elements: Set<PositionableViewModelElement>) =
+    fun createDeleteAction(elements: Set<PositionableElement>) =
         DeletePositionableViewModelElementAction(gModel, elements)
 
     fun createDeleteAction() = DeletePositionableViewModelElementAction(
@@ -99,7 +99,7 @@ class ActionFactory(val gModel: GModel) {
         MoveBlockViewModelElementAction(gModel.currentEditor!!, delta)
 
     fun createMoveBlockViewModelElementAction(
-        elementsToMove: Set<PositionableViewModelElement>?, delta: Point2D
+        elementsToMove: Set<PositionableElement>?, delta: Point2D
     ) = MoveBlockViewModelElementAction(gModel.currentEditor!!, elementsToMove, delta)
 
     fun createMoveEdgeViewModelElementAction(
@@ -109,14 +109,14 @@ class ActionFactory(val gModel: GModel) {
     fun createMoveEdgeViewModelElementAction(
         Edge: Edge,
         elementScalerBlock: ElementScalerBlock,
-        stateViewModel: StateViewModel?,
+        state: State?,
         Contract: Contract?
     ) = MoveEdgeViewModelElementAction(
-        gModel, Edge, elementScalerBlock, stateViewModel, Contract
+        gModel, Edge, elementScalerBlock, state, Contract
     )
 
     fun createMoveSystemConnectionViewModelElementAction(
-        systemConnectionViewModel: SystemConnectionViewModel?, elementScalerBlock: ElementScalerBlock?, delta: Point2D?
+        systemConnectionViewModel: SystemConnection?, elementScalerBlock: ElementScalerBlock?, delta: Point2D?
     ): MoveSystemConnectionViewModelElementAction {
         return MoveSystemConnectionViewModelElementAction(
             gModel, systemConnectionViewModel, elementScalerBlock!!, delta
@@ -124,7 +124,7 @@ class ActionFactory(val gModel: GModel) {
     }
 
     fun createMoveSystemConnectionViewModelElementAction(
-        systemConnectionViewModel: SystemConnectionViewModel?,
+        systemConnectionViewModel: SystemConnection?,
         elementScalerBlock: ElementScalerBlock?,
         Port: Port?,
         isVariableBlock: Boolean
@@ -142,11 +142,11 @@ class ActionFactory(val gModel: GModel) {
         RenameViewModelElementAction(renamable, name)
 
     fun createRestoreContractViewModelElementAction(
-        parent: StateViewModel, Contract: Contract?, edgesWithContract: Set<Edge>?
+        parent: State, Contract: Contract?, edgesWithContract: Set<Edge>?
     ) = RestoreContractViewModelElementAction(parent, Contract, edgesWithContract)
 
     fun createScaleBlockViewModelElementAction(
-        blockViewModelElement: BlockViewModelElement,
+        blockViewModelElement: BlockElement,
         elementScalerBlock: ElementScalerBlock?,
         position: Point2D?,
         size: Point2D?,
@@ -156,22 +156,22 @@ class ActionFactory(val gModel: GModel) {
     )
 
     fun createScaleBlockViewModelElementAction(
-        blockViewModelElement: BlockViewModelElement, elementScalerBlock: ElementScalerBlock?) = ScaleBlockViewModelElementAction(
+        blockViewModelElement: BlockElement, elementScalerBlock: ElementScalerBlock?) = ScaleBlockViewModelElementAction(
         gModel.currentEditor!!, blockViewModelElement, elementScalerBlock
     )
 
     fun createFocusPositionableViewModelElementAction(
-        element: PositionableViewModelElement
+        element: PositionableElement
     ) = FocusPositionableViewModelElementAction(gModel.currentEditor!!, element)
 
     fun createModifyEdgeViewModelPriorityAction(
         Edge: Edge, priority: Int
     ) = ModifyEdgeViewModelPriorityAction(Edge, priority)
 
-    fun createSelectAction(element: PositionableViewModelElement, newSelection: Boolean) =
+    fun createSelectAction(element: PositionableElement, newSelection: Boolean) =
         createSelectAction(setOf(element), newSelection)
 
-    fun createSelectAction(elements: Iterable<PositionableViewModelElement>, newSelection: Boolean) =
+    fun createSelectAction(elements: Iterable<PositionableElement>, newSelection: Boolean) =
         SelectAction(gModel.currentEditor!!, elements, newSelection)
 
     fun createDeselectAction() = DeselectAction(gModel.currentEditor!!)
@@ -182,8 +182,8 @@ class ActionFactory(val gModel: GModel) {
         SelectionHistoryForwardAction(gModel.currentEditor!!.selectionManager)
 
     fun createSelectToolAction(tool: ToolType) = SelectToolAction(gModel.currentEditor!!, tool)
-    fun createSetStartStateViewModelElementAction(stateViewModel: StateViewModel) =
-        SetStartStateViewModelElementAction(gModel, stateViewModel, true)
+    fun createSetStartStateViewModelElementAction(state: State) =
+        SetStartStateViewModelElementAction(gModel, state, true)
 
     fun createViewSwitchAction(System: System?, isAutomaton: Boolean) =
         ViewSwitchAction(gModel, System, isAutomaton)

@@ -20,7 +20,7 @@ import org.gecko.view.toolbar.ToolBarBuilder
 import org.gecko.view.views.shortcuts.ShortcutHandler
 import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.PositionableElement
 import org.gecko.viewmodel.onChange
 import org.gecko.viewmodel.onListChange
 
@@ -210,7 +210,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     }
 
     fun initializeViewElements() {
-        viewModel.viewableElementsProperty.forEach { element: PositionableViewModelElement? ->
+        viewModel.viewableElementsProperty.forEach { element: PositionableElement? ->
             this.addElement(
                 element
             )
@@ -218,7 +218,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         postUpdate()
     }
 
-    fun addElement(element: PositionableViewModelElement?) =
+    fun addElement(element: PositionableElement?) =
         element?.view(actionManager, geckoView)?.let { viewElement ->
             // Add view element to current view elements
             viewElementPane.addElement(viewElement)
@@ -226,7 +226,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
             viewElement
         }
 
-    fun findViewElement(element: PositionableViewModelElement) =
+    fun findViewElement(element: PositionableElement) =
         viewElementPane.findViewElement(element)
 
     fun onToolChanged(newValue: Tool?) {
@@ -239,7 +239,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
 
     }
 
-    fun focusedElementChanged(newValue: PositionableViewModelElement?) {
+    fun focusedElementChanged(newValue: PositionableElement?) {
         val newInspector = inspectorFactory.createInspector(newValue)
         currentInspector.set(if ((newInspector != null)) newInspector else emptyInspector)
         if (shortcutHandler != null) {
@@ -249,17 +249,17 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     }
 
     fun selectionChanged(
-        oldValue: MutableSet<PositionableViewModelElement>?,
-        newValue: Set<PositionableViewModelElement>?
+        oldValue: MutableSet<PositionableElement>?,
+        newValue: Set<PositionableElement>?
     ) {
-        val toRemove: MutableList<PositionableViewModelElement> = ArrayList()
+        val toRemove: MutableList<PositionableElement> = ArrayList()
         for (element in oldValue!!) {
             val viewElement = findViewElement(element)
             if (viewElement == null) {
                 toRemove.add(element)
             }
         }
-        toRemove.forEach { o: PositionableViewModelElement -> oldValue.remove(o) }
+        toRemove.forEach { o: PositionableElement -> oldValue.remove(o) }
 
         oldValue
             .map { this.findViewElement(it) }

@@ -15,15 +15,15 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.Contract
-import org.gecko.viewmodel.StateViewModel
+import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [StateViewModel].
+ * [State].
  */
 
-class StateViewElement(stateViewModel: StateViewModel) : BlockViewElement(stateViewModel), ViewElement<StateViewModel> {
-    override val target: StateViewModel = stateViewModel
+class StateViewElement(state: State) : BlockViewElement(state), ViewElement<State> {
+    override val target: State = state
     val nameProperty: StringProperty = SimpleStringProperty()
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty()
     val contractsProperty: ListProperty<Contract> = SimpleListProperty()

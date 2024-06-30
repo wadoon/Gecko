@@ -150,7 +150,7 @@ class CursorTool(
 
     fun runResizeAction(scaler: ElementScalerBlock) {
         scaler.isDragging = false
-        val target = scaler.decoratorTarget as BlockViewModelElement
+        val target = scaler.decoratorTarget as BlockElement
         val resizeAction: Action = actionManager.actionFactory
             .createScaleBlockViewModelElementAction(target, scaler, oldPosition, oldSize, true)
         actionManager.run(resizeAction)
@@ -192,7 +192,7 @@ class CursorTool(
             } else {
                 actionManager.actionFactory
                     .createMoveSystemConnectionViewModelElementAction(
-                        scaler.decoratorTarget as SystemConnectionViewModel, scaler,
+                        scaler.decoratorTarget as SystemConnection, scaler,
                         endWorldPos.subtract(startDragPosition)
                     )
             }
@@ -259,7 +259,7 @@ class CursorTool(
         }
         val eventPosition = viewPane!!.screenToWorldCoordinates(event.screenX, event.screenY)
         val delta = eventPosition.subtract(previousDragPosition)
-        selectionManager.currentSelection.forEach { element: PositionableViewModelElement ->
+        selectionManager.currentSelection.forEach { element: PositionableElement ->
             element.setCurrentlyModified(true)
             element.position = element.position.add(delta)
         }
@@ -272,7 +272,7 @@ class CursorTool(
             return
         }
         val endWorldPos = viewPane!!.screenToWorldCoordinates(event.screenX, event.screenY)
-        selectionManager.currentSelection.forEach { element: PositionableViewModelElement ->
+        selectionManager.currentSelection.forEach { element: PositionableElement ->
             element.setCurrentlyModified(false)
             element.position = element.position.add(startDragPosition!!.subtract(endWorldPos))
         }
