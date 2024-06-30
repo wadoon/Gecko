@@ -3,8 +3,7 @@ package org.gecko.actions
 
 import org.gecko.util.TestHelper
 import org.gecko.viewmodel.*
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class DeletePositionableViewModelElementActionTest {
@@ -50,9 +49,9 @@ class DeletePositionableViewModelElementActionTest {
     fun run() {
         val deleteAction: Action = actionFactory.createDeleteAction(elements)
         actionManager.run(deleteAction)
-        assertEquals(0, gModel.currentEditor!!.positionableViewModelElements.size)
+        assertEquals(0, gModel.currentEditor!!.viewableElements.size)
         gModel.switchEditor(rootSystem, false)
-        assertEquals(0, gModel.currentEditor!!.positionableViewModelElements.size)
+        assertEquals(0, gModel.currentEditor!!.viewableElements.size)
     }
 
     @Test
@@ -60,19 +59,19 @@ class DeletePositionableViewModelElementActionTest {
         val deleteAction: Action = actionFactory.createDeleteAction(elements)
         actionManager.run(deleteAction)
 
-        assertEquals(0,gModel.currentEditor!!.positionableViewModelElements.size )
+        assertEquals(0, gModel.currentEditor!!.viewableElements.size)
         gModel.switchEditor(rootSystem, false)
-        assertEquals(0,gModel.currentEditor!!.positionableViewModelElements.size)
+        assertEquals(0, gModel.currentEditor!!.viewableElements.size)
 
         actionManager.undo()
 
-        assertEquals(gModel.currentEditor!!.positionableViewModelElements.size, 3)
+        assertEquals(gModel.currentEditor!!.viewableElements.size, 3)
         gModel.switchEditor(rootSystem, false)
-        assertEquals(gModel.currentEditor!!.positionableViewModelElements.size, 3)
+        assertEquals(gModel.currentEditor!!.viewableElements.size, 3)
 
         actionManager.redo()
-        assertEquals(gModel.currentEditor!!.positionableViewModelElements.size, 0)
+        assertEquals(gModel.currentEditor!!.viewableElements.size, 0)
         gModel.switchEditor(rootSystem, false)
-        assertEquals(gModel.currentEditor!!.positionableViewModelElements.size, 0)
+        assertEquals(gModel.currentEditor!!.viewableElements.size, 0)
     }
 }

@@ -92,7 +92,7 @@ open class ViewContextMenuBuilder {
         selectMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
                 actionManager.actionFactory
-                    .createSelectAction(editorViewModel!!.positionableViewModelElements, true)
+                    .createSelectAction(editorViewModel!!.viewableElements, true)
             )
         }
         selectMenuItem.accelerator = Shortcuts.SELECT_ALL.get()
@@ -100,8 +100,8 @@ open class ViewContextMenuBuilder {
             selectMenuItem.disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
-                        { editorViewModel!!.viewableElements.isEmpty() },
-                        editorViewModel!!.viewableElements
+                        { editorViewModel!!.viewableElementsProperty.isEmpty() },
+                        editorViewModel!!.viewableElementsProperty
                     )
                 )
         }

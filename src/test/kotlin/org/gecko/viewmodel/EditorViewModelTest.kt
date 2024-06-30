@@ -88,8 +88,8 @@ internal class EditorViewModelTest {
 
         assertEquals(1, editorViewModel!!.getElementsByName(stateViewModel.name).size)
 
-        assertTrue(editorViewModel.positionableViewModelElements.contains(stateViewModel))
-        assertTrue(editorViewModel.viewableElements.contains(regionViewModel))
+        assertTrue(editorViewModel.viewableElements.contains(stateViewModel))
+        assertTrue(editorViewModel.viewableElementsProperty.contains(regionViewModel))
 
         editorViewModel.selectionManager.select(stateViewModel)
         assertEquals(editorViewModel.focusedElement, stateViewModel)

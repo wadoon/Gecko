@@ -140,8 +140,7 @@ class SystemViewElement(System: System) : BlockViewElement(System),
     fun removePort(Port: Port) {
         // This is safe, since the portViewElement should be present in the list
         val portViewElement =
-            portViewElements.stream().filter { pve: PortViewElement -> pve.viewModel == Port }.findFirst()
-                .orElseThrow()
+            portViewElements.filter { pve: PortViewElement -> pve.viewModel == Port }.first()
         portViewElements.remove(portViewElement)
         if (Port.visibility == Visibility.INPUT) {
             inputPortsAligner.children.remove(portViewElement)
@@ -167,11 +166,9 @@ class SystemViewElement(System: System) : BlockViewElement(System),
             return
         }
         val portViewModel =
-            portsProperty.stream().filter { pvm: Port? -> pvm!!.visibilityProperty === observable }.findFirst()
-                .orElseThrow()
+            portsProperty.filter { pvm: Port? -> pvm!!.visibilityProperty === observable }.first()
         val portViewElement =
-            portViewElements.stream().filter { pve: PortViewElement -> pve.viewModel == portViewModel }.findFirst()
-                .orElseThrow()
+            portViewElements.filter { pve: PortViewElement -> pve.viewModel == portViewModel }.first()
         if (newValue == Visibility.INPUT) {
             outputPortsAligner.children.remove(portViewElement)
             inputPortsAligner.children.add(portViewElement)

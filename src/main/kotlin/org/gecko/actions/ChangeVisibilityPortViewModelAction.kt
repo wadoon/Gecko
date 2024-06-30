@@ -69,17 +69,15 @@ class ChangeVisibilityPortViewModelAction : Action {
 
     private fun getSystemConnectionViewModels(system: System): Set<SystemConnectionViewModel> =
         system.connections
-            .stream()
             .filter { it.source == Port || it.destination == Port }
-            .collect(Collectors.toSet())
+            .toSet()
 
     private fun getSystemConnectionDeleteActions(system: System): List<Action> =
-        getSystemConnectionViewModels(system).stream()
+        getSystemConnectionViewModels(system)
             .map { systemConnectionViewModel: SystemConnectionViewModel? ->
                 DeleteSystemConnectionViewModelElementAction(
                     gModel,
                     systemConnectionViewModel!!, system
                 )
             }
-            .toList()
 }

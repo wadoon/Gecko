@@ -69,9 +69,7 @@ data class SelectionManager(
      * @param elements the elements to be deselected
      */
     fun deselect(elements: Set<PositionableViewModelElement>) {
-        if (elements.isEmpty() || elements.stream()
-                .noneMatch { o: PositionableViewModelElement -> currentSelectionProperty.get().contains(o) }
-        ) {
+        if (elements.isEmpty() || elements.none { currentSelectionProperty.get().contains(it) }) {
             return
         }
         redoSelectionStack.clear()
@@ -96,8 +94,7 @@ data class SelectionManager(
      */
     fun updateSelections(removedElements: Set<PositionableViewModelElement>) {
         val selectionToBeRemoved = ArrayDeque<MutableSet<PositionableViewModelElement>>()
-        if (removedElements.stream()
-                .anyMatch { o: PositionableViewModelElement -> currentSelectionProperty.value.contains(o) }
+        if (removedElements.any { currentSelectionProperty.value.contains(it) }
         ) {
             val newSelection: MutableSet<PositionableViewModelElement> = HashSet(currentSelectionProperty.value)
             newSelection.removeAll(removedElements)

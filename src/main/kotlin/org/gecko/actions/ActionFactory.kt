@@ -171,7 +171,7 @@ class ActionFactory(val gModel: GModel) {
     fun createSelectAction(element: PositionableViewModelElement, newSelection: Boolean) =
         createSelectAction(setOf(element), newSelection)
 
-    fun createSelectAction(elements: Set<PositionableViewModelElement>?, newSelection: Boolean) =
+    fun createSelectAction(elements: Iterable<PositionableViewModelElement>, newSelection: Boolean) =
         SelectAction(gModel.currentEditor!!, elements, newSelection)
 
     fun createDeselectAction() = DeselectAction(gModel.currentEditor!!)

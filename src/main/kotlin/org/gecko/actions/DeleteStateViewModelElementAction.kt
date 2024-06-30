@@ -3,7 +3,6 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 
 import org.gecko.viewmodel.*
-import java.util.stream.Collectors
 
 /**
  * A concrete representation of an [Action] that removes a [StateViewModel] from the [GModel]
@@ -27,17 +26,12 @@ class DeleteStateViewModelElementAction internal constructor(
         }*/
 
         // remove from region if it is in one
-        val RegionViewModels = editorViewModel.viewableElements
-            .stream()
+        val regionViewModels = editorViewModel.viewableElementsProperty
             .filter { element: PositionableViewModelElement -> automaton.regions.contains(element) }
             .map { element: PositionableViewModelElement -> element as Region }
-            .collect(Collectors.toSet())
+            .toSet()
 
-        RegionViewModels.forEach { Region: Region ->
-            Region.removeState(
-                stateViewModel
-            )
-        }
+        regionViewModels.forEach { it.removeState(stateViewModel) }
 
         automaton.removeState(stateViewModel)
         gModel.deleteViewModelElement(stateViewModel)

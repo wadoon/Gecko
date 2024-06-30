@@ -28,12 +28,12 @@ internal class GModelTest {
         gModel.switchEditor(rootSystem, false)
         val editorViewModel = gModel.currentEditor
         Assertions.assertFalse(
-            editorViewModel!!.viewableElements.contains(
+            editorViewModel!!.viewableElementsProperty.contains(
                 rootSystem
             )
         )
         Assertions.assertTrue(
-            editorViewModel.viewableElements
+            editorViewModel.viewableElementsProperty
                 .containsAll(listOf(childSystem1, childSystem2))
         )
     }
@@ -42,9 +42,9 @@ internal class GModelTest {
     fun switchEditorInitializeElements2() {
         gModel.switchEditor(rootSystem, true)
         val editorViewModel = gModel.currentEditor
-        Assertions.assertTrue(editorViewModel!!.viewableElements.contains(stateViewModel))
+        Assertions.assertTrue(editorViewModel!!.viewableElementsProperty.contains(stateViewModel))
         Assertions.assertFalse(
-            editorViewModel.viewableElements.contains(childSystem1)
+            editorViewModel.viewableElementsProperty.contains(childSystem1)
         )
     }
 

@@ -62,7 +62,7 @@ abstract class ShortcutHandler protected constructor(
     fun addSelectionShortcuts() {
         shortcuts[Shortcuts.SELECT_ALL.get()] = {
             actionManager.run(
-                actionFactory.createSelectAction(editorView.viewModel.positionableViewModelElements, true)
+                actionFactory.createSelectAction(editorView.viewModel.viewableElements, true)
             )
         }
 

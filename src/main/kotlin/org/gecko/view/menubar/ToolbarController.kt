@@ -20,7 +20,6 @@ import org.gecko.view.GeckoView
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.PositionableViewModelElement
 import org.kordamp.ikonli.Ikon
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.*
@@ -64,7 +63,7 @@ class ToolbarController(
         val vg = model.knownVariantGroupsProperty
         val mvg = MappedList(vg) { v ->
             val m = Menu(v.name)
-            m.items.setAll(v.variants.stream().map { CheckMenuItem() }.toList())
+            m.items.setAll(v.variants.map { CheckMenuItem() }.toList())
             m
         }
         btnActivateVariants.items.setAll(mvg)
@@ -232,7 +231,7 @@ class ToolbarController(
         //vbox {
         button("Select All", FontIcon(MaterialDesignS.SELECT_ALL)) {
             action {
-                val allElements: Set<PositionableViewModelElement> = view.allDisplayedElements
+                val allElements = view.allDisplayedElements
                 actionManager.run(actionManager.actionFactory.createSelectAction(allElements, true))
             }
             view.addMnemonic(this, Shortcuts.SELECT_ALL.get())

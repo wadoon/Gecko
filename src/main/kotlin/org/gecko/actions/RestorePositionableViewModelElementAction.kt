@@ -22,7 +22,7 @@ class RestorePositionableViewModelElementAction internal constructor(
             return false
         }
         val elementsToRestoreFromCurrentEditor = gModel.currentEditor!!
-            .viewableElements
+            .viewableElementsProperty
             .filter { deletedElements.contains(it) }
             .toSet()
         val actionManager = gModel.actionManager

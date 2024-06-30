@@ -103,7 +103,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             throw RuntimeException("Variables to substitute can only be from the same system")
         }
         val toReplaceWith = ctx.from.port.text
-        if (currentSystem.ports.stream().noneMatch { variable -> variable.name == toReplaceWith }) {
+        if (currentSystem.ports.none { it.name == toReplaceWith }) {
             throw RuntimeException(
                 String.format("Variable %s not found not found in system %s", toReplace, currentSystem.name)
             )
@@ -196,7 +196,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     override fun visitConnection(ctx: ConnectionContext) {
-        if (ctx.from.inst == null || ctx.to.stream().anyMatch { ident: IoportContext -> ident.inst == null }) {
+        if (ctx.from.inst == null || ctx.to.any { it.inst == null }) {
             throw RuntimeException("Invalid System in connection")
         }
         val startSystem = parseSystemReference(ctx.from.inst.text)

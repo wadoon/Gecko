@@ -95,9 +95,9 @@ class SystemTest {
         Assertions.assertTrue(system.allChildren.isEmpty())
         val children = hashSetOf(child1, child2)
         system.addChildren(children)
-        Assertions.assertEquals(children.stream().toList(), system.allChildren)
+        Assertions.assertEquals(children.toList(), system.allChildren)
         system.removeChild(child2)
-        Assertions.assertNotEquals(children.stream().toList(), system.allChildren)
+        Assertions.assertNotEquals(children.toList(), system.allChildren)
         system.addChild(child1)
         Assertions.assertEquals(1, system.allChildren.size)
     }

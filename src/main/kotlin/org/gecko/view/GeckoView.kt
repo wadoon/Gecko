@@ -5,6 +5,7 @@ import javafx.beans.Observable
 import javafx.beans.property.Property
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.collections.ObservableSet
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
@@ -137,9 +138,7 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
     fun onOpenedEditorChanged(newValue: ObservableSet<EditorViewModel>?) {
         if (newValue != null) {
             for (editorViewModel in newValue) {
-                if (openedViews.stream()
-                        .anyMatch { editorView: EditorView? -> editorView!!.viewModel == editorViewModel }
-                ) {
+                if (openedViews.any { it.viewModel == editorViewModel }) {
                     continue
                 }
 
@@ -226,26 +225,26 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
 
     fun focusCenter(editorViewModel: EditorViewModel) {
         // Evaluate the center of all elements by calculating the average position
-        if (editorViewModel.positionableViewModelElements.isEmpty()) {
+        if (editorViewModel.viewableElementsProperty.isEmpty()) {
             editorViewModel.pivot = Point2D(0.0, 0.0)
             return
         }
 
-        val center = editorViewModel.positionableViewModelElements
+        val center = editorViewModel.viewableElements
             .map { it.center }
             .reduce { a, b -> a + b }
-            .multiply(1.0 / editorViewModel.positionableViewModelElements.size)
+            .multiply(1.0 / editorViewModel.viewableElements.size)
 
         editorViewModel.pivot = center
     }
 
-    val allDisplayedElements: Set<PositionableViewModelElement>
+    val allDisplayedElements: ObservableList<PositionableViewModelElement>
         /**
          * Returns all displayed elements in the current view.
          *
          * @return a set of all displayed elements in the current view
          */
-        get() = viewModel.currentEditor!!.positionableViewModelElements
+        get() = viewModel.currentEditor!!.viewableElements
 
     fun toggleAppearance() {
         isDarkMode = !isDarkMode
@@ -257,10 +256,8 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
 
     var isDarkMode: Boolean by darkModeProperty
 
-    fun getView(tab: Tab?): EditorView? {
-        return openedViews.stream().filter { editorView: EditorView? -> editorView!!.currentView === tab }
-            .findFirst().orElseThrow()
-    }
+    fun getView(tab: Tab?) =
+        openedViews.firstOrNull { editorView: EditorView? -> editorView!!.currentView === tab }
 
     val currentView: EditorView?
         get() = currentViewProperty.value
@@ -277,4 +274,3 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
     }
 }
 
-class SplitDrawer

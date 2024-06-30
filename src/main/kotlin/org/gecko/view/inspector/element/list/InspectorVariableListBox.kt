@@ -23,10 +23,10 @@ class InspectorVariableListBox(
             this.onPortsListChanged(change)
         }
 
-        viewModel.ports.stream().filter { port: Port -> port.visibility == visibility }
-            .forEach { port: Port -> this.addPortItem(port) }
-        viewModel.ports.forEach { port: Port ->
-            port.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
+        viewModel.ports.filter { it.visibility == visibility }.forEach { port: Port -> this.addPortItem(port) }
+
+        viewModel.ports.forEach {
+            it.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
                 this.onVisibilityChanged(observable)
             }
         }

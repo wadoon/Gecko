@@ -79,9 +79,9 @@ class ViewModelFactory(
 //            //This should never be null because the Edge Model Element has a contract that should be coming
 //            //from its source
 //            val contract = source.contractsProperty
-//                .stream()
+//                
 //                .filter { contractViewModel: ContractViewModel -> contractViewModel.target == edge.contract }
-//                .findFirst()
+//                .findFirstOrNull()
 //                .orElse(null)
 //            result.contract = contract
 //        }

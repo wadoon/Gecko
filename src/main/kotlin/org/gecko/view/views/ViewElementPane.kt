@@ -3,8 +3,6 @@ package org.gecko.view.views
 import javafx.beans.binding.Bindings
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.Property
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.geometry.Point2D
@@ -12,36 +10,26 @@ import javafx.scene.Node
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Scale
-
 import org.gecko.view.views.viewelement.ViewElement
-import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableViewModelElement
+import org.gecko.viewmodel.*
 import kotlin.math.max
 import kotlin.math.min
 
-class ViewElementPane(evm: EditorViewModel) {
-    val offset: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
-    val evm: EditorViewModel
-    val widthPadding: DoubleProperty = SimpleDoubleProperty(0.0)
-    val heightPadding: DoubleProperty = SimpleDoubleProperty(0.0)
+class ViewElementPane(val evm: EditorViewModel) {
+    val offset: Property<Point2D> = objectProperty(Point2D.ZERO)
+    val widthPadding: DoubleProperty = doubleProperty(0.0)
+    val heightPadding: DoubleProperty = doubleProperty(0.0)
     var minWorldPosition: Point2D
     var maxWorldPosition: Point2D
 
     val pane = ScrollPane()
-
-
     val world = Pane()
-
-
-    val elements: MutableSet<ViewElement<*>>
-
+    val elements = listProperty<ViewElement<*>>()
     val nodeToElement: MutableMap<Node?, ViewElement<*>> = HashMap()
 
     init {
         this.minWorldPosition = Point2D.ZERO
         this.maxWorldPosition = Point2D.ZERO
-        this.elements = HashSet()
-        this.evm = evm
 
         setupListeners()
 
@@ -111,9 +99,8 @@ class ViewElementPane(evm: EditorViewModel) {
         orderChildren()
     }
 
-    fun findViewElement(element: PositionableViewModelElement?): ViewElement<*>? {
-        return elements.stream().filter { e -> e.target == element }.findFirst().orElse(null)
-    }
+    fun findViewElement(element: PositionableViewModelElement?) =
+        elements.firstOrNull { e -> e.target == element }
 
     fun focusWorldCoordinates(worldCoords: Point2D) {
         if (java.lang.Double.isNaN(worldCoords.x) || java.lang.Double.isNaN(worldCoords.y)) {
@@ -234,9 +221,7 @@ class ViewElementPane(evm: EditorViewModel) {
     }
 
     fun updateMinAndMaxWorldPosition() {
-        if (elements.isEmpty() || elements.stream()
-                .allMatch { e -> e.target!!.isCurrentlyModified() }
-        ) {
+        if (elements.isEmpty() || elements.all { it.target!!.isCurrentlyModified() }) {
             return
         }
         var minX = Double.MAX_VALUE
@@ -264,11 +249,11 @@ class ViewElementPane(evm: EditorViewModel) {
 
     fun orderChildren() {
         val newElements =
-            elements.stream().map { obj: ViewElement<*>? -> obj!!.drawElement() }
-                .filter { e: Node? -> !world.children.contains(e) }.toList()
+            elements.map { obj: ViewElement<*> -> obj.drawElement() }
+                .filter { !world.children.contains(it) }
         world.children.addAll(newElements)
         val removedElements = world.children
-            .mapNotNull { key -> nodeToElement[key] }
+            .mapNotNull { nodeToElement[it] }
             .filter { !elements.contains(it) }
             .map { it.drawElement() }
         world.children.removeAll(removedElements)

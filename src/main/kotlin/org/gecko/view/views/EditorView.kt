@@ -3,7 +3,6 @@ package org.gecko.view.views
 import javafx.beans.binding.Bindings
 import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
-import javafx.collections.SetChangeListener
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -23,6 +22,7 @@ import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableViewModelElement
 import org.gecko.viewmodel.onChange
+import org.gecko.viewmodel.onListChange
 
 /**
  * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed [ViewElement]s and
@@ -108,7 +108,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         StackPane.setAlignment(searchWindow, Pos.TOP_CENTER)
 
         // View element creator listener
-        viewModel.viewableElements.onChange { this.onUpdateViewElements(it) }
+        viewModel.viewableElementsProperty.onListChange { this.onUpdateViewElements() }
 
         // Inspector creator listener
         viewModel.focusedElementProperty.onChange { oldValue, newValue ->
@@ -193,16 +193,11 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         activateSearchWindow(!searchWindow!!.isVisible)
     }
 
-    fun onUpdateViewElements(change: SetChangeListener.Change<out PositionableViewModelElement?>) {
-        if (change.wasAdded()) {
-            addElement(change.elementAdded)
-        } else if (change.wasRemoved()) {
-            // Find corresponding view element and remove it
-            val viewElement = findViewElement(change.elementRemoved)
-            if (viewElement != null) {
-                viewElementPane.removeElement(viewElement)
-            }
-        }
+    fun onUpdateViewElements() {
+        viewElementPane.elements.setAll(
+            viewModel.viewableElements.map {
+                findViewElement(it) ?: addElement(it)
+            })
         postUpdate()
     }
 
@@ -215,7 +210,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     }
 
     fun initializeViewElements() {
-        viewModel.viewableElements.forEach { element: PositionableViewModelElement? ->
+        viewModel.viewableElementsProperty.forEach { element: PositionableViewModelElement? ->
             this.addElement(
                 element
             )
@@ -223,19 +218,16 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         postUpdate()
     }
 
-    fun addElement(element: PositionableViewModelElement?) {
+    fun addElement(element: PositionableViewModelElement?) =
         element?.view(actionManager, geckoView)?.let { viewElement ->
             // Add view element to current view elements
             viewElementPane.addElement(viewElement)
-            if (viewModel.currentToolType != null) {
-                viewElement.accept(viewModel.currentTool)
-            }
+            viewElement.accept(viewModel.currentTool)
+            viewElement
         }
-    }
 
-    fun findViewElement(element: PositionableViewModelElement?): ViewElement<*>? {
-        return viewElementPane.findViewElement(element)
-    }
+    fun findViewElement(element: PositionableViewModelElement) =
+        viewElementPane.findViewElement(element)
 
     fun onToolChanged(newValue: Tool?) {
         acceptTool(newValue)
@@ -283,7 +275,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         this.contextMenu = contextMenu
     }
 
-    val currentViewElements: Set<ViewElement<*>>
+    val currentViewElements
         get() = viewElementPane.elements
 
     companion object {

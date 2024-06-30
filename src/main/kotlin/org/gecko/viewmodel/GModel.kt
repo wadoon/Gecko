@@ -71,12 +71,10 @@ class GModel(var root: System = System()) : Element() {
      * editor
      */
     fun switchEditor(nextSystem: System, isAutomatonEditor: Boolean) {
-        openedEditorsProperty.stream()
-            .filter { editorViewModel: EditorViewModel -> (editorViewModel.currentSystem == nextSystem && editorViewModel.isAutomatonEditor == isAutomatonEditor) }
-            .findFirst()
-            .ifPresentOrElse(
-                { editorViewModel: EditorViewModel -> this.currentEditor = editorViewModel },
-                { setupNewEditorViewModel(nextSystem, isAutomatonEditor) })
+        openedEditorsProperty
+            .firstOrNull { (it.currentSystem == nextSystem && it.isAutomatonEditor == isAutomatonEditor) }
+            ?.let { this.currentEditor = it }
+            ?: setupNewEditorViewModel(nextSystem, isAutomatonEditor)
     }
 
     fun setupNewEditorViewModel(nextSystem: System, isAutomatonEditor: Boolean) {
@@ -134,12 +132,12 @@ class GModel(var root: System = System()) : Element() {
 
     fun addPositionableViewModelElementsToEditor(editorViewModel: EditorViewModel) {
         val currentSystem = editorViewModel.currentSystem
-        editorViewModel.viewableElements.clear()
+        editorViewModel.viewableElementsProperty.clear()
 
         if (editorViewModel.isAutomatonEditor) {
-            editorViewModel.addPositionableViewModelElements(currentSystem.automaton.allElements)
+            editorViewModel.viewableElements.setAll(currentSystem.automaton.allElements)
         } else {
-            editorViewModel.addPositionableViewModelElements(currentSystem.allElements)
+            editorViewModel.viewableElements.setAll(currentSystem.allElements)
         }
     }
 

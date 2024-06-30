@@ -52,10 +52,10 @@ class AutomatonFileScout(ctx: ModelContext) {
                     this
                 )
             }
-            foundChildren.stream().map(SystemInfo::type).toList().forEach(
+            foundChildren.map(SystemInfo::type).toList().forEach(
                 Consumer { o: String -> rootChildrenIdents.remove(o) })
             rootChildren.addAll(ctx.system()
-                .stream()
+                
                 .filter { system: SystemContext -> rootChildrenIdents.contains(system.ident().Ident().text) }
                 .toList())
         }

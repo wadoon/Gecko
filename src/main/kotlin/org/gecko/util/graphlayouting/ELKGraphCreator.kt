@@ -60,15 +60,10 @@ internal class ELKGraphCreator(val viewModel: GModel) {
         return System.automaton.states
     }
 
-    fun findNode(graph: ElkNode, element: BlockViewModelElement): ElkNode {
-        return graph.children
-            .stream()
-            .filter { e: ElkNode -> e.identifier == element.hashCode().toString() }
-            .findFirst()
-            .orElse(null)
-    }
+    fun findNode(graph: ElkNode, element: BlockViewModelElement) =
+        graph.children.firstOrNull { e: ElkNode -> e.identifier == element.hashCode().toString() }
 
-    fun findPortOrSystemNode(graph: ElkNode, parentSystem: System, element: Port): ElkNode {
+    fun findPortOrSystemNode(graph: ElkNode, parentSystem: System, element: Port): ElkNode? {
         if (parentSystem.ports.contains(element)) {
             return findNode(graph, element)
         } else {

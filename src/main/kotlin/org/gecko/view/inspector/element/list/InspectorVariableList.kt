@@ -31,7 +31,7 @@ class InspectorVariableList(
 
 
         //viewModel.getPortsProperty().addListener(this::onPortsListChanged);
-        //viewModel.getPorts().stream().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
+        //viewModel.getPorts().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
         //viewModel.getPorts().forEach(port -> port.getVisibilityProperty().addListener(this::onVisibilityChanged));
         val colName = TableColumn<Port, String>("Name")
         colName.sortType = TableColumn.SortType.ASCENDING

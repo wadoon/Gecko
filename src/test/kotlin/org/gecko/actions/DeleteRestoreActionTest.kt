@@ -17,7 +17,7 @@ class DeleteRestoreActionTest {
     @Test
     fun deleteElement() {
         gModel.switchEditor(root, true)
-        val v = gModel.currentEditor!!.viewableElements
+        val v = gModel.currentEditor!!.viewableElementsProperty
         Assertions.assertTrue(v.isNotEmpty())
         Assertions.assertTrue(state1 in v)
         actionManager.run(actionManager.actionFactory.createDeleteAction(setOf(state1)))
@@ -33,7 +33,7 @@ class DeleteRestoreActionTest {
         actionManager.undo()
         Assertions.assertTrue(
             gModel.currentEditor!!
-                .viewableElements
+                .viewableElementsProperty
                 .contains(state1)
         )
     }
@@ -56,7 +56,7 @@ class DeleteRestoreActionTest {
     fun deleteElementInChildSystem() {
         gModel.switchEditor(child, true)
         actionManager.run(actionManager.actionFactory.createDeleteAction(setOf(state2)))
-        Assertions.assertTrue(gModel.currentEditor!!.viewableElements.isEmpty())
+        Assertions.assertTrue(gModel.currentEditor!!.viewableElementsProperty.isEmpty())
     }
 
     @Test
@@ -68,7 +68,7 @@ class DeleteRestoreActionTest {
         actionManager.undo()
         Assertions.assertTrue(
             gModel.currentEditor!!
-                .viewableElements
+                .viewableElementsProperty
                 .contains(state2)
         )
     }

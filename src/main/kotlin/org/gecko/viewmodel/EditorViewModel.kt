@@ -15,7 +15,6 @@ import org.gecko.view.views.shortcuts.AutomatonEditorViewShortcutHandler
 import org.gecko.view.views.shortcuts.SystemEditorViewShortcutHandler
 import tornadofx.getValue
 import tornadofx.setValue
-import java.util.stream.Collectors
 import kotlin.math.max
 import kotlin.math.min
 
@@ -31,7 +30,9 @@ class EditorViewModel(
     val parentSystem: System?,
     val isAutomatonEditor: Boolean,
 ) : Openable {
-    val viewableElements = listProperty<PositionableViewModelElement>()
+    val viewableElementsProperty = listProperty<PositionableViewModelElement>()
+    var viewableElements by viewableElementsProperty
+
     val tools: MutableList<List<Tool>> = FXCollections.observableArrayList()
     val selectionManager = SelectionManager()
     val pivotProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
@@ -43,7 +44,7 @@ class EditorViewModel(
     init {
         initializeTools()
 
-        selectionManager.currentSelectionProperty.onChange { old, new ->
+        selectionManager.currentSelectionProperty.onChange { _, new ->
             focusedElement = new.firstOrNull()
         }
 
@@ -99,27 +100,6 @@ class EditorViewModel(
             focusedElementProperty.value = focusedElement
         }
 
-    /**
-     * Adds the given elements to the current [EditorViewModel]. They will then be displayed in the view.
-     *
-     * @param elements the elements to add
-     */
-    fun addPositionableViewModelElements(elements: MutableList<PositionableViewModelElement>) {
-        elements.removeAll(viewableElements)
-        viewableElements.addAll(elements)
-    }
-
-    /**
-     * Removes the given elements from the current [EditorViewModel]. They will then no longer be displayed in the
-     * view.
-     *
-     * @param elements the elements to remove
-     */
-    fun removePositionableViewModelElements(elements: Set<PositionableViewModelElement>) {
-        elements.forEach { viewableElements.remove(it) }
-    }
-
-    val positionableViewModelElements by viewableElements
 
     fun initializeTools() {
         tools.add(
@@ -201,18 +181,15 @@ class EditorViewModel(
      * @return the elements that are in the given area
      */
     fun getElementsInArea(bound: Bounds): Set<PositionableViewModelElement> {
-        return viewableElements.stream()
+        return viewableElementsProperty
             .filter { element: PositionableViewModelElement ->
                 if (element.size == Point2D.ZERO) {
                     return@filter false
                 }
-                val elementBound: Bounds =
-                    BoundingBox(
-                        element.position.x, element.position.y, element.size.x,
-                        element.size.y
-                    )
+                val elementBound =
+                    BoundingBox(element.position.x, element.position.y, element.size.x, element.size.y)
                 bound.intersects(elementBound)
-            }.collect(Collectors.toSet())
+            }.toSet()
     }
 
     companion object {
