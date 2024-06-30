@@ -24,30 +24,20 @@ class VersionManagerPane(val model: GModel) : UIComponent("Versions & Variants")
         hbox {
             label("Versions and Variants")
             spacer()
-            button("Menu") { }
+            button("Menu") {}
         }
 
         tree = treeview {
             isShowRoot = false
             isEditable = true
             contextmenu {
-                item("Add") {
-                    action { addItem() }
-                }
-                item("Delete") {
-                    action { delItem() }
+                item("Add") { action { addItem() } }
+                item("Delete") { action { delItem() } }
 
-                }
-                item("Toggle Active") {
-                    action { toggleActive() }
-                }
+                item("Toggle Active") { action { toggleActive() } }
             }
-            vboxConstraints {
-                this.vGrow = Priority.ALWAYS
-            }
+            vboxConstraints { this.vGrow = Priority.ALWAYS }
         }
-
-
     }
 
     private fun toggleActive() {
@@ -82,7 +72,9 @@ class VersionManagerPane(val model: GModel) : UIComponent("Versions & Variants")
     }
 
     val populateTreeListener =
-        ChangeListener<String> { _: ObservableValue<out Any>, _: String, _: String -> populateTree() }
+        ChangeListener<String> { _: ObservableValue<out Any>, _: String, _: String ->
+            populateTree()
+        }
     val populateTreeListListener = ListChangeListener<String> { _ -> populateTree() }
 
     init {
@@ -110,7 +102,6 @@ class VersionManagerPane(val model: GModel) : UIComponent("Versions & Variants")
     fun populateTree() {
         tree.root = RootItem(model)
     }
-
 }
 
 sealed class VVTreeItems : TreeItem<String>()

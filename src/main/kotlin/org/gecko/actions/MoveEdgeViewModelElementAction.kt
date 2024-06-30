@@ -21,7 +21,9 @@ class MoveEdgeViewModelElementAction : Action {
     var previousContract: Contract? = null
 
     internal constructor(
-        gModel: GModel, Edge: Edge, elementScalerBlock: ElementScalerBlock,
+        gModel: GModel,
+        Edge: Edge,
+        elementScalerBlock: ElementScalerBlock,
         delta: Point2D?
     ) {
         this.gModel = gModel
@@ -32,8 +34,11 @@ class MoveEdgeViewModelElementAction : Action {
     }
 
     internal constructor(
-        gModel: GModel, Edge: Edge, elementScalerBlock: ElementScalerBlock,
-        state: State?, Contract: Contract?
+        gModel: GModel,
+        Edge: Edge,
+        elementScalerBlock: ElementScalerBlock,
+        state: State?,
+        Contract: Contract?
     ) {
         this.gModel = gModel
         this.editorViewModel = gModel.currentEditor!!
@@ -43,11 +48,9 @@ class MoveEdgeViewModelElementAction : Action {
         this.Contract = Contract
     }
 
-
     @Throws(GeckoException::class)
     override fun run(): Boolean {
-        previousState =
-            if (elementScalerBlock.index == 0) Edge.source else Edge.destination
+        previousState = if (elementScalerBlock.index == 0) Edge.source else Edge.destination
         if (state == null) {
             state = attemptRelocation()
             if (state == null || state == previousState) {
@@ -70,8 +73,10 @@ class MoveEdgeViewModelElementAction : Action {
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
         return actionFactory.createMoveEdgeViewModelElementAction(
-            Edge, elementScalerBlock,
-            previousState, previousContract
+            Edge,
+            elementScalerBlock,
+            previousState,
+            previousContract
         )
     }
 
@@ -81,7 +86,12 @@ class MoveEdgeViewModelElementAction : Action {
 
     fun getStateViewModelAt(point: Point2D): State? {
         for (state in editorViewModel.currentSystem.automaton.states) {
-            if (point.x > state.position.x && point.x < state.position.x + state.size.x && point.y > state.position.y && point.y < state.position.y + state.size.y) {
+            if (
+                point.x > state.position.x &&
+                    point.x < state.position.x + state.size.x &&
+                    point.y > state.position.y &&
+                    point.y < state.position.y + state.size.y
+            ) {
                 return state
             }
         }

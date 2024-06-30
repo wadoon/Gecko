@@ -3,13 +3,13 @@ package org.gecko.view.inspector.element.button
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import org.gecko.view.inspector.element.textfield.InspectorAreaField
-import java.util.function.Consumer
 
 /**
  * Represents a type of [AbstractInspectorButton] used for expanding or collapsing a list of
  * [InspectorContractItem][org.gecko.view.inspector.element.container.InspectorContractItem].
  */
-class InspectorCollapseContractButton(fields: List<InspectorAreaField>) : AbstractInspectorButton() {
+class InspectorCollapseContractButton(fields: List<InspectorAreaField>) :
+    AbstractInspectorButton() {
     var expanded = false
 
     init {

@@ -10,7 +10,8 @@ import org.gecko.viewmodel.Port
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an
  * [InspectorTypeComboBox].
  */
-class InspectorTypeLabel(actionManager: ActionManager, viewModel: Port) : LabeledInspectorElement(
-    InspectorLabel(ResourceHandler.Companion.type),
-    InspectorTypeComboBox(actionManager, viewModel)
-)
+class InspectorTypeLabel(actionManager: ActionManager, viewModel: Port) :
+    LabeledInspectorElement(
+        InspectorLabel(ResourceHandler.Companion.type),
+        InspectorTypeComboBox(actionManager, viewModel)
+    )

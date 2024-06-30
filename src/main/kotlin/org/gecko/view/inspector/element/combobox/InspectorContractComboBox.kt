@@ -6,8 +6,8 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.inspector.element.InspectorElement
 import org.gecko.viewmodel.Edge
 
-class InspectorContractComboBox(actionManager: ActionManager, edge: Edge) : ComboBox<String>(),
-    InspectorElement<ComboBox<String>> {
+class InspectorContractComboBox(actionManager: ActionManager, edge: Edge) :
+    ComboBox<String>(), InspectorElement<ComboBox<String>> {
     init {
         prefWidth = PREF_WIDTH.toDouble()
         val source = edge.source
@@ -16,9 +16,7 @@ class InspectorContractComboBox(actionManager: ActionManager, edge: Edge) : Comb
             items.setAll(source.contracts.map { it.name })
         }
         value = if (edge.contract == null) null else edge.contract!!.name
-        edge.contractProperty.addListener { _, _, newValue ->
-            value = newValue?.name
-        }
+        edge.contractProperty.addListener { _, _, newValue -> value = newValue?.name }
 
         onAction = EventHandler {
             if (value == null || (edge.contract != null && value == edge.contract!!.name)) {

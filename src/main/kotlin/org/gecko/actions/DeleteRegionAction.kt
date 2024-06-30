@@ -3,8 +3,8 @@ package org.gecko.actions
 import org.gecko.viewmodel.*
 
 /**
- * A concrete representation of an [Action] that removes a [region] from the [GModel]
- * and its target-[org.gecko.model.Region] from the given [Automaton].
+ * A concrete representation of an [Action] that removes a [region] from the [GModel] and its
+ * target-[org.gecko.model.Region] from the given [Automaton].
  */
 class DeleteRegionAction(val gModel: GModel, val region: Region, val automaton: Automaton) :
     AbstractPositionableViewModelElementAction() {

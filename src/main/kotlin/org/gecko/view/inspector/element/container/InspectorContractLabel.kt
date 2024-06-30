@@ -10,7 +10,8 @@ import org.gecko.viewmodel.State
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an
  * [InspectorAddContractButton].
  */
-class InspectorContractLabel(actionManager: ActionManager, viewModel: State) : LabeledInspectorElement(
-    InspectorLabel(ResourceHandler.contract_plural),
-    InspectorAddContractButton(actionManager, viewModel)
-)
+class InspectorContractLabel(actionManager: ActionManager, viewModel: State) :
+    LabeledInspectorElement(
+        InspectorLabel(ResourceHandler.contract_plural),
+        InspectorAddContractButton(actionManager, viewModel)
+    )

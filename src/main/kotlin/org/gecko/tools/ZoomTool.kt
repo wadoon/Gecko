@@ -7,9 +7,7 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.views.ViewElementPane
 import org.gecko.viewmodel.EditorViewModel
 
-/**
- * A concrete representation of a zoom-[Tool], utilized for zooming in and out in the view.
- */
+/** A concrete representation of a zoom-[Tool], utilized for zooming in and out in the view. */
 class ZoomTool(actionManager: ActionManager) : Tool(actionManager, ToolType.ZOOM_TOOL, true) {
     override fun visitView(pane: ViewElementPane) {
         super.visitView(pane)
@@ -19,8 +17,10 @@ class ZoomTool(actionManager: ActionManager) : Tool(actionManager, ToolType.ZOOM
             val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
             if (event.isShiftDown) {
                 actionManager.run(
-                    actionManager.actionFactory
-                        .createZoomAction(position, 1 / EditorViewModel.defaultZoomStep)
+                    actionManager.actionFactory.createZoomAction(
+                        position,
+                        1 / EditorViewModel.defaultZoomStep
+                    )
                 )
             } else {
                 actionManager.run(

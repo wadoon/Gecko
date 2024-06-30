@@ -1,6 +1,5 @@
 package org.gecko.viewmodel
 
-
 import javafx.beans.property.*
 import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
@@ -14,11 +13,9 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [SystemConnection] model element. A [SystemConnection] is
- * described by a source- and a destination-[Port]. Contains methods for managing the afferent data and
- * updating the target-[SystemConnection].
+ * described by a source- and a destination-[Port]. Contains methods for managing the afferent data
+ * and updating the target-[SystemConnection].
  */
-
-
 data class SystemConnection(
     val sourceProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
     val destinationProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
@@ -31,10 +28,11 @@ data class SystemConnection(
     var source: Port? by sourceProperty
     var destination: Port? by destinationProperty
 
-    override fun asJson() = super.asJson().apply {
-        addProperty("source", source?.name)
-        addProperty("destination", destination?.name)
-    }
+    override fun asJson() =
+        super.asJson().apply {
+            addProperty("source", source?.name)
+            addProperty("destination", destination?.name)
+        }
 
     init {
         sizeProperty.value = Point2D.ZERO
@@ -54,8 +52,9 @@ data class SystemConnection(
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newSystemConnectionViewElement = SystemConnectionViewElement(this)
-        val contextMenuBuilder = SystemConnectionViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newSystemConnectionViewElement.pane, contextMenuBuilder)
+        val contextMenuBuilder =
+            SystemConnectionViewElementContextMenuBuilder(actionManager, this, geckoView)
+        // setContextMenu(newSystemConnectionViewElement.pane, contextMenuBuilder)
         return ConnectionElementScalerViewElementDecorator(newSystemConnectionViewElement)
     }
 
@@ -67,23 +66,30 @@ data class SystemConnection(
 /**
  * Checks if a connection between the given source and destination port is allowed.
  *
- * @param source            the new source port
- * @param destination       the new destination port
- * @param sourceSystem      the system that contains the source port
+ * @param source the new source port
+ * @param destination the new destination port
+ * @param sourceSystem the system that contains the source port
  * @param destinationSystem the system that contains the destination port
- * @param parentSystem      the system where the connection is created
- * @param systemConnection  the connection that is being edited, or null if a new connection is being created
+ * @param parentSystem the system where the connection is created
+ * @param systemConnection the connection that is being edited, or null if a new connection is being
+ *   created
  * @return true if the connection is allowed, false otherwise
  */
 fun isConnectingAllowed(
-    source: Port, destination: Port, sourceSystem: System?,
-    destinationSystem: System?, parentSystem: System?,
+    source: Port,
+    destination: Port,
+    sourceSystem: System?,
+    destinationSystem: System?,
+    parentSystem: System?,
     systemConnection: SystemConnection?
 ): Boolean {
     if (sourceSystem == null || destinationSystem == null || parentSystem == null) {
         return false
     }
-    if (destination.hasIncomingConnection && !(systemConnection != null && systemConnection.destination == destination)) {
+    if (
+        destination.hasIncomingConnection &&
+            !(systemConnection != null && systemConnection.destination == destination)
+    ) {
         return false
     }
     if (sourceSystem == destinationSystem) {

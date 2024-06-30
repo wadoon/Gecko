@@ -14,10 +14,9 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which encapsulates
- * an [SystemConnection].
+ * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [SystemConnection].
  */
-
 class SystemConnectionViewElement(override val target: SystemConnection) :
     ConnectionViewElement(target.edgePoints), ViewElement<SystemConnection> {
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()

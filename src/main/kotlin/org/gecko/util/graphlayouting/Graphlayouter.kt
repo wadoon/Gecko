@@ -13,9 +13,10 @@ import org.gecko.viewmodel.State
 import org.gecko.viewmodel.System
 
 /**
- * The Graphlayouter is the core of the graphlayouting package. It is responsible for creating the ELK graph from the
- * view model and applying the layout to the view model. Currently, the layoutalgorithms are hardcoded to use the
- * layered algorithm for the system graph and the force algorithm for the automaton graph.
+ * The Graphlayouter is the core of the graphlayouting package. It is responsible for creating the
+ * ELK graph from the view model and applying the layout to the view model. Currently, the
+ * layoutalgorithms are hardcoded to use the layered algorithm for the system graph and the force
+ * algorithm for the automaton graph.
  */
 class Graphlayouter(val viewModel: GModel) {
     internal val elkGraphCreator = ELKGraphCreator(viewModel)
@@ -74,10 +75,7 @@ class Graphlayouter(val viewModel: GModel) {
     fun findNodeById(root: ElkNode?, id: Int): ElkNode? =
         root!!.children.firstOrNull { it.identifier == id.toString() }
 
-    fun getChildSystemViewModels(System: System): List<System> =
-        System.subSystems
+    fun getChildSystemViewModels(System: System): List<System> = System.subSystems
 
-    fun getStates(System: System): List<State> = System
-        .automaton
-        .states
+    fun getStates(System: System): List<State> = System.automaton.states
 }

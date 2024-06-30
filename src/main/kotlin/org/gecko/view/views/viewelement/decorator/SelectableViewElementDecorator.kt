@@ -6,10 +6,12 @@ import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.view.views.viewelement.ViewElementVisitor
 
 /**
- * A concrete representation of a [ViewElementDecorator] following the decorator pattern for selection purposes.
- * It holds a reference to a Group containing the drawn target and borderline Path
+ * A concrete representation of a [ViewElementDecorator] following the decorator pattern for
+ * selection purposes. It holds a reference to a Group containing the drawn target and borderline
+ * Path
  */
-class SelectableViewElementDecorator(decoratorTarget: ViewElement<*>) : ViewElementDecorator(decoratorTarget) {
+class SelectableViewElementDecorator(decoratorTarget: ViewElement<*>) :
+    ViewElementDecorator(decoratorTarget) {
     override fun drawElement(): Node {
         return decoratorTarget.drawElement()
     }
@@ -28,7 +30,6 @@ class SelectableViewElementDecorator(decoratorTarget: ViewElement<*>) : ViewElem
 
     override val position: Point2D
         get() = decoratorTarget.position
-
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

@@ -1,11 +1,9 @@
 package org.gecko.actions
 
+import java.util.*
 import javafx.scene.control.Alert
-
-
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.GModel
-import java.util.*
 
 /**
  * Represents a manager for the actions of the active [Gecko][org.gecko.application.Gecko]. Holds an
@@ -18,12 +16,9 @@ class ActionManager(gModel: GModel) {
     val undoStack = ArrayDeque<Action>()
     val redoStack = ArrayDeque<Action>()
 
+    // var copyVisitor: CopyPositionableViewModelElementVisitor? = null
 
-    //var copyVisitor: CopyPositionableViewModelElementVisitor? = null
-
-    /**
-     * Undoes the last action and makes it redoable.
-     */
+    /** Undoes the last action and makes it redoable. */
     fun undo() {
         if (undoStack.isEmpty()) {
             return
@@ -37,14 +32,10 @@ class ActionManager(gModel: GModel) {
             showExceptionAlert(e.message)
             return
         }
-        action.getUndoAction(actionFactory)?.let { undoAction ->
-            redoStack.addFirst(undoAction)
-        }
+        action.getUndoAction(actionFactory)?.let { undoAction -> redoStack.addFirst(undoAction) }
     }
 
-    /**
-     * Redoes the last undone action and makes it undoable again.
-     */
+    /** Redoes the last undone action and makes it undoable again. */
     fun redo() {
         if (redoStack.isEmpty()) {
             return

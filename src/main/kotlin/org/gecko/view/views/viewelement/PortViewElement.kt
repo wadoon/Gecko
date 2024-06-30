@@ -56,7 +56,9 @@ class PortViewElement(val viewModel: Port) : Pane() {
         visibilityProperty.onChange { _: Visibility, _: Visibility -> updateBackgroundColor() }
         viewModel.systemPortOffsetProperty.bind(
             Bindings.createObjectBinding(
-                { Point2D(layoutX, layoutY) }, layoutXProperty(), layoutYProperty()
+                { Point2D(layoutX, layoutY) },
+                layoutXProperty(),
+                layoutYProperty()
             )
         )
     }
@@ -72,11 +74,10 @@ class PortViewElement(val viewModel: Port) : Pane() {
 
     fun updateBackgroundColor() {
         val isInput = viewModel.visibility == Visibility.INPUT
-        val background = Background(
-            BackgroundFill(
-                visibility.color, if (isInput) INPUT_RADII else OUTPUT_RADII, null
+        val background =
+            Background(
+                BackgroundFill(visibility.color, if (isInput) INPUT_RADII else OUTPUT_RADII, null)
             )
-        )
         setBackground(background)
     }
 

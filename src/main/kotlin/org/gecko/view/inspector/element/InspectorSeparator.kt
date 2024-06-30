@@ -3,9 +3,10 @@ package org.gecko.view.inspector.element
 import javafx.scene.control.Separator
 
 /**
- * Represents a type of [Separator], implementing the [InspectorElement] interface. Serves as delimiter
- * between other inspector elements.
+ * Represents a type of [Separator], implementing the [InspectorElement] interface. Serves as
+ * delimiter between other inspector elements.
  */
 class InspectorSeparator : Separator(), InspectorElement<Separator> {
-    override val control get() = this
+    override val control
+        get() = this
 }

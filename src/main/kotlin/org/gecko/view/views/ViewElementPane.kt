@@ -10,10 +10,10 @@ import javafx.scene.Node
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import javafx.scene.transform.Scale
-import org.gecko.view.views.viewelement.ViewElement
-import org.gecko.viewmodel.*
 import kotlin.math.max
 import kotlin.math.min
+import org.gecko.view.views.viewelement.ViewElement
+import org.gecko.viewmodel.*
 
 class ViewElementPane(val evm: EditorViewModel) {
     val offset: Property<Point2D> = objectProperty(Point2D.ZERO)
@@ -34,10 +34,16 @@ class ViewElementPane(val evm: EditorViewModel) {
         setupListeners()
 
         widthPadding.bind(
-            Bindings.createDoubleBinding({ pane.viewportBounds.width }, pane.viewportBoundsProperty())
+            Bindings.createDoubleBinding(
+                { pane.viewportBounds.width },
+                pane.viewportBoundsProperty()
+            )
         )
         heightPadding.bind(
-            Bindings.createDoubleBinding({ pane.viewportBounds.height }, pane.viewportBoundsProperty())
+            Bindings.createDoubleBinding(
+                { pane.viewportBounds.height },
+                pane.viewportBoundsProperty()
+            )
         )
 
         pane.content = world
@@ -54,7 +60,8 @@ class ViewElementPane(val evm: EditorViewModel) {
     }
 
     fun addElement(element: ViewElement<*>) {
-        // Save the pivot to refocus after adding the element because changing the world size will change the pivot
+        // Save the pivot to refocus after adding the element because changing the world size will
+        // change the pivot
         val oldPivot = evm.pivot
         val target = element.target
         elements.add(element)
@@ -63,28 +70,39 @@ class ViewElementPane(val evm: EditorViewModel) {
         nodeToElement[node] = element
         node.layoutX = worldTolocalCoordinates(target!!.position).x
         node.layoutY = worldTolocalCoordinates(target.position).y
-        node.layoutXProperty()
+        node
+            .layoutXProperty()
             .bind(
                 Bindings.createDoubleBinding(
                     { worldTolocalCoordinates(target.position).x },
-                    target.positionProperty, offset
+                    target.positionProperty,
+                    offset
                 )
             )
-        node.layoutYProperty()
+        node
+            .layoutYProperty()
             .bind(
                 Bindings.createDoubleBinding(
                     { worldTolocalCoordinates(target.position).y },
-                    target.positionProperty, offset
+                    target.positionProperty,
+                    offset
                 )
             )
 
         node.transforms.setAll(Scale(evm.zoomScale, evm.zoomScale, 0.0, 0.0))
-        evm.zoomScaleProperty.addListener { obs: ObservableValue<out Number>?, oldV: Number?, newV: Number ->
-            //Can't bind to zoomScale because the pivot of (0, 0) is important to keep world coordinates consistent with
-            //visual position
+        evm.zoomScaleProperty.addListener {
+            obs: ObservableValue<out Number>?,
+            oldV: Number?,
+            newV: Number ->
+            // Can't bind to zoomScale because the pivot of (0, 0) is important to keep world
+            // coordinates consistent with
+            // visual position
             node.transforms.setAll(Scale(newV.toDouble(), newV.toDouble(), 0.0, 0.0))
         }
-        target.positionProperty.addListener { obs: ObservableValue<out Point2D?>?, oldV: Point2D?, newV: Point2D? ->
+        target.positionProperty.addListener {
+            obs: ObservableValue<out Point2D?>?,
+            oldV: Point2D?,
+            newV: Point2D? ->
             if (target.isCurrentlyModified()) {
                 return@addListener
             }
@@ -148,10 +166,12 @@ class ViewElementPane(val evm: EditorViewModel) {
     }
 
     fun focusLocalCoordinates(localCoords: Point2D) {
-        val h = (localCoords.x - pane.viewportBounds.width / 2) / (world.width
-                - pane.viewportBounds.width)
-        val v = (localCoords.y - pane.viewportBounds.height / 2) / (world.height
-                - pane.viewportBounds.height)
+        val h =
+            (localCoords.x - pane.viewportBounds.width / 2) /
+                (world.width - pane.viewportBounds.width)
+        val v =
+            (localCoords.y - pane.viewportBounds.height / 2) /
+                (world.height - pane.viewportBounds.height)
         pane.hvalue = h
         pane.vvalue = v
     }
@@ -183,9 +203,8 @@ class ViewElementPane(val evm: EditorViewModel) {
     }
 
     fun screenCenterWorldCoords(): Point2D {
-        //Can't use screenToLocal because we don't want the pane.localToScreen() offset
-        val screenCenter =
-            Point2D(pane.viewportBounds.width / 2, pane.viewportBounds.height / 2)
+        // Can't use screenToLocal because we don't want the pane.localToScreen() offset
+        val screenCenter = Point2D(pane.viewportBounds.width / 2, pane.viewportBounds.height / 2)
         val localScreenCenter = screenCenter.add(localViewPortPosition())
         return localToWorldCoordinates(localScreenCenter)
     }
@@ -197,25 +216,39 @@ class ViewElementPane(val evm: EditorViewModel) {
     }
 
     fun setupListeners() {
-        evm.needsRefocusProperty.addListener { obs: ObservableValue<out Boolean>?, oldV: Boolean?, newV: Boolean ->
+        evm.needsRefocusProperty.addListener {
+            obs: ObservableValue<out Boolean>?,
+            oldV: Boolean?,
+            newV: Boolean ->
             if (newV) {
                 focusWorldCoordinates(evm.pivot)
                 evm.needsRefocusProperty.set(false)
             }
         }
-        evm.zoomScaleProperty.addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number? ->
+        evm.zoomScaleProperty.addListener {
+            obs: ObservableValue<out Number?>?,
+            oldV: Number?,
+            newV: Number? ->
             updateWorldSize(evm.pivot)
         }
-        pane.hvalueProperty().addListener { obs: ObservableValue<out Number?>?, oldH: Number?, newH: Number? ->
+        pane.hvalueProperty().addListener {
+            obs: ObservableValue<out Number?>?,
+            oldH: Number?,
+            newH: Number? ->
             evm.updatePivot(screenCenterWorldCoords())
         }
-        pane.vvalueProperty().addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number? ->
+        pane.vvalueProperty().addListener {
+            obs: ObservableValue<out Number?>?,
+            oldV: Number?,
+            newV: Number? ->
             evm.updatePivot(screenCenterWorldCoords())
         }
-        widthPadding.addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number? ->
+        widthPadding.addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number?
+            ->
             updateWorldSize(evm.pivot)
         }
-        heightPadding.addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number? ->
+        heightPadding.addListener { obs: ObservableValue<out Number?>?, oldV: Number?, newV: Number?
+            ->
             updateWorldSize(evm.pivot)
         }
     }
@@ -249,15 +282,19 @@ class ViewElementPane(val evm: EditorViewModel) {
 
     fun orderChildren() {
         val newElements =
-            elements.map { obj: ViewElement<*> -> obj.drawElement() }
+            elements
+                .map { obj: ViewElement<*> -> obj.drawElement() }
                 .filter { !world.children.contains(it) }
         world.children.addAll(newElements)
-        val removedElements = world.children
-            .mapNotNull { nodeToElement[it] }
-            .filter { !elements.contains(it) }
-            .map { it.drawElement() }
+        val removedElements =
+            world.children
+                .mapNotNull { nodeToElement[it] }
+                .filter { !elements.contains(it) }
+                .map { it.drawElement() }
         world.children.removeAll(removedElements)
-        FXCollections.sort(world.children,
-            Comparator.comparingInt { nodeToElement[it]?.zPriority ?: 0 })
+        FXCollections.sort(
+            world.children,
+            Comparator.comparingInt { nodeToElement[it]?.zPriority ?: 0 }
+        )
     }
 }

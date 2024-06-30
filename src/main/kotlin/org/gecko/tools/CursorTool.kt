@@ -16,8 +16,8 @@ import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
 
 /**
- * A concrete representation of an area-[Tool], utilized for marking a rectangle-formed area in the view. Holds
- * the [starting position][Point2D]  and the afferent [javafx.scene.shape.Rectangle].
+ * A concrete representation of an area-[Tool], utilized for marking a rectangle-formed area in the
+ * view. Holds the [starting position][Point2D] and the afferent [javafx.scene.shape.Rectangle].
  */
 class CursorTool(
     actionManager: ActionManager,
@@ -82,7 +82,9 @@ class CursorTool(
         }
     }
 
-    override fun visit(connectionElementScalerViewElementDecorator: ConnectionElementScalerViewElementDecorator) {
+    override fun visit(
+        connectionElementScalerViewElementDecorator: ConnectionElementScalerViewElementDecorator
+    ) {
         super.visit(connectionElementScalerViewElementDecorator)
 
         for (scaler in connectionElementScalerViewElementDecorator.scalers) {
@@ -90,7 +92,9 @@ class CursorTool(
         }
     }
 
-    override fun visit(blockElementScalerViewElementDecorator: BlockElementScalerViewElementDecorator) {
+    override fun visit(
+        blockElementScalerViewElementDecorator: BlockElementScalerViewElementDecorator
+    ) {
         super.visit(blockElementScalerViewElementDecorator)
         for (scaler in blockElementScalerViewElementDecorator.scalers) {
             setBlockScalerElementHandlers(scaler)
@@ -151,8 +155,14 @@ class CursorTool(
     fun runResizeAction(scaler: ElementScalerBlock) {
         scaler.isDragging = false
         val target = scaler.decoratorTarget as BlockElement
-        val resizeAction: Action = actionManager.actionFactory
-            .createScaleBlockViewModelElementAction(target, scaler, oldPosition, oldSize, true)
+        val resizeAction: Action =
+            actionManager.actionFactory.createScaleBlockViewModelElementAction(
+                target,
+                scaler,
+                oldPosition,
+                oldSize,
+                true
+            )
         actionManager.run(resizeAction)
     }
 
@@ -181,21 +191,23 @@ class CursorTool(
                 return@EventHandler
             }
             val endWorldPos = viewPane!!.screenToWorldCoordinates(event.screenX, event.screenY)
-            scaler.layoutPosition = scaler.layoutPosition.add(startDragPosition!!.subtract(endWorldPos))
+            scaler.layoutPosition =
+                scaler.layoutPosition.add(startDragPosition!!.subtract(endWorldPos))
 
-            val moveAction = if (editorViewModel.isAutomatonEditor) {
-                actionManager.actionFactory
-                    .createMoveEdgeViewModelElementAction(
+            val moveAction =
+                if (editorViewModel.isAutomatonEditor) {
+                    actionManager.actionFactory.createMoveEdgeViewModelElementAction(
                         scaler.decoratorTarget as Edge,
-                        scaler, endWorldPos.subtract(startDragPosition)
-                    )
-            } else {
-                actionManager.actionFactory
-                    .createMoveSystemConnectionViewModelElementAction(
-                        scaler.decoratorTarget as SystemConnection, scaler,
+                        scaler,
                         endWorldPos.subtract(startDragPosition)
                     )
-            }
+                } else {
+                    actionManager.actionFactory.createMoveSystemConnectionViewModelElementAction(
+                        scaler.decoratorTarget as SystemConnection,
+                        scaler,
+                        endWorldPos.subtract(startDragPosition)
+                    )
+                }
 
             actionManager.run(moveAction)
             scaler.decoratorTarget.target?.setCurrentlyModified(false)
@@ -211,7 +223,10 @@ class CursorTool(
             }
             if (event.clickCount == 2) {
                 val openSystemAction: Action =
-                    actionManager.actionFactory.createViewSwitchAction(systemViewElement.target, false)
+                    actionManager.actionFactory.createViewSwitchAction(
+                        systemViewElement.target,
+                        false
+                    )
                 actionManager.run(openSystemAction)
             }
             event.consume()
@@ -236,9 +251,11 @@ class CursorTool(
         }
         element.drawElement().onMouseReleased = EventHandler { event: MouseEvent ->
             stopDraggingElementHandler(event)
-            if (event.button == MouseButton.PRIMARY && element.isSelected && startDragPosition!!.distance(
-                    previousDragPosition
-                ) * editorViewModel.zoomScale < DRAG_THRESHOLD
+            if (
+                event.button == MouseButton.PRIMARY &&
+                    element.isSelected &&
+                    startDragPosition!!.distance(previousDragPosition) * editorViewModel.zoomScale <
+                        DRAG_THRESHOLD
             ) {
                 selectElement(element, !event.isShiftDown)
             }
@@ -276,15 +293,18 @@ class CursorTool(
             element.setCurrentlyModified(false)
             element.position = element.position.add(startDragPosition!!.subtract(endWorldPos))
         }
-        val moveAction: Action = actionManager.actionFactory
-            .createMoveBlockViewModelElementAction(endWorldPos.subtract(startDragPosition))
+        val moveAction: Action =
+            actionManager.actionFactory.createMoveBlockViewModelElementAction(
+                endWorldPos.subtract(startDragPosition)
+            )
         actionManager.run(moveAction)
         cancelDrag()
         event.consume()
     }
 
     fun selectElement(viewElement: ViewElement<*>, newSelection: Boolean) {
-        val select: Action = actionManager.actionFactory.createSelectAction(viewElement.target!!, newSelection)
+        val select: Action =
+            actionManager.actionFactory.createSelectAction(viewElement.target!!, newSelection)
         actionManager.run(select)
     }
 

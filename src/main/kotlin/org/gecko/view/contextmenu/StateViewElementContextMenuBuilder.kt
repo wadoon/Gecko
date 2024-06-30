@@ -12,8 +12,8 @@ import org.gecko.viewmodel.State
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
- * [StateViewElement][org.gecko.view.views.viewelement.StateViewElement]. Contains [MenuItem]s that run
- * operations like setting the state as start-state or deleting the state.
+ * [StateViewElement][org.gecko.view.views.viewelement.StateViewElement]. Contains [MenuItem]s that
+ * run operations like setting the state as start-state or deleting the state.
  */
 class StateViewElementContextMenuBuilder(
     actionManager: ActionManager,
@@ -36,12 +36,12 @@ class StateViewElementContextMenuBuilder(
 
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createDeleteAction(state)
-            )
+            actionManager.run(actionManager.actionFactory.createDeleteAction(state))
         }
 
-        stateContextMenu!!.items.addAll(dataTransferToStateEditingSeparator, startStateMenuItem, deleteMenuItem)
+        stateContextMenu!!
+            .items
+            .addAll(dataTransferToStateEditingSeparator, startStateMenuItem, deleteMenuItem)
         return stateContextMenu
     }
 }

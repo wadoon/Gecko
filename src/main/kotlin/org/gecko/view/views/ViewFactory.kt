@@ -14,7 +14,8 @@ import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 import org.gecko.viewmodel.*
 
 /**
- * Represents a factory for the view elements of a Gecko project. Provides a method for the creation of each element.
+ * Represents a factory for the view elements of a Gecko project. Provides a method for the creation
+ * of each element.
  */
 class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
     /*fun createEditorView(editorViewModel: EditorViewModel, isAutomatonEditor: Boolean): EditorView {
@@ -38,7 +39,9 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
         val contextMenuBuilder: ViewContextMenuBuilder =
             RegionViewElementContextMenuBuilder(actionManager, Region, geckoView)
         setContextMenu(newRegionViewElement, contextMenuBuilder)
-        return BlockElementScalerViewElementDecorator(SelectableViewElementDecorator(newRegionViewElement))
+        return BlockElementScalerViewElementDecorator(
+            SelectableViewElementDecorator(newRegionViewElement)
+        )
     }
 
     fun createViewElementFrom(Port: Port): ViewElement<*> {
@@ -62,11 +65,14 @@ class ViewFactory(val actionManager: ActionManager, val geckoView: GeckoView) {
     }
 
     fun createViewElementFrom(systemConnectionViewModel: SystemConnection): ViewElement<*> {
-        val newSystemConnectionViewElement =
-            SystemConnectionViewElement(systemConnectionViewModel)
+        val newSystemConnectionViewElement = SystemConnectionViewElement(systemConnectionViewModel)
 
         val contextMenuBuilder: ViewContextMenuBuilder =
-            SystemConnectionViewElementContextMenuBuilder(actionManager, systemConnectionViewModel, geckoView)
+            SystemConnectionViewElementContextMenuBuilder(
+                actionManager,
+                systemConnectionViewModel,
+                geckoView
+            )
         setContextMenu(newSystemConnectionViewElement.pane, contextMenuBuilder)
 
         return ConnectionElementScalerViewElementDecorator(newSystemConnectionViewElement)

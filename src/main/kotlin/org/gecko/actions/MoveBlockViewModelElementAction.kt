@@ -6,8 +6,8 @@ import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableElement
 
 /**
- * A concrete representation of an [Action] that moves a set of {link PositionableViewModelElement}s with a given
- * [delta value][Point2D].
+ * A concrete representation of an [Action] that moves a set of {link PositionableViewModelElement}s
+ * with a given [delta value][Point2D].
  */
 class MoveBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
@@ -47,6 +47,9 @@ class MoveBlockViewModelElementAction : Action {
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createMoveBlockViewModelElementAction(elementsToMove, delta.multiply(-1.0))
+        return actionFactory.createMoveBlockViewModelElementAction(
+            elementsToMove,
+            delta.multiply(-1.0)
+        )
     }
 }

@@ -13,8 +13,8 @@ import org.gecko.viewmodel.System
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
- * [SystemViewElement][org.gecko.view.views.viewelement.SystemViewElement]. Contains [MenuItem]s that run
- * operations like opening or deleting the system.
+ * [SystemViewElement][org.gecko.view.views.viewelement.SystemViewElement]. Contains [MenuItem]s
+ * that run operations like opening or deleting the system.
  */
 class SystemViewElementContextMenuBuilder(
     actionManager: ActionManager,
@@ -29,23 +29,18 @@ class SystemViewElementContextMenuBuilder(
         // Access system commands:
         val openSystemMenuItem = MenuItem(ResourceHandler.Companion.open_system)
         openSystemMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createViewSwitchAction(
-                    System, false
-                )
-            )
+            actionManager.run(actionManager.actionFactory.createViewSwitchAction(System, false))
         }
         openSystemMenuItem.accelerator = Shortcuts.OPEN_CHILD_SYSTEM_EDITOR.get()
 
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createDeleteAction(System)
-            )
+            actionManager.run(actionManager.actionFactory.createDeleteAction(System))
         }
 
-
-        systemContextMenu!!.items.addAll(dataTransferToSystemAccessSeparator, openSystemMenuItem, deleteMenuItem)
+        systemContextMenu!!
+            .items
+            .addAll(dataTransferToSystemAccessSeparator, openSystemMenuItem, deleteMenuItem)
         return systemContextMenu
     }
 }

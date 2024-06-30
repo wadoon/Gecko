@@ -2,6 +2,8 @@ package org.gecko.application
 
 import atlantafx.base.theme.PrimerDark
 import atlantafx.base.theme.PrimerLight
+import java.io.File
+import java.io.IOException
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -21,13 +23,10 @@ import org.gecko.viewmodel.objectProperty
 import tornadofx.getValue
 import tornadofx.onChange
 import tornadofx.setValue
-import java.io.File
-import java.io.IOException
-
 
 /**
- * Represents a manager for the active [Gecko]. Additionally, holds a reference to the [Stage] of the
- * application.
+ * Represents a manager for the active [Gecko]. Additionally, holds a reference to the [Stage] of
+ * the application.
  */
 class GeckoManager : Application() {
     lateinit var stage: Stage
@@ -58,7 +57,6 @@ class GeckoManager : Application() {
             }
         }
 
-
         activateGeckoView()
         stage.show()
     }
@@ -69,35 +67,32 @@ class GeckoManager : Application() {
         stage.scene = scene
 
         /*
-    gdbus call --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme
-    */
+        gdbus call --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop --method org.freedesktop.portal.Settings.Read org.freedesktop.appearance color-scheme
+        */
         setUserAgentStylesheet(PrimerLight().userAgentStylesheet)
         geckoView.darkModeProperty.onChange { n ->
             setUserAgentStylesheet(
-                if (!n) PrimerLight().userAgentStylesheet
-                else PrimerDark().userAgentStylesheet
+                if (!n) PrimerLight().userAgentStylesheet else PrimerDark().userAgentStylesheet
             )
         }
-
     }
 
     /**
-     * Represents a manager for the I/O functionalities of the Gecko Graphic Editor, following the singleton pattern.
-     * Provides methods for creating, loading and saving project files or importing and exporting a project to another file
-     * format. Uses the IO package for serialization and parsing.
+     * Represents a manager for the I/O functionalities of the Gecko Graphic Editor, following the
+     * singleton pattern. Provides methods for creating, loading and saving project files or
+     * importing and exporting a project to another file format. Uses the IO package for
+     * serialization and parsing.
      */
     var latestFile: File? = null
 
-    /**
-     * Attempts to create a new project and makes the user choose a file to save it to.
-     */
+    /** Attempts to create a new project and makes the user choose a file to save it to. */
     fun createNewProject() {
         this.gecko = GModel()
     }
 
     /**
-     * Attempts to load a project from a file chosen that was either previously chosen or asks the user to choose a
-     * file.
+     * Attempts to load a project from a file chosen that was either previously chosen or asks the
+     * user to choose a file.
      */
     fun loadGeckoProject() {
         getOpenFileChooser(FileTypes.JSON)?.let { fileToLoad ->
@@ -128,11 +123,8 @@ class GeckoManager : Application() {
             this.latestFile = null
         } catch (e: IOException) {
             val message: String =
-                ResourceHandler.could_not_read_file + String.format(
-                    "%s.%s%s",
-                    file.path,
-                    System.lineSeparator(), e.message
-                )
+                ResourceHandler.could_not_read_file +
+                    String.format("%s.%s%s", file.path, System.lineSeparator(), e.message)
             val alert = Alert(Alert.AlertType.ERROR)
             alert.contentText = message
             alert.showAndWait()
@@ -166,7 +158,8 @@ class GeckoManager : Application() {
             val fileSerializer: FileSerializer = AutomatonFileSerializer(gecko)
             fileSerializer.writeToFile(file!!)
         } catch (e: IOException) {
-            val alert = Alert(Alert.AlertType.ERROR, ResourceHandler.could_not_write_file, ButtonType.OK)
+            val alert =
+                Alert(Alert.AlertType.ERROR, ResourceHandler.could_not_write_file, ButtonType.OK)
             alert.showAndWait()
         }
     }
@@ -187,8 +180,9 @@ class GeckoManager : Application() {
 
     fun getNewFileChooser(fileType: FileTypes): FileChooser {
         val fileChooser = FileChooser()
-        fileChooser.extensionFilters
-            .addAll(FileChooser.ExtensionFilter(fileType.fileDescription, fileType.fileNameGlob))
+        fileChooser.extensionFilters.addAll(
+            FileChooser.ExtensionFilter(fileType.fileDescription, fileType.fileNameGlob)
+        )
         return fileChooser
     }
 
@@ -208,7 +202,8 @@ class GeckoManager : Application() {
         }
 
         if (latestFile == null) {
-            val fileToSaveTo = getSaveFileChooser(FileTypes.JSON) ?: throw GeckoException("No file chosen.")
+            val fileToSaveTo =
+                getSaveFileChooser(FileTypes.JSON) ?: throw GeckoException("No file chosen.")
             latestFile = fileToSaveTo
         }
         saveGeckoProject(latestFile!!)

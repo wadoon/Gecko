@@ -1,6 +1,5 @@
 package org.gecko.viewmodel
 
-
 import javafx.beans.property.*
 import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
@@ -13,7 +12,6 @@ import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
-
 
 /**
  * Represents an abstraction of a [Variable] model element. A [Port] is described by a type and a
@@ -43,7 +41,6 @@ data class Port(
     init {
         sizeProperty.value = DEFAULT_PORT_SIZE
         name = AutoNaming.name("port_${visibility}_")
-
     }
 
     fun setSystemPortPosition(position: Point2D) {
@@ -75,22 +72,23 @@ data class Port(
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newVariableBlockViewElement = VariableBlockViewElement(this)
-        val contextMenuBuilder = VariableBlockViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newVariableBlockViewElement, contextMenuBuilder)
+        val contextMenuBuilder =
+            VariableBlockViewElementContextMenuBuilder(actionManager, this, geckoView)
+        // setContextMenu(newVariableBlockViewElement, contextMenuBuilder)
         return SelectableViewElementDecorator(newVariableBlockViewElement)
     }
 
     override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
         VariableBlockInspectorBuilder(actionManager, this)
 
-    override fun asJson() = super.asJson().apply {
-        addProperty("type", type)
-        addProperty("visibility", visibility.name)
-        addProperty("value", value)
-    }
+    override fun asJson() =
+        super.asJson().apply {
+            addProperty("type", type)
+            addProperty("visibility", visibility.name)
+            addProperty("value", value)
+        }
 
     companion object {
         val DEFAULT_PORT_SIZE = Point2D(100.0, 50.0)
     }
-
 }

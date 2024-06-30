@@ -9,7 +9,8 @@ import org.gecko.viewmodel.State
  * A concrete representation of an [Action] that restores a deleted [Contract] in a given
  * parent-[State].
  */
-class RestoreContractViewModelElementAction internal constructor(
+class RestoreContractViewModelElementAction
+internal constructor(
     val parent: State,
     val Contract: Contract?,
     val edgesWithContract: Set<Edge>?

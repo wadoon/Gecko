@@ -7,12 +7,13 @@ import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.State
 
 /**
- * A concrete representation of an [Action] that creates a [State] in the
- * current-[SystemViewModel] through the [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the
- * [GModel]. Additionally, holds the [position][Point2D] and the current [EditorViewModel] for
- * setting the correct position for the created state.
+ * A concrete representation of an [Action] that creates a [State] in the current-[SystemViewModel]
+ * through the [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GModel].
+ * Additionally, holds the [position][Point2D] and the current [EditorViewModel] for setting the
+ * correct position for the created state.
  */
-class CreateStateViewModelElementAction internal constructor(
+class CreateStateViewModelElementAction
+internal constructor(
     val gModel: GModel,
     val editorViewModel: EditorViewModel,
     val position: Point2D

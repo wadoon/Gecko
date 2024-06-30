@@ -6,9 +6,7 @@ import javafx.geometry.Point2D
 import javafx.scene.shape.Rectangle
 import tornadofx.minus
 
-/**
- * Represents a type of [Rectangle] used for displaying the scaling of elements.
- */
+/** Represents a type of [Rectangle] used for displaying the scaling of elements. */
 class ElementScalerBlock(
     val index: Int,
     val decoratorTarget: ElementScalerViewElementDecorator,
@@ -25,9 +23,7 @@ class ElementScalerBlock(
         refreshListeners()
     }
 
-    /**
-     * Refreshes scaler block listeners and updates its position.
-     */
+    /** Refreshes scaler block listeners and updates its position. */
     fun refreshListeners() {
         /*if (listener != null) {
             decoratorgetEdgePoints().get(index).removeListener(listener);
@@ -35,23 +31,22 @@ class ElementScalerBlock(
         updatePosition()
 
         val newListener =
-            ChangeListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? ->
+            ChangeListener {
+                observable: ObservableValue<out Point2D?>?,
+                oldValue: Point2D?,
+                newValue: Point2D? ->
                 if (!isDragging) {
                     updatePosition()
                 }
             }
-        //decoratorgetEdgePoints().get(index).addListener(newListener);
-        //listener = newListener;
+        // decoratorgetEdgePoints().get(index).addListener(newListener);
+        // listener = newListener;
     }
 
-    /**
-     * Updates the position of the scaler block to match the edge point.
-     */
+    /** Updates the position of the scaler block to match the edge point. */
     fun updatePosition() {
-        layoutX =
-            decoratorTarget.edgePoints[index].x - decoratorTarget.position.x - (width / 2)
-        layoutY =
-            decoratorTarget.edgePoints[index].y - decoratorTarget.position.y - (height / 2)
+        layoutX = decoratorTarget.edgePoints[index].x - decoratorTarget.position.x - (width / 2)
+        layoutY = decoratorTarget.edgePoints[index].y - decoratorTarget.position.y - (height / 2)
     }
 
     /**

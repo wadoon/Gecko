@@ -13,8 +13,8 @@ import org.gecko.view.inspector.element.button.InspectorSelectionBackwardButton
 import org.gecko.view.inspector.element.button.InspectorSelectionForwardButton
 
 /**
- * Represents a [ScrollPane] that encapsulates [InspectorElement]s, which allow the properties of Gecko
- * elements to be modified from the view.
+ * Represents a [ScrollPane] that encapsulates [InspectorElement]s, which allow the properties of
+ * Gecko elements to be modified from the view.
  */
 class Inspector(elements: List<InspectorElement<*>>, actionManager: ActionManager) : ScrollPane() {
     init {
@@ -26,8 +26,10 @@ class Inspector(elements: List<InspectorElement<*>>, actionManager: ActionManage
 
         // Selection forward/backward buttons
         val selectionButtons = HBox()
-        val selectionBackwardButton: AbstractInspectorButton = InspectorSelectionBackwardButton(actionManager)
-        val selectionForwardButton: AbstractInspectorButton = InspectorSelectionForwardButton(actionManager)
+        val selectionBackwardButton: AbstractInspectorButton =
+            InspectorSelectionBackwardButton(actionManager)
+        val selectionForwardButton: AbstractInspectorButton =
+            InspectorSelectionForwardButton(actionManager)
         selectionButtons.children.addAll(selectionBackwardButton, selectionForwardButton)
 
         HBox.setHgrow(selectionButtons, Priority.ALWAYS)
@@ -47,8 +49,7 @@ class Inspector(elements: List<InspectorElement<*>>, actionManager: ActionManage
     val view: Node
         get() = this
 
-    override fun requestFocus() {
-    }
+    override fun requestFocus() {}
 
     companion object {
         const val INSPECTOR_ELEMENT_SPACING = 10

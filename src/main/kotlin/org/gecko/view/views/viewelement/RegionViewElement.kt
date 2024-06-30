@@ -17,11 +17,11 @@ import org.gecko.viewmodel.Region
 import org.gecko.viewmodel.State
 
 /**
- * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [Region].
+ * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [Region].
  */
-
-class RegionViewElement(override val target: Region) : BlockViewElement(target), ViewElement<Region> {
+class RegionViewElement(override val target: Region) :
+    BlockViewElement(target), ViewElement<Region> {
     val nameProperty: StringProperty = SimpleStringProperty()
     val colorProperty: Property<Color> = SimpleObjectProperty()
     val invariantProperty: StringProperty = SimpleStringProperty()
@@ -38,9 +38,7 @@ class RegionViewElement(override val target: Region) : BlockViewElement(target),
     }
 
     override fun setEdgePoint(index: Int, point: Point2D): Boolean {
-        return target.manipulate(
-            edgePoints[(index + edgePoints.size / 2) % edgePoints.size], point
-        )
+        return target.manipulate(edgePoints[(index + edgePoints.size / 2) % edgePoints.size], point)
     }
 
     override val position: Point2D
@@ -61,12 +59,10 @@ class RegionViewElement(override val target: Region) : BlockViewElement(target),
             }
         }
         target.statesProperty.addListener(listener)
-        prefWidthProperty().bind(
-            Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty)
-        )
-        prefHeightProperty().bind(
-            Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty)
-        )
+        prefWidthProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty))
+        prefHeightProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty))
     }
 
     fun constructViewElement() {
@@ -75,15 +71,19 @@ class RegionViewElement(override val target: Region) : BlockViewElement(target),
         val background = Rectangle()
         background.widthProperty().bind(widthProperty())
         background.heightProperty().bind(heightProperty())
-        background.fillProperty()
+        background
+            .fillProperty()
             .bind(
                 Bindings.createObjectBinding(
                     {
                         Color(
-                            colorProperty.value.red, colorProperty.value.green,
-                            colorProperty.value.blue, 0.5
+                            colorProperty.value.red,
+                            colorProperty.value.green,
+                            colorProperty.value.blue,
+                            0.5
                         )
-                    }, colorProperty
+                    },
+                    colorProperty
                 )
             )
         background.arcHeight = BACKGROUND_ROUNDING.toDouble()

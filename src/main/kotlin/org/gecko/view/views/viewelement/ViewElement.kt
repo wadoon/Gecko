@@ -6,10 +6,10 @@ import javafx.scene.Node
 import org.gecko.viewmodel.PositionableElement
 
 /**
- * Provides methods used in the visualization of an element in the view. Any such view element corresponds to a
- * view-model element, which is why the interface is generic, encapsulating a type of
- * [PositionableElement]. Concrete visitors must implement this interface to define specific behavior for
- * each view element.
+ * Provides methods used in the visualization of an element in the view. Any such view element
+ * corresponds to a view-model element, which is why the interface is generic, encapsulating a type
+ * of [PositionableElement]. Concrete visitors must implement this interface to define specific
+ * behavior for each view element.
  */
 interface ViewElement<T : PositionableElement?> {
     /**
@@ -20,12 +20,10 @@ interface ViewElement<T : PositionableElement?> {
     fun drawElement(): Node
 
     /**
-     * Get the edge points of the element in world coordinates. The edge points represent the bound points of the
-     * element.
-     *
+     * Get the edge points of the element in world coordinates. The edge points represent the bound
+     * points of the element.
      *
      * In case of a connection, these points represent the start and end points of the connection.
-     *
      *
      * In case of a region, these points represent the bound points of the region.
      *
@@ -38,7 +36,8 @@ interface ViewElement<T : PositionableElement?> {
      *
      * @param index the index
      * @param point new point
-     * @return true if the edge point was set, false if the edge point could not be set due to size limitations
+     * @return true if the edge point was set, false if the edge point could not be set due to size
+     *   limitations
      */
     fun setEdgePoint(index: Int, point: Point2D): Boolean {
         return true
@@ -71,7 +70,8 @@ interface ViewElement<T : PositionableElement?> {
     val position: Point2D
 
     /**
-     * Get the z priority of the element. The z priority is used to determine the order of the elements in the view.
+     * Get the z priority of the element. The z priority is used to determine the order of the
+     * elements in the view.
      *
      * @return the z priority
      */

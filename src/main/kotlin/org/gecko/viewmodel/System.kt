@@ -30,7 +30,9 @@ data class System(
     val allElements: MutableList<PositionableElement>
         get() {
             val allElements =
-                ArrayList<PositionableElement>(subSystems.size + portsProperty.size + connections.size)
+                ArrayList<PositionableElement>(
+                    subSystems.size + portsProperty.size + connections.size
+                )
             allElements.addAll(subSystems)
             allElements.addAll(portsProperty)
             allElements.addAll(connections)
@@ -44,7 +46,7 @@ data class System(
         val newSystemViewElement = SystemViewElement(this)
         val contextMenuBuilder: ViewContextMenuBuilder =
             SystemViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newSystemViewElement, contextMenuBuilder)
+        // setContextMenu(newSystemViewElement, contextMenuBuilder)
         return SelectableViewElementDecorator(newSystemViewElement)
     }
 
@@ -61,14 +63,14 @@ data class System(
     val automatonProperty = objectProperty(Automaton())
     var automaton: Automaton by automatonProperty
 
-    override fun asJson() = super.asJson().apply {
-        addProperty("code", code)
-        add("connections", connections.asJsonArray())
-        add("ports", ports.asJsonArray())
-        add("subSystems", subSystems.asJsonArray())
-        add("automaton", automaton.asJson())
-    }
-
+    override fun asJson() =
+        super.asJson().apply {
+            addProperty("code", code)
+            add("connections", connections.asJsonArray())
+            add("ports", ports.asJsonArray())
+            add("subSystems", subSystems.asJsonArray())
+            add("automaton", automaton.asJson())
+        }
 
     init {
         size = DEFAULT_SYSTEM_SIZE
@@ -85,20 +87,24 @@ data class System(
         port.systemPositionProperty.unbind()
     }
 
-
     fun removeConnection(con: SystemConnection) = connectionsProperty.remove(con)
+
     fun addConnection(con: SystemConnection) = connections.add(con)
 
-    fun getChildByName(name: String): System? =
-        subSystems.firstOrNull { it.name == name }
+    fun getChildByName(name: String): System? = subSystems.firstOrNull { it.name == name }
 
     fun getChildSystemWithVariable(element: Port) =
         subSystems.firstOrNull { it.ports.contains(element) }
 
     fun getVariableByName(text: String?): Port? = ports.firstOrNull { it.name == text }
+
     fun createVariable(): Port = Port().also { addPort(it) }
-    fun createSubSystem(): System = System()
-        .also { subSystems.add(it); it.parent = this }
+
+    fun createSubSystem(): System =
+        System().also {
+            subSystems.add(it)
+            it.parent = this
+        }
 
     companion object {
         val DEFAULT_SYSTEM_SIZE = Point2D(300.0, 300.0)

@@ -10,16 +10,18 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 
 /**
- * Represents a type of [AbstractInspectorButton] used for navigating forward in the selection history of the
- * [SelectionManager][org.gecko.viewmodel.SelectionManager].
+ * Represents a type of [AbstractInspectorButton] used for navigating forward in the selection
+ * history of the [SelectionManager][org.gecko.viewmodel.SelectionManager].
  */
 class InspectorSelectionForwardButton(actionManager: ActionManager) : AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)
-        val toolTip = "%s (%s)".format(
-            ResourceHandler.inspector_selection_forward,
-            Shortcuts.SELECTION_FORWARD.get().displayText
-        )
+        val toolTip =
+            "%s (%s)"
+                .format(
+                    ResourceHandler.inspector_selection_forward,
+                    Shortcuts.SELECTION_FORWARD.get().displayText
+                )
         tooltip = Tooltip(toolTip)
         onAction = EventHandler { event: ActionEvent? ->
             actionManager.run(actionManager.actionFactory.createSelectionHistoryForwardAction())
@@ -31,6 +33,5 @@ class InspectorSelectionForwardButton(actionManager: ActionManager) : AbstractIn
         const val ICON_STYLE_NAME = "inspector-selection-forward-button"
     }
 }
-
 
 fun String.format(fmt: String, vararg args: Any?) = String.format(fmt, *args)

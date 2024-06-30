@@ -17,13 +17,15 @@ class VariableBlockCreatorTool(actionManager: ActionManager) :
     override fun visitView(pane: ViewElementPane) {
         super.visitView(pane)
         pane.draw().cursor = Cursor.CROSSHAIR
-        pane.draw().onMouseClicked = EventHandler<MouseEvent> { event: MouseEvent ->
-            if (event.button != MouseButton.PRIMARY) {
-                return@EventHandler
+        pane.draw().onMouseClicked =
+            EventHandler<MouseEvent> { event: MouseEvent ->
+                if (event.button != MouseButton.PRIMARY) {
+                    return@EventHandler
+                }
+                val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
+                val createVariableBlockAction: Action =
+                    actionManager.actionFactory.createVariable(position)
+                actionManager.run(createVariableBlockAction)
             }
-            val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
-            val createVariableBlockAction: Action = actionManager.actionFactory.createVariable(position)
-            actionManager.run(createVariableBlockAction)
-        }
     }
 }

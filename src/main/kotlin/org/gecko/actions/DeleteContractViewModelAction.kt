@@ -5,10 +5,8 @@ import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.State
 
-class DeleteContractViewModelAction internal constructor(
-    val parent: State,
-    val Contract: Contract?
-) : Action() {
+class DeleteContractViewModelAction
+internal constructor(val parent: State, val Contract: Contract?) : Action() {
     var edgesWithContract: Set<Edge> = setOf()
 
     @Throws(GeckoException::class)
@@ -22,6 +20,10 @@ class DeleteContractViewModelAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createRestoreContractViewModelElementAction(parent, Contract, edgesWithContract)
+        return actionFactory.createRestoreContractViewModelElementAction(
+            parent,
+            Contract,
+            edgesWithContract
+        )
     }
 }

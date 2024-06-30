@@ -3,10 +3,8 @@ package org.gecko.actions
 import org.gecko.exceptions.ModelException
 import org.gecko.viewmodel.Port
 
-class ChangeVariableValuePortViewModelAction internal constructor(
-    val Port: Port,
-    newValue: String?
-) : Action() {
+class ChangeVariableValuePortViewModelAction
+internal constructor(val Port: Port, newValue: String?) : Action() {
     var newValue: String?
     val oldValue: String
 

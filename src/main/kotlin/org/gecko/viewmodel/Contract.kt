@@ -1,13 +1,13 @@
 package org.gecko.viewmodel
 
-
 import javafx.beans.property.*
 import tornadofx.getValue
 import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [Contract] model element. A [Contract] is described by a name, a
- * pre- and a postcondition. Contains methods for managing the afferent data and updating the target-[Contract].
+ * pre- and a postcondition. Contains methods for managing the afferent data and updating the
+ * target-[Contract].
  */
 data class Contract(
     override val nameProperty: StringProperty = SimpleStringProperty(""),
@@ -21,7 +21,6 @@ data class Contract(
 
     override val children: Sequence<Element>
         get() = sequenceOf()
-
 
     override fun asJson() = withJsonObject {
         addProperty("name", name)

@@ -11,17 +11,18 @@ import org.gecko.view.views.ViewElementPane
  * A concrete representation of a state-creating-[Tool], utilized for creating a
  * [StateViewModel][org.gecko.viewmodel.State].
  */
-class StateCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolType.STATE_CREATOR, false) {
+class StateCreatorTool(actionManager: ActionManager) :
+    Tool(actionManager, ToolType.STATE_CREATOR, false) {
     override fun visitView(pane: ViewElementPane) {
         super.visitView(pane)
-        pane.draw().onMouseClicked = EventHandler<MouseEvent> { event: MouseEvent ->
-            if (event.button != MouseButton.PRIMARY) {
-                return@EventHandler
+        pane.draw().onMouseClicked =
+            EventHandler<MouseEvent> { event: MouseEvent ->
+                if (event.button != MouseButton.PRIMARY) {
+                    return@EventHandler
+                }
+                val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
+                val createStateAction: Action = actionManager.actionFactory.createState(position)
+                actionManager.run(createStateAction)
             }
-            val position = pane.screenToWorldCoordinates(event.screenX, event.screenY)
-            val createStateAction: Action =
-                actionManager.actionFactory.createState(position)
-            actionManager.run(createStateAction)
-        }
     }
 }

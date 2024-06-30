@@ -3,12 +3,11 @@ package org.gecko.view.views.viewelement.decorator
 import javafx.geometry.Point2D
 import javafx.scene.Group
 import javafx.scene.Node
-
 import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.view.views.viewelement.ViewElementVisitor
 
-
-open class ElementScalerViewElementDecorator(decoratorTarget: ViewElement<*>) : ViewElementDecorator(decoratorTarget) {
+open class ElementScalerViewElementDecorator(decoratorTarget: ViewElement<*>) :
+    ViewElementDecorator(decoratorTarget) {
     val decoratedNode: Group
     val scalers: MutableList<ElementScalerBlock> = mutableListOf()
 
@@ -34,15 +33,15 @@ open class ElementScalerViewElementDecorator(decoratorTarget: ViewElement<*>) : 
     init {
         decoratedNode = Group(decoratorTarget.drawElement())
         for (i in decoratorTarget.edgePoints.indices) {
-            val scalerBlock = ElementScalerBlock(i, this, SCALER_SIZE.toDouble(), SCALER_SIZE.toDouble())
-            //TODO disabled scalerBlock.setFill(Color.RED);
+            val scalerBlock =
+                ElementScalerBlock(i, this, SCALER_SIZE.toDouble(), SCALER_SIZE.toDouble())
+            // TODO disabled scalerBlock.setFill(Color.RED);
             scalerBlock.fill = null
             scalers.add(scalerBlock)
-            //decoratedNode.getChildren().add(scalerBlock);
+            // decoratedNode.getChildren().add(scalerBlock);
         }
         isSelected = false
     }
-
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

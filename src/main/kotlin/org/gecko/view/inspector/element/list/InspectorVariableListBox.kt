@@ -9,7 +9,8 @@ import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
 
 /**
- * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorVariableField].
+ * A concrete representation of an [AbstractInspectorList] encapsulating an
+ * [InspectorVariableField].
  */
 class InspectorVariableListBox(
     val actionManager: ActionManager,
@@ -23,10 +24,15 @@ class InspectorVariableListBox(
             this.onPortsListChanged(change)
         }
 
-        viewModel.ports.filter { it.visibility == visibility }.forEach { port: Port -> this.addPortItem(port) }
+        viewModel.ports
+            .filter { it.visibility == visibility }
+            .forEach { port: Port -> this.addPortItem(port) }
 
         viewModel.ports.forEach {
-            it.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
+            it.visibilityProperty.addListener {
+                observable: ObservableValue<out Visibility>,
+                oldValue: Visibility?,
+                newValue: Visibility? ->
                 this.onVisibilityChanged(observable)
             }
         }
@@ -55,7 +61,7 @@ class InspectorVariableListBox(
     }
 
     fun onVisibilityChanged(observable: ObservableValue<out Visibility>) {
-        //Since the visibility property of a port changed we should always find that port
+        // Since the visibility property of a port changed we should always find that port
         val port = viewModel.ports.first { it.visibilityProperty === observable }
         if (port.visibility == visibility) {
             addPortItem(port)

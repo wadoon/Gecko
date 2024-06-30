@@ -6,8 +6,8 @@ import org.gecko.view.views.EditorView
 import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of a [ShortcutHandler] that manages the shortcuts corresponding to the navigation of
- * and the selection of creator tools specific to a system editor view.
+ * A concrete representation of a [ShortcutHandler] that manages the shortcuts corresponding to the
+ * navigation of and the selection of creator tools specific to a system editor view.
  */
 class SystemEditorViewShortcutHandler(actionManager: ActionManager, editorView: EditorView) :
     ShortcutHandler(actionManager, editorView) {
@@ -25,10 +25,16 @@ class SystemEditorViewShortcutHandler(actionManager: ActionManager, editorView: 
     }
 
     fun addCreatorShortcuts() {
-        val creatorTools = listOf(ToolType.SYSTEM_CREATOR, ToolType.CONNECTION_CREATOR, ToolType.VARIABLE_BLOCK_CREATOR)
+        val creatorTools =
+            listOf(
+                ToolType.SYSTEM_CREATOR,
+                ToolType.CONNECTION_CREATOR,
+                ToolType.VARIABLE_BLOCK_CREATOR
+            )
         creatorTools.forEach { tool: ToolType ->
-            shortcuts[tool.keyCodeCombination] = { actionManager.run(actionFactory.createSelectToolAction(tool)) }
+            shortcuts[tool.keyCodeCombination] = {
+                actionManager.run(actionFactory.createSelectToolAction(tool))
+            }
         }
     }
 }
-

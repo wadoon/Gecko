@@ -5,15 +5,11 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.scene.Node
 import javafx.scene.layout.VBox
-
 import org.gecko.view.inspector.element.InspectorElement
 
-/**
- * An abstract representation of a [ListView] encapsulating a type of [InspectorElement].
- */
-
-abstract class AbstractInspectorList<T : InspectorElement<out Node>> protected constructor() : VBox(),
-    InspectorElement<VBox> {
+/** An abstract representation of a [ListView] encapsulating a type of [InspectorElement]. */
+abstract class AbstractInspectorList<T : InspectorElement<out Node>> protected constructor() :
+    VBox(), InspectorElement<VBox> {
     protected var items: ObservableList<T>
 
     init {
@@ -34,7 +30,8 @@ abstract class AbstractInspectorList<T : InspectorElement<out Node>> protected c
         }
     }
 
-    override val control get() = this
+    override val control
+        get() = this
 
     companion object {
         const val SPACING = 5.0

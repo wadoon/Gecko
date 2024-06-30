@@ -5,9 +5,7 @@ import javafx.collections.ObservableList
 import org.gecko.view.inspector.element.label.InspectorLabel
 import org.gecko.viewmodel.Region
 
-/**
- * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorLabel].
- */
+/** A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorLabel]. */
 class InspectorRegionList(RegionList: ObservableList<Region>) :
     AbstractInspectorList<InspectorLabel>() {
     init {
@@ -16,7 +14,9 @@ class InspectorRegionList(RegionList: ObservableList<Region>) :
             items.add(regionLabel)
         }
 
-        RegionList.addListener { c: ListChangeListener.Change<out Region> -> this.updateRegionList(c) }
+        RegionList.addListener { c: ListChangeListener.Change<out Region> ->
+            this.updateRegionList(c)
+        }
         minHeight = MIN_HEIGHT
     }
 

@@ -3,8 +3,7 @@ package org.gecko.actions
 import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.System
 
-class ChangeCodeSystemViewModelAction(val System: System, val newCode: String) :
-    Action() {
+class ChangeCodeSystemViewModelAction(val System: System, val newCode: String) : Action() {
     val oldCode = System.code
 
     @Throws(GeckoException::class)

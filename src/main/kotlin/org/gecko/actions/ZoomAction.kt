@@ -5,14 +5,12 @@ import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * A concrete representation of an [Action] that zooms in or out in the given [EditorViewModel] from a given
- * {link Point2D pivot} by a given zoom factor.
+ * A concrete representation of an [Action] that zooms in or out in the given [EditorViewModel] from
+ * a given {link Point2D pivot} by a given zoom factor.
  */
-class ZoomAction internal constructor(
-    val editorViewModel: EditorViewModel,
-    val pivot: Point2D,
-    val factor: Double
-) : Action() {
+class ZoomAction
+internal constructor(val editorViewModel: EditorViewModel, val pivot: Point2D, val factor: Double) :
+    Action() {
     @Throws(GeckoException::class)
     override fun run(): Boolean {
         editorViewModel.zoom(factor, pivot)

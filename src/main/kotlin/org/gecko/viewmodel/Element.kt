@@ -5,23 +5,17 @@ import javafx.collections.ObservableListBase
 import org.gecko.io.Mappable
 import org.gecko.lint.Problem
 import tornadofx.getValue
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.memberProperties
-
 
 /**
- * Represents an abstraction of a view model element of a Gecko project. An [Element] has an id
- * and a target-[Element], the data of which it can update.
+ * Represents an abstraction of a view model element of a Gecko project. An [Element] has an id and
+ * a target-[Element], the data of which it can update.
  */
 abstract class Element : Mappable {
     val issuesProperty = listProperty<Problem>()
     val issues: ObservableList<Problem> by issuesProperty
     abstract val children: Sequence<Element>
-
-    fun allIssues(): Sequence<Problem> =
-        issues.asSequence() + children.flatMap { it.allIssues() }
+    fun allIssues(): Sequence<Problem> = issues.asSequence() + children.flatMap { it.allIssues() }
 }
-
 
 class ConcatList(vararg seqs: ObservableList<Problem>) : ObservableListBase<Problem>() {
     private val lists = seqs.toList()
@@ -31,7 +25,7 @@ class ConcatList(vararg seqs: ObservableList<Problem>) : ObservableListBase<Prob
     }
 
     private fun sourceChanged() {
-        //fireChange(NonIterableChange.GenericAddRemoveChange())
+        // fireChange(NonIterableChange.GenericAddRemoveChange())
     }
 
     override fun get(index: Int): Problem {

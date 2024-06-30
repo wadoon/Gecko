@@ -1,6 +1,7 @@
 package org.gecko.viewmodel
 
-
+import java.lang.System
+import java.util.*
 import javafx.beans.property.Property
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
@@ -17,13 +18,11 @@ import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
-import java.lang.System
-import java.util.*
 
 /**
- * Represents an abstraction of a [Region] model element. A [Region] is described by a
- * [Color], a set of [State]s, a [Contract] and an invariant. Contains methods for
- * managing the afferent data and updating the target-[Region].
+ * Represents an abstraction of a [Region] model element. A [Region] is described by a [Color], a
+ * set of [State]s, a [Contract] and an invariant. Contains methods for managing the afferent data
+ * and updating the target-[Region].
  */
 data class Region(val contract: Contract) : BlockElement(), Inspectable {
     val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
@@ -35,11 +34,12 @@ data class Region(val contract: Contract) : BlockElement(), Inspectable {
     val statesProperty = listProperty<State>()
     var states: ObservableList<State> by statesProperty
 
-    override fun asJson() = super.asJson().apply {
-        add("color", color.asJson())
-        addProperty("invariant", invariant.value)
-        add("contract", contract.asJson())
-    }
+    override fun asJson() =
+        super.asJson().apply {
+            add("color", color.asJson())
+            addProperty("invariant", invariant.value)
+            add("contract", contract.asJson())
+        }
 
     init {
         val random = Random(System.currentTimeMillis())
@@ -56,8 +56,10 @@ data class Region(val contract: Contract) : BlockElement(), Inspectable {
         val newRegionViewElement = RegionViewElement(this)
         val contextMenuBuilder: ViewContextMenuBuilder =
             RegionViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newRegionViewElement, contextMenuBuilder)
-        return BlockElementScalerViewElementDecorator(SelectableViewElementDecorator(newRegionViewElement))
+        // setContextMenu(newRegionViewElement, contextMenuBuilder)
+        return BlockElementScalerViewElementDecorator(
+            SelectableViewElementDecorator(newRegionViewElement)
+        )
     }
 
     /**
@@ -82,4 +84,3 @@ data class Region(val contract: Contract) : BlockElement(), Inspectable {
     override fun inspector(actionManager: ActionManager) =
         RegionInspectorBuilder(actionManager, this)
 }
-

@@ -31,35 +31,44 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         val zoomInButton = createStyledButton()
         zoomInButton.graphic = FontIcon.of(MaterialDesignM.MAGNIFY_PLUS, 24)
         zoomInButton.styleClass.add(ZOOM_IN_STYLE_CLASS)
-        zoomInButton.onAction = EventHandler<ActionEvent> { event: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createZoomCenterAction(EditorViewModel.defaultZoomStep)
-            )
-        }
-        val zoomInTooltip = "%s (%s)".format(
-            ResourceHandler.zoom_in,
-            Shortcuts.ZOOM_IN.get().displayText
-        )
+        zoomInButton.onAction =
+            EventHandler<ActionEvent> { event: ActionEvent? ->
+                actionManager.run(
+                    actionManager.actionFactory.createZoomCenterAction(
+                        EditorViewModel.defaultZoomStep
+                    )
+                )
+            }
+        val zoomInTooltip =
+            "%s (%s)".format(ResourceHandler.zoom_in, Shortcuts.ZOOM_IN.get().displayText)
         zoomInButton.tooltip = Tooltip(zoomInTooltip)
 
         val zoomLabel = Label()
-        zoomLabel.textProperty().bind(Bindings.createStringBinding({
-            val zoom = editorViewModel.zoomScale
-            String.format("%.0f%%", zoom * 100)
-        }, editorViewModel.zoomScaleProperty))
+        zoomLabel
+            .textProperty()
+            .bind(
+                Bindings.createStringBinding(
+                    {
+                        val zoom = editorViewModel.zoomScale
+                        String.format("%.0f%%", zoom * 100)
+                    },
+                    editorViewModel.zoomScaleProperty
+                )
+            )
 
         val zoomOutButton = createStyledButton()
         zoomOutButton.graphic = FontIcon.of(MaterialDesignM.MAGNIFY_MINUS, 24)
         zoomOutButton.styleClass.add(ZOOM_OUT_STYLE_CLASS)
-        zoomOutButton.onAction = EventHandler<ActionEvent> { event: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createZoomCenterAction(1 / EditorViewModel.defaultZoomStep)
-            )
-        }
-        val zoomOutTooltip = "%s (%s)".format(
-            ResourceHandler.zoom_out,
-            Shortcuts.ZOOM_OUT.get().displayText
-        )
+        zoomOutButton.onAction =
+            EventHandler<ActionEvent> { event: ActionEvent? ->
+                actionManager.run(
+                    actionManager.actionFactory.createZoomCenterAction(
+                        1 / EditorViewModel.defaultZoomStep
+                    )
+                )
+            }
+        val zoomOutTooltip =
+            "%s (%s)".format(ResourceHandler.zoom_out, Shortcuts.ZOOM_OUT.get().displayText)
         zoomOutButton.tooltip = Tooltip(zoomOutTooltip)
 
         zoomButtons.children.addAll(zoomInButton, zoomLabel, zoomOutButton)
@@ -68,7 +77,8 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
 
     fun buildCurrentViewLabel(): Node {
         val currentViewLabel = Label()
-        currentViewLabel.textProperty()
+        currentViewLabel
+            .textProperty()
             .bind(
                 Bindings.createStringBinding(
                     { editorViewModel.currentSystem.name },
@@ -99,33 +109,45 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         val searchTextField = TextField()
         searchTextField.promptText = ResourceHandler.search
 
-        searchBar.items.addAll(closeButton, searchTextField, backwardButton, forwardButton, matchesLabel)
+        searchBar.items.addAll(
+            closeButton,
+            searchTextField,
+            backwardButton,
+            forwardButton,
+            matchesLabel
+        )
 
-        searchTextField.onAction = EventHandler<ActionEvent> { e: ActionEvent? ->
-            editorViewModel.selectionManager.deselectAll()
-            val oldSearchMatches: List<PositionableElement> = ArrayList(matches)
-            oldSearchMatches.forEach { o: PositionableElement -> matches.remove(o) }
-            matches.addAll(editorViewModel.getElementsByName(searchTextField.text))
-            if (!matches.isEmpty()) {
-                actionManager.run(
-                    actionManager.actionFactory.createFocusPositionableViewModelElementAction(matches.first())
-                )
-                matchesLabel.text = String.format(ResourceHandler.matches_format_string, 1, matches.size)
-                backwardButton.isDisable = true
-                forwardButton.isDisable = matches.size == 1
-            } else {
-                matchesLabel.text = String.format(ResourceHandler.matches_format_string, 0, 0)
-                backwardButton.isDisable = true
-                forwardButton.isDisable = true
-            }
-        }
-
-        searchBar.focusedProperty()
-            .addListener { observable: ObservableValue<out Boolean>?, oldValue: Boolean?, newValue: Boolean ->
-                if (newValue) {
-                    searchTextField.requestFocus()
+        searchTextField.onAction =
+            EventHandler<ActionEvent> { e: ActionEvent? ->
+                editorViewModel.selectionManager.deselectAll()
+                val oldSearchMatches: List<PositionableElement> = ArrayList(matches)
+                oldSearchMatches.forEach { o: PositionableElement -> matches.remove(o) }
+                matches.addAll(editorViewModel.getElementsByName(searchTextField.text))
+                if (!matches.isEmpty()) {
+                    actionManager.run(
+                        actionManager.actionFactory.createFocusPositionableViewModelElementAction(
+                            matches.first()
+                        )
+                    )
+                    matchesLabel.text =
+                        String.format(ResourceHandler.matches_format_string, 1, matches.size)
+                    backwardButton.isDisable = true
+                    forwardButton.isDisable = matches.size == 1
+                } else {
+                    matchesLabel.text = String.format(ResourceHandler.matches_format_string, 0, 0)
+                    backwardButton.isDisable = true
+                    forwardButton.isDisable = true
                 }
             }
+
+        searchBar.focusedProperty().addListener {
+            observable: ObservableValue<out Boolean>?,
+            oldValue: Boolean?,
+            newValue: Boolean ->
+            if (newValue) {
+                searchTextField.requestFocus()
+            }
+        }
 
         forwardButton.onAction = EventHandler { e: ActionEvent? ->
             if (!matches.isEmpty()) {
@@ -133,11 +155,12 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
             }
         }
 
-        closeButton.onAction = EventHandler<ActionEvent> { e: ActionEvent? ->
-            searchTextField.text = ""
-            matchesLabel.text = ""
-            editorView.activateSearchWindow(false)
-        }
+        closeButton.onAction =
+            EventHandler<ActionEvent> { e: ActionEvent? ->
+                searchTextField.text = ""
+                matchesLabel.text = ""
+                editorView.activateSearchWindow(false)
+            }
 
         return searchBar
     }
@@ -151,14 +174,13 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
     ) {
         var currentPosition = matches.indexOf(editorViewModel.focusedElement)
         actionManager.run(
-            actionManager.actionFactory
-                .createFocusPositionableViewModelElementAction(matches[currentPosition + direction])
+            actionManager.actionFactory.createFocusPositionableViewModelElementAction(
+                matches[currentPosition + direction]
+            )
         )
         currentPosition += direction
-        matchesLabel.text = String.format(
-            ResourceHandler.matches_format_string, currentPosition + 1,
-            matches.size
-        )
+        matchesLabel.text =
+            String.format(ResourceHandler.matches_format_string, currentPosition + 1, matches.size)
         backwardButton.isDisable = currentPosition == 0
         forwardButton.isDisable = currentPosition == matches.size - 1
     }
@@ -170,32 +192,38 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
         val switchToParentSystemStyleClass = "floating-parent-system-switch-button"
 
         val switchViewButton = createStyledButton()
-        //switchViewButton.getStyleClass()
-        //    .add(editorViewModel.isAutomatonEditor() ? switchToSystemStyleClass : switchToAutomatonStyleClass);
+        // switchViewButton.getStyleClass()
+        //    .add(editorViewModel.isAutomatonEditor() ? switchToSystemStyleClass :
+        // switchToAutomatonStyleClass);
         switchViewButton.onAction = EventHandler { event: ActionEvent? ->
             val automatonEditor = editorViewModel.isAutomatonEditor
             actionManager.run(
-                actionManager.actionFactory
-                    .createViewSwitchAction(editorViewModel.currentSystem, !automatonEditor)
+                actionManager.actionFactory.createViewSwitchAction(
+                    editorViewModel.currentSystem,
+                    !automatonEditor
+                )
             )
             /*switchViewButton.getStyleClass()
                 .remove(automatonEditor ? switchToAutomatonStyleClass : switchToSystemStyleClass);
             switchViewButton.getStyleClass()
                 .add(automatonEditor ? switchToSystemStyleClass : switchToAutomatonStyleClass);*/
-            switchViewButton.graphic = FontIcon.of(
-                if (automatonEditor) MaterialDesignR.RECTANGLE_OUTLINE else MaterialDesignC.CIRCLE_OUTLINE, 24
-            )
+            switchViewButton.graphic =
+                FontIcon.of(
+                    if (automatonEditor) MaterialDesignR.RECTANGLE_OUTLINE
+                    else MaterialDesignC.CIRCLE_OUTLINE,
+                    24
+                )
         }
 
-        switchViewButton.graphic = FontIcon.of(
-            if (editorViewModel.isAutomatonEditor) MaterialDesignR.RECTANGLE_OUTLINE else MaterialDesignC.CIRCLE_OUTLINE,
-            24
-        )
+        switchViewButton.graphic =
+            FontIcon.of(
+                if (editorViewModel.isAutomatonEditor) MaterialDesignR.RECTANGLE_OUTLINE
+                else MaterialDesignC.CIRCLE_OUTLINE,
+                24
+            )
 
-        val switchViewTooltip = "%s (%s)".format(
-            ResourceHandler.switch_view,
-            Shortcuts.SWITCH_EDITOR.get().displayText
-        )
+        val switchViewTooltip =
+            "%s (%s)".format(ResourceHandler.switch_view, Shortcuts.SWITCH_EDITOR.get().displayText)
         switchViewButton.tooltip = Tooltip(switchViewTooltip)
 
         viewSwitchButtons.children.add(switchViewButton)
@@ -204,23 +232,25 @@ class FloatingUIBuilder(val actionManager: ActionManager, val editorViewModel: E
             val parentSystemSwitchButton = createStyledButton()
             parentSystemSwitchButton.graphic = FontIcon.of(MaterialDesignA.ARROW_TOP_LEFT, 24)
 
-            //parentSystemSwitchButton.getStyleClass().add(switchToParentSystemStyleClass);
+            // parentSystemSwitchButton.getStyleClass().add(switchToParentSystemStyleClass);
             parentSystemSwitchButton.onAction = EventHandler { event: ActionEvent? ->
                 actionManager.run(
-                    actionManager.actionFactory
-                        .createViewSwitchAction(editorViewModel.parentSystem, editorViewModel.isAutomatonEditor)
+                    actionManager.actionFactory.createViewSwitchAction(
+                        editorViewModel.parentSystem,
+                        editorViewModel.isAutomatonEditor
+                    )
                 )
             }
             val parentSystemSwitchTooltip =
-                "%s (%s)".format(
-                    ResourceHandler.parent_system,
-                    Shortcuts.OPEN_PARENT_SYSTEM_EDITOR.get().displayText
-                )
+                "%s (%s)"
+                    .format(
+                        ResourceHandler.parent_system,
+                        Shortcuts.OPEN_PARENT_SYSTEM_EDITOR.get().displayText
+                    )
             parentSystemSwitchButton.tooltip = Tooltip(parentSystemSwitchTooltip)
 
             viewSwitchButtons.children.add(parentSystemSwitchButton)
         }
-
 
         return viewSwitchButtons
     }

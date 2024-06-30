@@ -13,10 +13,9 @@ import org.gecko.view.views.viewelement.VariableBlockViewElement
 import org.gecko.viewmodel.Port
 
 /**
- * A concrete representation of a system-connection-creating-[Tool], utilized for connecting a source- and a
- * destination-[Port] through a
- * [SystemConnectionViewModel][org.gecko.viewmodel.SystemConnection]. Holds the
- * source-[Port].
+ * A concrete representation of a system-connection-creating-[Tool], utilized for connecting a
+ * source- and a destination-[Port] through a
+ * [SystemConnectionViewModel][org.gecko.viewmodel.SystemConnection]. Holds the source-[Port].
  */
 class SystemConnectionCreatorTool(actionManager: ActionManager) :
     Tool(actionManager, ToolType.CONNECTION_CREATOR, false) {
@@ -33,34 +32,39 @@ class SystemConnectionCreatorTool(actionManager: ActionManager) :
 
     override fun visit(portViewElement: PortViewElement) {
         super.visit(portViewElement)
-        portViewElement.onMouseClicked = EventHandler<MouseEvent> { event: MouseEvent ->
-            if (event.button != MouseButton.PRIMARY) {
-                return@EventHandler
+        portViewElement.onMouseClicked =
+            EventHandler<MouseEvent> { event: MouseEvent ->
+                if (event.button != MouseButton.PRIMARY) {
+                    return@EventHandler
+                }
+                setPortViewModel(portViewElement.viewModel)
             }
-            setPortViewModel(portViewElement.viewModel)
-        }
     }
 
     override fun visit(variableBlockViewElement: VariableBlockViewElement) {
         super.visit(variableBlockViewElement)
-        variableBlockViewElement.onMouseClicked = EventHandler<MouseEvent> { event: MouseEvent ->
-            if (event.button != MouseButton.PRIMARY) {
-                return@EventHandler
+        variableBlockViewElement.onMouseClicked =
+            EventHandler<MouseEvent> { event: MouseEvent ->
+                if (event.button != MouseButton.PRIMARY) {
+                    return@EventHandler
+                }
+                setPortViewModel(variableBlockViewElement.target)
             }
-            setPortViewModel(variableBlockViewElement.target)
-        }
     }
 
     override fun visit(systemViewElement: SystemViewElement) {
         super.visit(systemViewElement)
-        //Pass events to the port view elements
+        // Pass events to the port view elements
         systemViewElement.onMouseClicked = null
     }
 
     fun setPortViewModel(viewModel: Port?) {
         if (previousPort != null) {
-            val createAction: Action = actionManager.actionFactory
-                .createCreateSystemConnection(previousPort!!, viewModel!!)
+            val createAction: Action =
+                actionManager.actionFactory.createCreateSystemConnection(
+                    previousPort!!,
+                    viewModel!!
+                )
             actionManager.run(createAction)
         }
         previousPort = viewModel

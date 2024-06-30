@@ -14,11 +14,11 @@ import org.gecko.viewmodel.Port
 
 /**
  * Represents a type of [VBox] implementing the [InspectorElement] interface. Holds a reference to a
- * [Port] and contains an [InspectorRenameField], an [InspectorRemoveVariableButton] and an
- * {link InspectorTypeField}.
+ * [Port] and contains an [InspectorRenameField], an [InspectorRemoveVariableButton] and an {link
+ * InspectorTypeField}.
  */
-class InspectorVariableField(actionManager: ActionManager, val viewModel: Port) : VBox(),
-    InspectorElement<VBox> {
+class InspectorVariableField(actionManager: ActionManager, val viewModel: Port) :
+    VBox(), InspectorElement<VBox> {
 
     init {
         val nameAndDeleteContainer = HBox()
@@ -26,13 +26,14 @@ class InspectorVariableField(actionManager: ActionManager, val viewModel: Port) 
         HBox.setHgrow(spacer, Priority.ALWAYS)
         val typeContainer = HBox()
 
-
         val nameLabel = InspectorLabel(ResourceHandler.name)
         val variableNameField = InspectorRenameField(actionManager, viewModel)
         val deleteButton = InspectorRemoveVariableButton(actionManager, viewModel)
         nameAndDeleteContainer.children.addAll(
-            nameLabel.control, variableNameField.control,
-            spacer, deleteButton.control
+            nameLabel.control,
+            variableNameField.control,
+            spacer,
+            deleteButton.control
         )
 
         val typeLabel = InspectorLabel(ResourceHandler.type)
@@ -44,5 +45,4 @@ class InspectorVariableField(actionManager: ActionManager, val viewModel: Port) 
 
     override val control
         get() = this
-
 }

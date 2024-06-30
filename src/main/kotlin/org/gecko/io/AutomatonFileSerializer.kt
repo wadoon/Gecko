@@ -1,14 +1,15 @@
 package org.gecko.io
 
-import org.gecko.exceptions.ModelException
-import org.gecko.viewmodel.*
 import java.io.PrintWriter
 import java.io.Writer
 import java.util.*
+import org.gecko.exceptions.ModelException
+import org.gecko.viewmodel.*
 
 /**
- * The AutomatonFileSerializer is used to export a project to a sys file. When exporting, it transforms features unique
- * to Gecko, such as regions, kinds and priorities, to be compatible with the sys file format.
+ * The AutomatonFileSerializer is used to export a project to a sys file. When exporting, it
+ * transforms features unique to Gecko, such as regions, kinds and priorities, to be compatible with
+ * the sys file format.
  */
 class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     lateinit var out: PrintWriter
@@ -35,12 +36,10 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
         serializeSystems(model)
     }
 
-
     private fun serializeAutomata(model: GModel) =
         model.allSystems.forEach { serializeAutomaton(it) }
 
-    private fun serializeSystems(model: GModel) =
-        model.allSystems.forEach { serializeSystem(it) }
+    private fun serializeSystems(model: GModel) = model.allSystems.forEach { serializeSystem(it) }
 
     private fun serializeAutomaton(system: System) {
         val automaton = system.automaton
@@ -60,13 +59,14 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     }
 
     private fun serializeStateContracts(state: State, automaton: Automaton) {
-        //Edges are used so much here because contracts don't have priorities or kinds and only states can be in regions
+        // Edges are used so much here because contracts don't have priorities or kinds and only
+        // states can be in regions
         val relevantRegions = automaton.getRegionsWithState(state)
         val edges = automaton.getOutgoingEdges(state).filter { it.contract != null }
         if (edges.isEmpty()) {
             return
         }
-        //Creating new contracts to not alter the model
+        // Creating new contracts to not alter the model
         val newContracts: MutableMap<Edge, Contract> = HashMap()
         for (edge in edges) {
             val newContract = applyRegionsToContract(relevantRegions, edge.contract!!)
@@ -79,33 +79,37 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
             newContracts[edge] = newContract
         }
 
-        //Building the conditions for the priorities
+        // Building the conditions for the priorities
         val groupedEdges = edges.groupBy { it!!.priority }.values.reversed()
         val preConditionsByPrio: MutableList<Condition> = arrayListOf()
         for (edgeGroup in groupedEdges) {
-            //OrElseThrow because validity needs to be ensured by model
-            val newPre = edgeGroup
-                .map { key -> newContracts[key]!! }
-                .map { obj -> obj.preCondition }
-                .reduce { obj, other -> Condition("$obj & $other") }
+            // OrElseThrow because validity needs to be ensured by model
+            val newPre =
+                edgeGroup
+                    .map { key -> newContracts[key]!! }
+                    .map { obj -> obj.preCondition }
+                    .reduce { obj, other -> Condition("$obj & $other") }
             preConditionsByPrio.add(newPre)
         }
-        //and the specific condition for a prio with all conditions with lower prio
+        // and the specific condition for a prio with all conditions with lower prio
         val allLowerPrioPreConditions = arrayListOf<Condition>()
         for (i in 0 until preConditionsByPrio.size - 1) {
             allLowerPrioPreConditions.add(
-                allLowerPrioPreConditions.reduce { obj, other -> obj.and(other) })
+                allLowerPrioPreConditions.reduce { obj, other -> obj.and(other) }
+            )
         }
 
-        //applying priorites
+        // applying priorites
         for ((prioIndex, edgeGroup) in groupedEdges.withIndex()) {
             for (edge in edgeGroup) {
                 if (prioIndex == 0) {
-                    continue  //Highest prio doesn't need to be altered
+                    continue // Highest prio doesn't need to be altered
                 }
                 val contractWithPrio = newContracts[edge]!!
                 contractWithPrio.preCondition.value =
-                    contractWithPrio.preCondition.and(allLowerPrioPreConditions[prioIndex - 1].not()).value
+                    contractWithPrio.preCondition
+                        .and(allLowerPrioPreConditions[prioIndex - 1].not())
+                        .value
                 newContracts[edge] = contractWithPrio
             }
         }
@@ -119,7 +123,6 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
                 contract.preCondition.value = contract.preCondition.not().value
                 contract.postCondition.value = Condition("true").value
             }
-
             Kind.FAIL -> contract.postCondition.value = contract.postCondition.not().value
             Kind.HIT -> {}
         }
@@ -172,12 +175,22 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
 
     private fun serializeContract(contract: Contract) {
         out.write(INDENT)
-        out.format(SERIALIZED_CONTRACT, contract.name, contract.preCondition, contract.postCondition)
+        out.format(
+            SERIALIZED_CONTRACT,
+            contract.name,
+            contract.preCondition,
+            contract.postCondition
+        )
     }
 
     private fun serializeTransition(edge: Edge) {
         out.write(INDENT)
-        out.format(SERIALIZED_TRANSITION, edge.source.name, edge.destination.name, getContractName(edge))
+        out.format(
+            SERIALIZED_TRANSITION,
+            edge.source.name,
+            edge.destination.name,
+            getContractName(edge)
+        )
     }
 
     private fun serializeSystem(system: System) {
@@ -236,11 +249,13 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
 
     private fun serializeVariable(variable: Port): String {
         var output = ""
-        output += INDENT + when (variable.visibility) {
-            Visibility.INPUT -> SERIALIZED_INPUT
-            Visibility.OUTPUT -> SERIALIZED_OUTPUT
-            Visibility.STATE -> SERIALIZED_STATE_VISIBILITY
-        }
+        output +=
+            INDENT +
+                when (variable.visibility) {
+                    Visibility.INPUT -> SERIALIZED_INPUT
+                    Visibility.OUTPUT -> SERIALIZED_OUTPUT
+                    Visibility.STATE -> SERIALIZED_STATE_VISIBILITY
+                }
         output += VARIABLE_ATTRIBUTES.format(variable.name, variable.type)
         if (variable.value != null) {
             output += " := " + variable.value
@@ -276,4 +291,3 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
         const val SERIALIZED_STATE_VISIBILITY = "state"
     }
 }
-

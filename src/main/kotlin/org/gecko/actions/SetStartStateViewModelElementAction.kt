@@ -8,7 +8,9 @@ import org.gecko.viewmodel.State
  * [SystemViewModel]. Additionally, holds the previous start-[State].
  */
 data class SetStartStateViewModelElementAction(
-    val gModel: GModel, val state: State, val value: Boolean
+    val gModel: GModel,
+    val state: State,
+    val value: Boolean
 ) : Action() {
     override fun run(): Boolean {
         state.isStartState = value

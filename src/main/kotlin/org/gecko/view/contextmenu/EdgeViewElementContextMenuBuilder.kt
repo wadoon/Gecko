@@ -13,8 +13,8 @@ import org.gecko.viewmodel.Kind
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to an
- * [EdgeViewElement][org.gecko.view.views.viewelement.EdgeViewElement]. Contains [MenuItem]s that run
- * operations like changing the edge's kind or deleting the edge.
+ * [EdgeViewElement][org.gecko.view.views.viewelement.EdgeViewElement]. Contains [MenuItem]s that
+ * run operations like changing the edge's kind or deleting the edge.
  */
 class EdgeViewElementContextMenuBuilder(
     actionManager: ActionManager,
@@ -41,23 +41,19 @@ class EdgeViewElementContextMenuBuilder(
 
         val deleteMenuItem = MenuItem(ResourceHandler.delete)
         deleteMenuItem.onAction = EventHandler {
-            actionManager.run(
-                actionManager.actionFactory.createDeleteAction(Edge)
-            )
+            actionManager.run(actionManager.actionFactory.createDeleteAction(Edge))
         }
 
-        edgeContextMenu!!.items.addAll(dataTransferToEdgeEditingSeparator, changeKindMenu, deleteMenuItem)
+        edgeContextMenu!!
+            .items
+            .addAll(dataTransferToEdgeEditingSeparator, changeKindMenu, deleteMenuItem)
         return edgeContextMenu
     }
 
     fun createKindMenuItem(kind: Kind): MenuItem {
         val kindMenuItem = MenuItem(kind.name)
         kindMenuItem.onAction = EventHandler {
-            actionManager.run(
-                actionManager.actionFactory.createChangeKindAction(
-                    Edge, kind
-                )
-            )
+            actionManager.run(actionManager.actionFactory.createChangeKindAction(Edge, kind))
         }
         return kindMenuItem
     }

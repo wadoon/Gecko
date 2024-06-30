@@ -6,8 +6,9 @@ import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.viewmodel.PositionableElement
 
 /**
- * An abstract representation of a [ViewElement] implementation following the decorator pattern and targeting a
- * decorated [ViewElement], which can be selected and encapsulates a [PositionableElement].
+ * An abstract representation of a [ViewElement] implementation following the decorator pattern and
+ * targeting a decorated [ViewElement], which can be selected and encapsulates a
+ * [PositionableElement].
  */
 abstract class ViewElementDecorator(val decoratorTarget: ViewElement<*>) :
     ViewElement<PositionableElement?> {

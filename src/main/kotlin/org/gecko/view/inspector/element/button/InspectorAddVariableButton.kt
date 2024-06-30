@@ -22,7 +22,9 @@ class InspectorAddVariableButton(
         tooltip = Tooltip(ResourceHandler.inspector_add_variable)
         prefWidth = WIDTH.toDouble()
         onAction = EventHandler { _ ->
-            actionManager.run(actionManager.actionFactory.createCreatePortViewModelElementAction(System))
+            actionManager.run(
+                actionManager.actionFactory.createCreatePortViewModelElementAction(System)
+            )
             // Newly added port is the last in the list.
             val addedPort = System.portsProperty.last()
             // This is not an action because it should not be undoable.

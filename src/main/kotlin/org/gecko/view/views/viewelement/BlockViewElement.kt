@@ -1,14 +1,13 @@
 package org.gecko.view.views.viewelement
 
-
 import javafx.geometry.Point2D
 import javafx.scene.layout.Pane
 import org.gecko.viewmodel.PositionableElement
 import org.gecko.viewmodel.listProperty
 
 /**
- * An abstract representation of a [Pane] view element, that is an element with a rectangular shape in a Gecko
- * project. Contains a list of [edge point][Point2D]s.
+ * An abstract representation of a [Pane] view element, that is an element with a rectangular shape
+ * in a Gecko project. Contains a list of [edge point][Point2D]s.
  */
 abstract class BlockViewElement(positionableElement: PositionableElement) : Pane() {
     val edgePoints = listProperty<Point2D>()

@@ -2,7 +2,6 @@ package org.gecko.actions
 
 import javafx.geometry.Point2D
 import org.gecko.exceptions.GeckoException
-
 import org.gecko.view.views.viewelement.decorator.ElementScalerBlock
 import org.gecko.viewmodel.*
 
@@ -66,20 +65,23 @@ class MoveSystemConnectionViewModelElementAction : Action {
             if (Port == sourcePortViewModel) {
                 return false
             }
-            wasVariableBlock = gModel.getSystemViewModelWithPort(sourcePortViewModel) == parentSystem
+            wasVariableBlock =
+                gModel.getSystemViewModelWithPort(sourcePortViewModel) == parentSystem
             sourcePortViewModel = Port!!
         } else {
             if (Port == destinationPortViewModel) {
                 return false
             }
-            wasVariableBlock = gModel.getSystemViewModelWithPort(destinationPortViewModel) == parentSystem
+            wasVariableBlock =
+                gModel.getSystemViewModelWithPort(destinationPortViewModel) == parentSystem
             destinationPortViewModel = Port!!
         }
 
         val sourceSystem = gModel.getSystemViewModelWithPort(sourcePortViewModel)
         val destinationSystem = gModel.getSystemViewModelWithPort(destinationPortViewModel)
 
-        if (!isConnectingAllowed(
+        if (
+            !isConnectingAllowed(
                 sourcePortViewModel,
                 destinationPortViewModel,
                 sourceSystem,
@@ -91,26 +93,27 @@ class MoveSystemConnectionViewModelElementAction : Action {
             return false
         }
 
-        val newPositionProperty = if (isVariableBlock) {
-            calculateEndPortPosition(Port!!.position, Port!!.size, Port!!.visibility, false)
+        val newPositionProperty =
+            if (isVariableBlock) {
+                calculateEndPortPosition(Port!!.position, Port!!.size, Port!!.visibility, false)
 
-            /*portViewModel.getPositionProperty().addListener((observable, oldValue, newValue) ->
-                    newPositionProperty.setValue(
-                            calculateEndPortPosition(portViewModel.getPosition(), portViewModel.getSize(),
-                                    portViewModel.getVisibility(), false)));*/
-        } else {
-            calculateEndPortPosition(
-                Port!!.systemPortPositionProperty.value,
-                Port!!.systemPortSizeProperty.value,
-                Port!!.visibility,
-                true
-            )
+                /*portViewModel.getPositionProperty().addListener((observable, oldValue, newValue) ->
+                newPositionProperty.setValue(
+                        calculateEndPortPosition(portViewModel.getPosition(), portViewModel.getSize(),
+                                portViewModel.getVisibility(), false)));*/
+            } else {
+                calculateEndPortPosition(
+                    Port!!.systemPortPositionProperty.value,
+                    Port!!.systemPortSizeProperty.value,
+                    Port!!.visibility,
+                    true
+                )
 
-            /*            portViewModel.getSystemPortPositionProperty()
-                    .addListener((observable, oldValue, newValue) -> newPositionProperty.setValue(
-                            calculateEndPortPosition(portViewModel.getSystemPortPositionProperty().getValue(),
-                                    portViewModel.getSystemPortSizeProperty().getValue(), portViewModel.getVisibility(), true)));*/
-        }
+                /*            portViewModel.getSystemPortPositionProperty()
+                .addListener((observable, oldValue, newValue) -> newPositionProperty.setValue(
+                        calculateEndPortPosition(portViewModel.getSystemPortPositionProperty().getValue(),
+                                portViewModel.getSystemPortSizeProperty().getValue(), portViewModel.getVisibility(), true)));*/
+            }
 
         systemConnectionViewModel.edgePoints[elementScalerBlock.index] = newPositionProperty
 
@@ -146,7 +149,12 @@ class MoveSystemConnectionViewModelElementAction : Action {
     fun getPortViewModelAt(point: Point2D): Port? {
         // Check for variable blocks in the current system
         for (variable in editorViewModel.currentSystem.ports) {
-            if (point.x > variable.position.x && point.x < variable.position.x + variable.size.x && point.y > variable.position.y && point.y < variable.position.y + variable.size.y) {
+            if (
+                point.x > variable.position.x &&
+                    point.x < variable.position.x + variable.size.x &&
+                    point.y > variable.position.y &&
+                    point.y < variable.position.y + variable.size.y
+            ) {
                 isVariableBlock = true
                 return variable
             }
@@ -155,7 +163,16 @@ class MoveSystemConnectionViewModelElementAction : Action {
         // Check for ports in the children systems
         for (system in editorViewModel.currentSystem.subSystems) {
             for (variable in system.ports) {
-                if (point.x > variable.systemPortPositionProperty.value.x && point.x < variable.systemPortPositionProperty.value.x + variable.systemPortSizeProperty.value.x && point.y > variable.systemPortPositionProperty.value.y && point.y < variable.systemPortPositionProperty.value.y + variable.systemPortSizeProperty.value.y) {
+                if (
+                    point.x > variable.systemPortPositionProperty.value.x &&
+                        point.x <
+                            variable.systemPortPositionProperty.value.x +
+                                variable.systemPortSizeProperty.value.x &&
+                        point.y > variable.systemPortPositionProperty.value.y &&
+                        point.y <
+                            variable.systemPortPositionProperty.value.y +
+                                variable.systemPortSizeProperty.value.y
+                ) {
                     isVariableBlock = false
                     return variable
                 }
@@ -171,7 +188,8 @@ class MoveSystemConnectionViewModelElementAction : Action {
         isPort: Boolean
     ): Point2D {
         val sign = if (isPort) 1 else -1
-        return position.add(size.multiply(0.5))
+        return position
+            .add(size.multiply(0.5))
             .subtract((if (visibility == Visibility.INPUT) 1 else -1) * sign * size.x / 2, 0.0)
     }
 

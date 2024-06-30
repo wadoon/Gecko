@@ -7,18 +7,14 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.Port
 
-/**
- * Represents a type of [AbstractInspectorButton] used for removing a [Port].
- */
+/** Represents a type of [AbstractInspectorButton] used for removing a [Port]. */
 class InspectorRemoveVariableButton(actionManager: ActionManager, Port: Port?) :
     AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)
         tooltip = Tooltip(ResourceHandler.inspector_remove_variable)
         onAction = EventHandler { _: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createDeleteAction(Port!!)
-            )
+            actionManager.run(actionManager.actionFactory.createDeleteAction(Port!!))
         }
     }
 

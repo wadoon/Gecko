@@ -7,14 +7,11 @@ import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of an [Action] that creates a [Port] in a given
- * [System] through the [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the
- * [GModel].
+ * A concrete representation of an [Action] that creates a [Port] in a given [System] through the
+ * [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GModel].
  */
-class CreatePortViewModelElementAction internal constructor(
-    val gModel: GModel,
-    parentSystem: System
-) : Action() {
+class CreatePortViewModelElementAction
+internal constructor(val gModel: GModel, parentSystem: System) : Action() {
     val systemViewModel = parentSystem
     lateinit var createdPort: Port
 

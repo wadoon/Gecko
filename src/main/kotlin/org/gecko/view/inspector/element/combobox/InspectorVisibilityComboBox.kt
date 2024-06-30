@@ -6,8 +6,8 @@ import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.Visibility
 
 /**
- * Represents a type of [InspectorComboBox] encapsulating a [Visibility]. Holds a reference to a current
- * [Port] and the current [ActionManager].
+ * Represents a type of [InspectorComboBox] encapsulating a [Visibility]. Holds a reference to a
+ * current [Port] and the current [ActionManager].
  */
 class InspectorVisibilityComboBox(val actionManager: ActionManager, val viewModel: Port) :
     InspectorComboBox<Visibility>(actionManager, Visibility.entries, viewModel.visibilityProperty) {

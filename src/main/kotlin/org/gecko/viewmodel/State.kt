@@ -1,6 +1,5 @@
 package org.gecko.viewmodel
 
-
 import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
@@ -21,24 +20,28 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of a [State] model element. A [State] is described by a set of
- * [Contract]s and can target either a regular or a start-[State]. Contains methods for managing
- * the afferent data and updating the target-[State].
+ * [Contract]s and can target either a regular or a start-[State]. Contains methods for managing the
+ * afferent data and updating the target-[State].
  */
 data class State(
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty(false),
-    val contractsProperty: ListProperty<Contract> = SimpleListProperty(FXCollections.observableArrayList()),
-    val incomingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
-    val outgoingEdgesProperty: ListProperty<Edge> = SimpleListProperty(FXCollections.observableArrayList()),
+    val contractsProperty: ListProperty<Contract> =
+        SimpleListProperty(FXCollections.observableArrayList()),
+    val incomingEdgesProperty: ListProperty<Edge> =
+        SimpleListProperty(FXCollections.observableArrayList()),
+    val outgoingEdgesProperty: ListProperty<Edge> =
+        SimpleListProperty(FXCollections.observableArrayList()),
 ) : BlockElement(), Inspectable {
     var isStartState by isStartStateProperty
     var contracts by contractsProperty
     var incomingEdges by incomingEdgesProperty
     var outgoingEdges: ObservableList<Edge> by outgoingEdgesProperty
 
-    override fun asJson() = super.asJson().apply {
-        addProperty("isStartState", isStartState)
-        add("contracts", contracts.asJsonArray())
-    }
+    override fun asJson() =
+        super.asJson().apply {
+            addProperty("isStartState", isStartState)
+            add("contracts", contracts.asJsonArray())
+        }
 
     init {
         name = AutoNaming.name("State_")
@@ -61,15 +64,24 @@ data class State(
 
         val contextMenuBuilder: ViewContextMenuBuilder =
             StateViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newStateViewElement, contextMenuBuilder)
+        // setContextMenu(newStateViewElement, contextMenuBuilder)
         return SelectableViewElementDecorator(newStateViewElement)
     }
 
     fun addEdgeListeners() {
         updateEdgeOffset()
-        incomingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? -> updateEdgeOffset() }
-        outgoingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? -> updateEdgeOffset() }
-        positionProperty.addListener { _: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? -> updateEdgeOffset() }
+        incomingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? ->
+            updateEdgeOffset()
+        }
+        outgoingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? ->
+            updateEdgeOffset()
+        }
+        positionProperty.addListener {
+            _: ObservableValue<out Point2D?>?,
+            oldValue: Point2D?,
+            newValue: Point2D? ->
+            updateEdgeOffset()
+        }
     }
 
     fun updateEdgeOffset() {
@@ -89,7 +101,8 @@ data class State(
         var min = Int.MAX_VALUE
         for (orientation in 0 until ORIENTATIONS) {
             val count =
-                intersectionOrientationEdges[orientation]!!.size + intersectionOrientationEdges[(orientation + 1) % ORIENTATIONS]!!.size
+                intersectionOrientationEdges[orientation]!!.size +
+                    intersectionOrientationEdges[(orientation + 1) % ORIENTATIONS]!!.size
             if (count < min) {
                 min = count
                 loopOrientation = orientation
@@ -126,23 +139,23 @@ data class State(
     }
 
     fun getOtherEdgePoint(edge: Edge): Point2D {
-        if (edge.source == this)
-            return edge.destination.center
+        if (edge.source == this) return edge.destination.center
         return edge.source.center
     }
 
     fun compareEdges(e1: Edge, e2: Edge, orientation: Int): Int {
-        val compare = when (orientation) {
-            0 -> getOtherEdgePoint(e1).x.compareTo(getOtherEdgePoint(e2).x)
-            1 -> getOtherEdgePoint(e1).y.compareTo(getOtherEdgePoint(e2).y)
-            2 -> getOtherEdgePoint(e2).x.compareTo(getOtherEdgePoint(e1).x)
-            3 -> getOtherEdgePoint(e2).y.compareTo(getOtherEdgePoint(e1).y)
-            else -> 0
-        }
-//        if (compare == 0) {
-//            val equalCompare = e1.compareTo(e2)
-//            return if (orientation > 1) -equalCompare else equalCompare
-//        }
+        val compare =
+            when (orientation) {
+                0 -> getOtherEdgePoint(e1).x.compareTo(getOtherEdgePoint(e2).x)
+                1 -> getOtherEdgePoint(e1).y.compareTo(getOtherEdgePoint(e2).y)
+                2 -> getOtherEdgePoint(e2).x.compareTo(getOtherEdgePoint(e1).x)
+                3 -> getOtherEdgePoint(e2).y.compareTo(getOtherEdgePoint(e1).y)
+                else -> 0
+            }
+        //        if (compare == 0) {
+        //            val equalCompare = e1.compareTo(e2)
+        //            return if (orientation > 1) -equalCompare else equalCompare
+        //        }
         return compare
     }
 
@@ -150,9 +163,7 @@ data class State(
         for (orientation in 0 until ORIENTATIONS) {
             val finalOrientation = orientation
             intersectionOrientationEdges[orientation]!!.sortWith { e1: Edge, e2: Edge ->
-                compareEdges(
-                    e1, e2, finalOrientation
-                )
+                compareEdges(e1, e2, finalOrientation)
             }
         }
     }
@@ -189,11 +200,15 @@ data class State(
         }
 
     fun getIntersectionOrientation(p1: Point2D, p2: Point2D): Int {
-        val edgePoints: List<Point2D> = ArrayList(
-            listOf(
-                position, position.add(size.x, 0.0), position.add(size), position.add(0.0, size.y)
+        val edgePoints: List<Point2D> =
+            ArrayList(
+                listOf(
+                    position,
+                    position.add(size.x, 0.0),
+                    position.add(size),
+                    position.add(0.0, size.y)
+                )
             )
-        )
         for (i in edgePoints.indices) {
             val p3 = edgePoints[i]
             val p4 = edgePoints[(i + 1) % ORIENTATIONS]
@@ -207,7 +222,13 @@ data class State(
     companion object {
         const val LOOPS = 4
         const val ORIENTATIONS = 4
-        fun lineIntersectsLine(l1p1: Point2D, l1p2: Point2D, l2p1: Point2D, l2p2: Point2D): Boolean {
+
+        fun lineIntersectsLine(
+            l1p1: Point2D,
+            l1p2: Point2D,
+            l2p1: Point2D,
+            l2p2: Point2D
+        ): Boolean {
             val s1X = l1p2.x - l1p1.x
             val s1Y = l1p2.y - l1p1.y
             val s2X = l2p2.x - l2p1.x

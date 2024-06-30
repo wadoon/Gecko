@@ -12,7 +12,8 @@ import org.gecko.view.views.ViewElementPane
  * A concrete representation of a system-creating-[Tool], utilized for creating a
  * [SystemViewModel][org.gecko.viewmodel.System].
  */
-class SystemCreatorTool(actionManager: ActionManager) : Tool(actionManager, ToolType.SYSTEM_CREATOR, false) {
+class SystemCreatorTool(actionManager: ActionManager) :
+    Tool(actionManager, ToolType.SYSTEM_CREATOR, false) {
     override fun visitView(pane: ViewElementPane) {
         super.visitView(pane)
         pane.draw().onMouseClicked = EventHandler { event: MouseEvent ->
@@ -23,8 +24,7 @@ class SystemCreatorTool(actionManager: ActionManager) : Tool(actionManager, Tool
                 return@EventHandler
             }
             val point = pane.screenToWorldCoordinates(Point2D(event.screenX, event.screenY))
-            val createSystemAction: Action =
-                actionManager.actionFactory.createSystem(point)
+            val createSystemAction: Action = actionManager.actionFactory.createSystem(point)
             actionManager.run(createSystemAction)
         }
     }

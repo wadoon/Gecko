@@ -2,18 +2,18 @@ package org.gecko.io
 
 import gecko.parser.SystemDefBaseVisitor
 import gecko.parser.SystemDefParser.*
+import java.util.*
 import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.*
-import java.util.*
 
 /**
- * Used for building a [GModel] from a sys file. This class is a visitor for the ANTLR4 generated parser for
- * the sys file format. The entire [GModel] can be built by calling [.visitModel] and passing it the
- * [SystemDefParser.ModelContext] of a sys file.
+ * Used for building a [GModel] from a sys file. This class is a visitor for the ANTLR4 generated
+ * parser for the sys file format. The entire [GModel] can be built by calling [.visitModel] and
+ * passing it the [SystemDefParser.ModelContext] of a sys file.
  */
 class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     var model: GModel = GModel()
@@ -51,11 +51,10 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         }
 
         if (ctx.defines() != null) {
-            val constants = ctx.defines().variable().flatMap {
-                it.n.map { name ->
-                    Constant(name.text, it.t.text, it.init.text)
+            val constants =
+                ctx.defines().variable().flatMap {
+                    it.n.map { name -> Constant(name.text, it.t.text, it.init.text) }
                 }
-            }
             model.globalDefines.setAll(constants)
         }
     }
@@ -70,17 +69,20 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
         for (io in ctx.io()) io.accept(this)
 
-        scout.getChildSystemInfos(ctx)
-            .forEach {
-                val ctx = scout.getSystem(it.type) ?: error(String.format("System %s not found", it.type))
-                instanceName = it.name
-                ctx.accept(this)
-            }
+        scout.getChildSystemInfos(ctx).forEach {
+            val ctx =
+                scout.getSystem(it.type) ?: error(String.format("System %s not found", it.type))
+            instanceName = it.name
+            ctx.accept(this)
+        }
 
         ctx.connection().forEach { it.accept(this) }
 
         if (ctx.use_contracts().isNotEmpty()) {
-            require(ctx.use_contracts().size == 1 && ctx.use_contracts().first().use_contract().size == 1) {
+            require(
+                ctx.use_contracts().size == 1 &&
+                    ctx.use_contracts().first().use_contract().size == 1
+            ) {
                 "Multiple automata in one system are not supported"
             }
             ctx.use_contracts().first().use_contract().first().accept(this)
@@ -89,8 +91,9 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
     }
 
     override fun visitUse_contract(ctx: Use_contractContext) {
-        val automata = scout.getAutomaton(ctx.ident().text)
-            ?: throw RuntimeException(String.format("Automaton %s not found", ctx.ident().text))
+        val automata =
+            scout.getAutomaton(ctx.ident().text)
+                ?: throw RuntimeException(String.format("Automaton %s not found", ctx.ident().text))
         automata.accept(this)
         for (subst in ctx.subst()) {
             subst.accept(this)
@@ -105,7 +108,11 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         val toReplaceWith = ctx.from.port.text
         if (currentSystem.ports.none { it.name == toReplaceWith }) {
             throw RuntimeException(
-                String.format("Variable %s not found not found in system %s", toReplace, currentSystem.name)
+                String.format(
+                    "Variable %s not found not found in system %s",
+                    toReplace,
+                    currentSystem.name
+                )
             )
         }
         applySubstitution(currentSystem, toReplace, toReplaceWith)
@@ -113,19 +120,25 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
     override fun visitAutomata(ctx: AutomataContext) {
         if (ctx.history().isNotEmpty()) {
-            warnings.add(String.format("Automaton %s has history, which is ignored", ctx.ident().text))
+            warnings.add(
+                String.format("Automaton %s has history, which is ignored", ctx.ident().text)
+            )
         }
 
         if (ctx.use_contracts().isNotEmpty()) {
-            warnings.add(String.format("Automaton %s has use_contracts, which are be ignored", ctx.ident().text))
+            warnings.add(
+                String.format(
+                    "Automaton %s has use_contracts, which are be ignored",
+                    ctx.ident().text
+                )
+            )
         }
 
         if (ctx.transition().isEmpty()) {
             warnings.add(String.format("Automaton %s has no transitions", ctx.ident().text))
         }
 
-        for (transition in ctx.transition())
-            transition.accept(this)
+        for (transition in ctx.transition()) transition.accept(this)
 
         currentSystem.automaton.states.forEach { it.isStartState = it.name[0].isLowerCase() }
     }
@@ -141,7 +154,6 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             start = currentSystem.automaton.createState()
 
             start.name = startName
-
         }
         var end = currentSystem.automaton.getStateByName(endName)
         if (end == null) {
@@ -149,23 +161,26 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
             end.name = endName
         }
-        val contract = if (ctx.contr != null) {
-            buildContract(start, scout.getContract(ctx.contr.text))
-        } else {
-            buildContract(start, ctx.pre.text, ctx.post.text)
-        }
+        val contract =
+            if (ctx.contr != null) {
+                buildContract(start, scout.getContract(ctx.contr.text))
+            } else {
+                buildContract(start, ctx.pre.text, ctx.post.text)
+            }
         val edge: Edge = currentSystem.automaton.createEdge(start, end)
 
         edge.contract = contract
     }
 
     override fun visitIo(ctx: IoContext) {
-        val visibility = when (ctx.type.type) {
-            INPUT -> Visibility.INPUT
-            OUTPUT -> Visibility.OUTPUT
-            STATE -> Visibility.STATE
-            else -> throw IllegalStateException("Unexpected variable visibility: " + ctx.type.type)
-        }
+        val visibility =
+            when (ctx.type.type) {
+                INPUT -> Visibility.INPUT
+                OUTPUT -> Visibility.OUTPUT
+                STATE -> Visibility.STATE
+                else ->
+                    throw IllegalStateException("Unexpected variable visibility: " + ctx.type.type)
+            }
         for (variable in ctx.variable()) {
             if (!builtinTypes.contains(variable.t.text)) {
                 if (visibility == Visibility.STATE) {
@@ -179,7 +194,9 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
                 }
             }
             for (ident in variable.n) {
-                if (currentSystem.getVariableByName(ident.Ident().text) != null || scout.getSystem(ident.text) != null
+                if (
+                    currentSystem.getVariableByName(ident.Ident().text) != null ||
+                        scout.getSystem(ident.text) != null
                 ) {
                     continue
                 }
@@ -200,20 +217,24 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             throw RuntimeException("Invalid System in connection")
         }
         val startSystem = parseSystemReference(ctx.from.inst.text)
-        val start = startSystem.getVariableByName(ctx.from.port.text)
-            ?: throw RuntimeException(String.format("Could not find variable %s", ctx.from.port.text))
+        val start =
+            startSystem.getVariableByName(ctx.from.port.text)
+                ?: throw RuntimeException(
+                    String.format("Could not find variable %s", ctx.from.port.text)
+                )
         val end: MutableSet<Port> = HashSet()
         for (ident in ctx.to) {
             val endSystem = parseSystemReference(ident.inst.text)
-            val endVar = endSystem.getVariableByName(ident.port.text)
-                ?: throw RuntimeException(String.format("Could not find variable %s", ident.port.text))
+            val endVar =
+                endSystem.getVariableByName(ident.port.text)
+                    ?: throw RuntimeException(
+                        String.format("Could not find variable %s", ident.port.text)
+                    )
             end.add(endVar)
         }
         for (variable in end) {
             model.viewModelFactory.createSystemConnectionViewModelIn(currentSystem, start, variable)
-
         }
-
     }
 
     private fun buildContract(state: State, contract: PrepostContext?): Contract {
@@ -243,10 +264,14 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
     private fun applySubstitution(condition: Condition, toReplace: String, toReplaceWith: String) {
         var con = condition.value
-        //replace normal occurrences (var -> newVar)
+        // replace normal occurrences (var -> newVar)
         con = con.replace("\\b$toReplace\\b".toRegex(), toReplaceWith)
-        //replace history occurrences (h_var_\d -> h_newVar_\d)
-        con = con.replace(("\\bh_" + toReplace + "_(\\d+)\\b").toRegex(), "h_" + toReplaceWith + "_$1")
+        // replace history occurrences (h_var_\d -> h_newVar_\d)
+        con =
+            con.replace(
+                ("\\bh_" + toReplace + "_(\\d+)\\b").toRegex(),
+                "h_" + toReplaceWith + "_$1"
+            )
         condition.value = con
     }
 
@@ -258,7 +283,8 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         return if (name == SELF_REFERENCE_TOKEN) {
             currentSystem
         } else {
-            currentSystem.getChildByName(name) ?: error(String.format("Could not find system %s", name))
+            currentSystem.getChildByName(name)
+                ?: error(String.format("Could not find system %s", name))
         }
     }
 

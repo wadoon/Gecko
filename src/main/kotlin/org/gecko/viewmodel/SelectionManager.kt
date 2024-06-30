@@ -1,14 +1,14 @@
 package org.gecko.viewmodel
 
+import java.util.*
 import javafx.beans.property.SetProperty
 import javafx.beans.property.SimpleSetProperty
 import javafx.collections.FXCollections
 import tornadofx.asObservable
-import java.util.*
 
 /**
- * Represents a manager for the selection history of an editor view, allowing the navigation through the history of
- * selected elements.
+ * Represents a manager for the selection history of an editor view, allowing the navigation through
+ * the history of selected elements.
  */
 data class SelectionManager(
     val undoSelectionStack: Deque<MutableSet<PositionableElement>> = ArrayDeque(),
@@ -16,9 +16,7 @@ data class SelectionManager(
     val currentSelectionProperty: SetProperty<PositionableElement> =
         SimpleSetProperty(FXCollections.observableSet())
 ) {
-    /**
-     * Goes back to the previous selection.
-     */
+    /** Goes back to the previous selection. */
     fun goBack() {
         if (undoSelectionStack.isEmpty()) {
             return
@@ -27,9 +25,7 @@ data class SelectionManager(
         currentSelectionProperty.set(undoSelectionStack.pop().asObservable())
     }
 
-    /**
-     * Goes forward to the next selection.
-     */
+    /** Goes forward to the next selection. */
     fun goForward() {
         if (redoSelectionStack.isEmpty()) {
             return
@@ -43,9 +39,10 @@ data class SelectionManager(
     }
 
     /**
-     * Selects the given elements. If the given elements are already selected, nothing happens. A new selection is made
-     * with the given elements. It works by setting the current selection to the given elements and pushing the current
-     * selection to the undo stack. The redo stack is cleared because a new selection was made.
+     * Selects the given elements. If the given elements are already selected, nothing happens. A
+     * new selection is made with the given elements. It works by setting the current selection to
+     * the given elements and pushing the current selection to the undo stack. The redo stack is
+     * cleared because a new selection was made.
      *
      * @param elements the elements to be selected
      */
@@ -63,8 +60,8 @@ data class SelectionManager(
     }
 
     /**
-     * Deselects the given elements. A new selection is made with the remaining elements. If the given elements are not
-     * selected, nothing happens.
+     * Deselects the given elements. A new selection is made with the remaining elements. If the
+     * given elements are not selected, nothing happens.
      *
      * @param elements the elements to be deselected
      */
@@ -87,16 +84,16 @@ data class SelectionManager(
         get() = HashSet(currentSelectionProperty.get())
 
     /**
-     * Updates all selections by removing the given elements from them. This method is used when elements are removed
-     * from the view model. It keeps the selections consistent.
+     * Updates all selections by removing the given elements from them. This method is used when
+     * elements are removed from the view model. It keeps the selections consistent.
      *
      * @param removedElements the elements that are removed from the view model
      */
     fun updateSelections(removedElements: Set<PositionableElement>) {
         val selectionToBeRemoved = ArrayDeque<MutableSet<PositionableElement>>()
-        if (removedElements.any { currentSelectionProperty.value.contains(it) }
-        ) {
-            val newSelection: MutableSet<PositionableElement> = HashSet(currentSelectionProperty.value)
+        if (removedElements.any { currentSelectionProperty.value.contains(it) }) {
+            val newSelection: MutableSet<PositionableElement> =
+                HashSet(currentSelectionProperty.value)
             newSelection.removeAll(removedElements)
             currentSelectionProperty.set(newSelection.asObservable())
             redoSelectionStack.clear()

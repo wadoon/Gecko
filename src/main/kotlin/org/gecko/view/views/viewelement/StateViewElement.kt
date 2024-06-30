@@ -18,10 +18,9 @@ import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.State
 
 /**
- * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [State].
+ * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [State].
  */
-
 class StateViewElement(state: State) : BlockViewElement(state), ViewElement<State> {
     override val target: State = state
     val nameProperty: StringProperty = SimpleStringProperty()
@@ -58,7 +57,10 @@ class StateViewElement(state: State) : BlockViewElement(state), ViewElement<Stat
         val stateName = Pane()
         colorStateName(stateName)
         // Color the state name according to its type
-        isStartStateProperty.addListener { observable: ObservableValue<out Boolean?>?, oldValue: Boolean?, newValue: Boolean? ->
+        isStartStateProperty.addListener {
+            observable: ObservableValue<out Boolean?>?,
+            oldValue: Boolean?,
+            newValue: Boolean? ->
             colorStateName(stateName)
         }
         stateName.styleClass.add(INNER_STYLE)
@@ -67,18 +69,22 @@ class StateViewElement(state: State) : BlockViewElement(state), ViewElement<Stat
         name.textProperty().bind(target.nameProperty)
 
         // center the label
-        name.layoutXProperty()
+        name
+            .layoutXProperty()
             .bind(
                 Bindings.createDoubleBinding(
                     { (stateName.width - name.width) / 2 },
-                    stateName.widthProperty(), name.widthProperty()
+                    stateName.widthProperty(),
+                    name.widthProperty()
                 )
             )
-        name.layoutYProperty()
+        name
+            .layoutYProperty()
             .bind(
                 Bindings.createDoubleBinding(
                     { (stateName.height - name.height) / 2 },
-                    stateName.heightProperty(), name.heightProperty()
+                    stateName.heightProperty(),
+                    name.heightProperty()
                 )
             )
 
@@ -88,25 +94,27 @@ class StateViewElement(state: State) : BlockViewElement(state), ViewElement<Stat
         contents.children.add(Separator())
 
         // Contracts
-        val contracts: Labeled = Label(
-            ResourceHandler.contract_plural + ": " + contractsProperty
-                .size
-        )
-        contracts.textProperty()
-            .bind(Bindings.createStringBinding({
-                (ResourceHandler.contract_plural + ": "
-                        + contractsProperty.size)
-            }, contractsProperty))
+        val contracts: Labeled =
+            Label(ResourceHandler.contract_plural + ": " + contractsProperty.size)
+        contracts
+            .textProperty()
+            .bind(
+                Bindings.createStringBinding(
+                    { (ResourceHandler.contract_plural + ": " + contractsProperty.size) },
+                    contractsProperty
+                )
+            )
 
         contents.children.add(contracts)
 
         val contractsPane = VBox()
 
         refreshContracts(contractsPane)
-        contractsProperty.addListener { observable: ObservableValue<out ObservableList<Contract?>>?, oldValue: ObservableList<Contract?>?, newValue: ObservableList<Contract?>? ->
-            refreshContracts(
-                contractsPane
-            )
+        contractsProperty.addListener {
+            observable: ObservableValue<out ObservableList<Contract?>>?,
+            oldValue: ObservableList<Contract?>?,
+            newValue: ObservableList<Contract?>? ->
+            refreshContracts(contractsPane)
         }
 
         contents.children.add(contractsPane)
@@ -160,12 +168,10 @@ class StateViewElement(state: State) : BlockViewElement(state), ViewElement<Stat
         nameProperty.bind(target.nameProperty)
         isStartStateProperty.bind(target.isStartStateProperty)
         contractsProperty.bind(target.contractsProperty)
-        prefWidthProperty().bind(
-            Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty)
-        )
-        prefHeightProperty().bind(
-            Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty)
-        )
+        prefWidthProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty))
+        prefHeightProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty))
     }
 
     override val zPriority: Int = 30

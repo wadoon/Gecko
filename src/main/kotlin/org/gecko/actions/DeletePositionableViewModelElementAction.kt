@@ -14,15 +14,13 @@ class DeletePositionableViewModelElementAction(
     lateinit var deleteActionGroup: ActionGroup
     val deletedElements = mutableSetOf<PositionableElement>()
 
-    constructor(gModel: GModel, element: PositionableElement)
-            : this(gModel, setOf(element))
+    constructor(gModel: GModel, element: PositionableElement) : this(gModel, setOf(element))
 
     override fun run(): Boolean {
         val allDeleteActions = hashSetOf<AbstractPositionableViewModelElementAction>()
         for (element in elementsToDelete) {
             val visitor =
-                DeleteActionsHelper(gModel, gModel.currentEditor!!.currentSystem)
-                    .visit(element)
+                DeleteActionsHelper(gModel, gModel.currentEditor!!.currentSystem).visit(element)
             allDeleteActions.addAll(visitor)
         }
 

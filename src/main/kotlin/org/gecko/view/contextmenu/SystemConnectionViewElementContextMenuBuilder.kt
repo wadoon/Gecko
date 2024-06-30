@@ -12,8 +12,8 @@ import org.gecko.viewmodel.SystemConnection
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
- * [SystemConnectionViewElement][org.gecko.view.views.viewelement.SystemConnectionViewElement]. Contains
- * [MenuItem]s that run operations like deleting the connection.
+ * [SystemConnectionViewElement][org.gecko.view.views.viewelement.SystemConnectionViewElement].
+ * Contains [MenuItem]s that run operations like deleting the connection.
  */
 class SystemConnectionViewElementContextMenuBuilder(
     actionManager: ActionManager,
@@ -29,12 +29,13 @@ class SystemConnectionViewElementContextMenuBuilder(
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory
-                    .createDeleteAction(systemConnectionViewModel)
+                actionManager.actionFactory.createDeleteAction(systemConnectionViewModel)
             )
         }
 
-        systemConnectionContextMenu!!.items.addAll(dataTransferToEdgeEditingSeparator, deleteMenuItem)
+        systemConnectionContextMenu!!
+            .items
+            .addAll(dataTransferToEdgeEditingSeparator, deleteMenuItem)
         return systemConnectionContextMenu
     }
 }

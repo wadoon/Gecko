@@ -13,7 +13,8 @@ import org.gecko.viewmodel.BlockElement
  * rectangle-formed-[RegionViewModel][org.gecko.viewmodel.Region]. Holds the [Color] of the drawn
  * region.
  */
-class RegionCreatorTool(actionManager: ActionManager) : AreaTool(actionManager, ToolType.REGION_CREATOR, false) {
+class RegionCreatorTool(actionManager: ActionManager) :
+    AreaTool(actionManager, ToolType.REGION_CREATOR, false) {
     var color: Color? = null
 
     override fun createNewArea(): Rectangle {
@@ -25,17 +26,18 @@ class RegionCreatorTool(actionManager: ActionManager) : AreaTool(actionManager, 
     }
 
     override fun onAreaCreated(event: MouseEvent, worldBounds: Bounds) {
-        if (worldBounds.width < BlockElement.Companion.MIN_WIDTH
-            || worldBounds.height < BlockElement.Companion.MIN_HEIGHT
+        if (
+            worldBounds.width < BlockElement.Companion.MIN_WIDTH ||
+                worldBounds.height < BlockElement.Companion.MIN_HEIGHT
         ) {
             return
         }
         actionManager.run(
-            actionManager.actionFactory
-                .createRegion(
-                    Point2D(worldBounds.minX, worldBounds.minY),
-                    Point2D(worldBounds.width, worldBounds.height), color
-                )
+            actionManager.actionFactory.createRegion(
+                Point2D(worldBounds.minX, worldBounds.minY),
+                Point2D(worldBounds.width, worldBounds.height),
+                color
+            )
         )
     }
 }

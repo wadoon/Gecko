@@ -5,8 +5,8 @@ import org.gecko.viewmodel.*
 
 /**
  * A concrete representation of an [Action] that changes the visibility of a [Port], which it holds
- * a reference to. Additionally, holds the old and new [Visibilities][Visibility] of the contract for undo/redo
- * purposes.
+ * a reference to. Additionally, holds the old and new [Visibilities][Visibility] of the contract
+ * for undo/redo purposes.
  */
 class ChangeVisibilityPortViewModelAction : Action {
     val gModel: GModel
@@ -23,7 +23,9 @@ class ChangeVisibilityPortViewModelAction : Action {
     }
 
     constructor(
-        gModel: GModel, Port: Port, visibility: Visibility,
+        gModel: GModel,
+        Port: Port,
+        visibility: Visibility,
         systemConnectionDeleteActionGroup: Action?
     ) {
         this.gModel = gModel
@@ -50,7 +52,8 @@ class ChangeVisibilityPortViewModelAction : Action {
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
         return actionFactory.changeVisibility(
-            Port, oldVisibility,
+            Port,
+            oldVisibility,
             systemConnectionDeleteActionGroup!!.getUndoAction(gModel.actionManager.actionFactory)
         )
     }
@@ -58,7 +61,8 @@ class ChangeVisibilityPortViewModelAction : Action {
     fun getSystemConnectionDeleteActionGroup(): ActionGroup {
         val containingSystem = gModel.getSystemViewModelWithPort(Port)!!
         val parentSystem = containingSystem.parent
-        val deleteActions: MutableList<Action> = ArrayList(getSystemConnectionDeleteActions(containingSystem))
+        val deleteActions: MutableList<Action> =
+            ArrayList(getSystemConnectionDeleteActions(containingSystem))
 
         if (parentSystem != null) {
             deleteActions.addAll(getSystemConnectionDeleteActions(parentSystem))
@@ -67,16 +71,14 @@ class ChangeVisibilityPortViewModelAction : Action {
     }
 
     private fun getSystemConnectionViewModels(system: System): Set<SystemConnection> =
-        system.connections
-            .filter { it.source == Port || it.destination == Port }
-            .toSet()
+        system.connections.filter { it.source == Port || it.destination == Port }.toSet()
 
     private fun getSystemConnectionDeleteActions(system: System): List<Action> =
-        getSystemConnectionViewModels(system)
-            .map { systemConnectionViewModel: SystemConnection? ->
-                DeleteSystemConnectionViewModelElementAction(
-                    gModel,
-                    systemConnectionViewModel!!, system
-                )
-            }
+        getSystemConnectionViewModels(system).map { systemConnectionViewModel: SystemConnection? ->
+            DeleteSystemConnectionViewModelElementAction(
+                gModel,
+                systemConnectionViewModel!!,
+                system
+            )
+        }
 }

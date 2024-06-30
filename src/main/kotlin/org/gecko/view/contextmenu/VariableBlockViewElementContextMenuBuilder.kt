@@ -12,8 +12,8 @@ import org.gecko.viewmodel.Port
 
 /**
  * Represents a type of [ViewContextMenuBuilder] for a [ContextMenu] specific to a
- * [PortViewElement][org.gecko.view.views.viewelement.PortViewElement]. Contains [MenuItem]s that run
- * operations like deleting the port.
+ * [PortViewElement][org.gecko.view.views.viewelement.PortViewElement]. Contains [MenuItem]s that
+ * run operations like deleting the port.
  */
 class VariableBlockViewElementContextMenuBuilder(
     actionManager: ActionManager,
@@ -28,12 +28,12 @@ class VariableBlockViewElementContextMenuBuilder(
         // Variable Block editing commands:
         val deleteMenuItem = MenuItem(ResourceHandler.Companion.delete)
         deleteMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createDeleteAction(Port)
-            )
+            actionManager.run(actionManager.actionFactory.createDeleteAction(Port))
         }
 
-        variableBlockContextMenu!!.items.addAll(dataTransferToVariableBlockEditingSeparator, deleteMenuItem)
+        variableBlockContextMenu!!
+            .items
+            .addAll(dataTransferToVariableBlockEditingSeparator, deleteMenuItem)
         return variableBlockContextMenu
     }
 }

@@ -8,9 +8,9 @@ import org.gecko.actions.ActionManager
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * A concrete representation of a marquee-[AreaTool], utilized for marking a rectangle-formed area in the view and
- * thus selecting the covered [org.gecko.view.views.viewelement.ViewElement]s. Holds the current
- * [EditorViewModel]..
+ * A concrete representation of a marquee-[AreaTool], utilized for marking a rectangle-formed area
+ * in the view and thus selecting the covered [org.gecko.view.views.viewelement.ViewElement]s. Holds
+ * the current [EditorViewModel]..
  */
 class MarqueeTool(actionManager: ActionManager, val editorViewModel: EditorViewModel) :
     AreaTool(actionManager, ToolType.MARQUEE_TOOL, true) {
@@ -28,7 +28,9 @@ class MarqueeTool(actionManager: ActionManager, val editorViewModel: EditorViewM
         if (elements.isEmpty()) {
             return
         }
-        actionManager.run(actionManager.actionFactory.createSelectAction(elements, !event.isShiftDown))
+        actionManager.run(
+            actionManager.actionFactory.createSelectAction(elements, !event.isShiftDown)
+        )
     }
 
     companion object {

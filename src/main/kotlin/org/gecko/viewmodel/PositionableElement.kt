@@ -12,9 +12,9 @@ import tornadofx.getValue
 import tornadofx.setValue
 
 /**
- * Represents an abstraction of a view model element that is graphically represented in a Gecko project. A
- * [PositionableElement] is described by a position- and a size-[Point2D]. Contains methods for
- * managing the different data.
+ * Represents an abstraction of a view model element that is graphically represented in a Gecko
+ * project. A [PositionableElement] is described by a position- and a size-[Point2D]. Contains
+ * methods for managing the different data.
  */
 abstract class PositionableElement : Element(), Viewable {
     val positionProperty: Property<Point2D> = SimpleObjectProperty(Point2D.ZERO)
@@ -29,10 +29,11 @@ abstract class PositionableElement : Element(), Viewable {
         get() = Rectangle2D(position.x, position.y, size.x, size.y)
 
     open val center: Point2D
-        get() = Point2D(
-            positionProperty.value.x + sizeProperty.value.x / 2,
-            positionProperty.value.y + sizeProperty.value.y / 2
-        )
+        get() =
+            Point2D(
+                positionProperty.value.x + sizeProperty.value.x / 2,
+                positionProperty.value.y + sizeProperty.value.y / 2
+            )
 
     override fun asJson() = objectOf("position" to position.asJson(), "size" to size.asJson())
 
@@ -49,7 +50,8 @@ abstract class PositionableElement : Element(), Viewable {
     }
 }
 
-fun Point2D.asJson() = JsonObject().also {
-    it.addProperty("x", x)
-    it.addProperty("y", y)
-}
+fun Point2D.asJson() =
+    JsonObject().also {
+        it.addProperty("x", x)
+        it.addProperty("y", y)
+    }

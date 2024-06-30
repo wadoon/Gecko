@@ -1,12 +1,11 @@
 package org.gecko.io
 
-
 import org.gecko.viewmodel.*
 
 /**
- * Performs operations for every [Model-Element][org.gecko.model.Element] from the subtree of a [System],
- * creating for each of them a [ViewModelPropertiesContainer], depending on the attributes of the corresponding
- * [PositionableElement].
+ * Performs operations for every [Model-Element][org.gecko.model.Element] from the subtree of a
+ * [System], creating for each of them a [ViewModelPropertiesContainer], depending on the attributes
+ * of the corresponding [PositionableElement].
  */
 class ViewModelElementSaver(val gModel: GModel) {
     val viewModelProperties: MutableList<ViewModelPropertiesContainer> = arrayListOf()
@@ -91,7 +90,7 @@ class ViewModelElementSaver(val gModel: GModel) {
 
     fun getCoordinateContainer(element: PositionableElement): ViewModelPropertiesContainer {
         val container = ViewModelPropertiesContainer()
-        //container.elementId = element.hashCode()
+        // container.elementId = element.hashCode()
         container.id = element.hashCode()
         container.positionX = element.position.x
         container.positionY = element.position.y

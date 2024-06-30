@@ -5,9 +5,9 @@ import org.eclipse.elk.graph.util.ElkGraphUtil
 import org.gecko.viewmodel.*
 
 /**
- * The ELKGraphCreator is used to create ELK graphs from a view model. When creating an ELK graph, it applies the
- * current position and size of the view model elements to the ELK nodes. It also creates edges between the nodes based
- * on the connections in the view model.
+ * The ELKGraphCreator is used to create ELK graphs from a view model. When creating an ELK graph,
+ * it applies the current position and size of the view model elements to the ELK nodes. It also
+ * creates edges between the nodes based on the connections in the view model.
  */
 internal class ELKGraphCreator(val viewModel: GModel) {
     fun createSystemElkGraph(system: System): ElkNode {
@@ -32,7 +32,10 @@ internal class ELKGraphCreator(val viewModel: GModel) {
             createElkNode(root, child)
         }
         for (edge in getAutomatonEdges(system)) {
-            ElkGraphUtil.createSimpleEdge(findNode(root, edge.source), findNode(root, edge.destination))
+            ElkGraphUtil.createSimpleEdge(
+                findNode(root, edge.source),
+                findNode(root, edge.destination)
+            )
         }
         return root
     }
@@ -50,11 +53,9 @@ internal class ELKGraphCreator(val viewModel: GModel) {
         return System.subSystems
     }
 
-    fun getAutomatonEdges(System: System): List<Edge> =
-        System.automaton.edges
+    fun getAutomatonEdges(System: System): List<Edge> = System.automaton.edges
 
-    fun getConnectionViewModels(System: System): List<SystemConnection> =
-        System.connections
+    fun getConnectionViewModels(System: System): List<SystemConnection> = System.connections
 
     fun getStates(System: System): List<State> {
         return System.automaton.states

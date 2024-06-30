@@ -7,12 +7,13 @@ import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.Region
 
 /**
- * A concrete representation of an [Action] that creates a [Region] in the
- * current-[SystemViewModel] through the [org.gecko.viewmodel.ViewModelFactory] of the
- * [GModel]. Additionally, holds the current [EditorViewModel][org.gecko.viewmodel.EditorViewModel]
- * for setting the correct size and position for the created region.
+ * A concrete representation of an [Action] that creates a [Region] in the current-[SystemViewModel]
+ * through the [org.gecko.viewmodel.ViewModelFactory] of the [GModel]. Additionally, holds the
+ * current [EditorViewModel][org.gecko.viewmodel.EditorViewModel] for setting the correct size and
+ * position for the created region.
  */
-class CreateRegionViewModelElementAction internal constructor(
+class CreateRegionViewModelElementAction
+internal constructor(
     val gModel: GModel,
     val position: Point2D,
     val size: Point2D,

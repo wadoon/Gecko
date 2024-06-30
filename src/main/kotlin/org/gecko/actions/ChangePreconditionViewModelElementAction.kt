@@ -5,8 +5,8 @@ import org.gecko.viewmodel.Contract
 
 /**
  * A concrete representation of an [Action] that changes the precondition of a [Contract], which it
- * holds a reference to. Additionally, holds the old and new [precondition][String]s of the contract for undo/redo
- * purposes.
+ * holds a reference to. Additionally, holds the old and new [precondition][String]s of the contract
+ * for undo/redo purposes.
  */
 data class ChangePreconditionViewModelElementAction(
     val Contract: Contract,

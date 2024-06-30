@@ -4,10 +4,9 @@ import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableElement
 
-/**
- * A concrete representation of an [Action] that selects a set of [PositionableElement]s.
- */
-class SelectAction internal constructor(
+/** A concrete representation of an [Action] that selects a set of [PositionableElement]s. */
+class SelectAction
+internal constructor(
     editorViewModel: EditorViewModel,
     elements: Iterable<PositionableElement>,
     val newSelection: Boolean

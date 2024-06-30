@@ -13,7 +13,8 @@ import org.gecko.viewmodel.System
 import org.gecko.viewmodel.Visibility
 
 /**
- * A concrete representation of an [AbstractInspectorList] encapsulating an [InspectorVariableField].
+ * A concrete representation of an [AbstractInspectorList] encapsulating an
+ * [InspectorVariableField].
  */
 class InspectorVariableList(
     val actionManager: ActionManager,
@@ -24,22 +25,26 @@ class InspectorVariableList(
     override val control: VBox = VBox(view)
 
     init {
-        val ports = FilteredList(
-            viewModel.portsProperty
-        ) { port: Port -> port.visibility == visibility }
+        val ports =
+            FilteredList(viewModel.portsProperty) { port: Port -> port.visibility == visibility }
         view.itemsProperty().set(ports)
 
-
-        //viewModel.getPortsProperty().addListener(this::onPortsListChanged);
-        //viewModel.getPorts().filter(port -> port.getVisibility() == visibility).forEach(this::addPortItem);
-        //viewModel.getPorts().forEach(port -> port.getVisibilityProperty().addListener(this::onVisibilityChanged));
+        // viewModel.getPortsProperty().addListener(this::onPortsListChanged);
+        // viewModel.getPorts().filter(port -> port.getVisibility() ==
+        // visibility).forEach(this::addPortItem);
+        // viewModel.getPorts().forEach(port ->
+        // port.getVisibilityProperty().addListener(this::onVisibilityChanged));
         val colName = TableColumn<Port, String>("Name")
         colName.sortType = TableColumn.SortType.ASCENDING
-        colName.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> -> tcf.value.nameProperty }
+        colName.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> ->
+            tcf.value.nameProperty
+        }
 
         val colDatatype = TableColumn<Port, String>("Type")
         colDatatype.sortType = TableColumn.SortType.ASCENDING
-        colDatatype.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> -> tcf.value.typeProperty }
+        colDatatype.setCellValueFactory { tcf: TableColumn.CellDataFeatures<Port, String> ->
+            tcf.value.typeProperty
+        }
 
         view.columns.setAll(colName, colDatatype)
 
@@ -51,7 +56,6 @@ class InspectorVariableList(
                 viewModel.portsProperty.removeAll(selected)
             }
         }
-
 
         view.styleClass.add(STYLE_CLASS)
     }

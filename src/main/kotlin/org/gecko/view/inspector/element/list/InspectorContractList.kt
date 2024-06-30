@@ -23,22 +23,26 @@ class InspectorContractList(actionManager: ActionManager, state: State) :
         }
 
         // Create a listener for contractViewModels changes and update inspector items accordingly
-        val contractViewModelListener = ListChangeListener { change: ListChangeListener.Change<out Contract> ->
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    for (item in change.addedSubList) {
-                        val newContractItem =
-                            InspectorContractItem(actionManager, state, item)
-                        newContractItem.prefWidthProperty().bind(widthProperty().subtract(CONTRACT_ITEM_OFFSET))
-                        items.add(newContractItem)
-                    }
-                } else if (change.wasRemoved()) {
-                    for (item in change.removed) {
-                        items.removeIf { inspectorContractItem: InspectorContractItem -> inspectorContractItem.viewModel == item }
+        val contractViewModelListener =
+            ListChangeListener { change: ListChangeListener.Change<out Contract> ->
+                while (change.next()) {
+                    if (change.wasAdded()) {
+                        for (item in change.addedSubList) {
+                            val newContractItem = InspectorContractItem(actionManager, state, item)
+                            newContractItem
+                                .prefWidthProperty()
+                                .bind(widthProperty().subtract(CONTRACT_ITEM_OFFSET))
+                            items.add(newContractItem)
+                        }
+                    } else if (change.wasRemoved()) {
+                        for (item in change.removed) {
+                            items.removeIf { inspectorContractItem: InspectorContractItem ->
+                                inspectorContractItem.viewModel == item
+                            }
+                        }
                     }
                 }
             }
-        }
 
         Contracts.addListener(contractViewModelListener)
     }

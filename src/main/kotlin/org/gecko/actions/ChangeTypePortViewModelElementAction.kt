@@ -5,12 +5,11 @@ import org.gecko.viewmodel.Port
 
 /**
  * A concrete representation of an [Action] that changes the type of a [Port], which it holds a
- * reference to. Additionally, holds the old and new [type][String]s of the contract for undo/redo purposes.
+ * reference to. Additionally, holds the old and new [type][String]s of the contract for undo/redo
+ * purposes.
  */
-class ChangeTypePortViewModelElementAction internal constructor(
-    val Port: Port,
-    val newType: String
-) : Action() {
+class ChangeTypePortViewModelElementAction
+internal constructor(val Port: Port, val newType: String) : Action() {
     val oldType: String = Port.type
 
     @Throws(GeckoException::class)

@@ -10,16 +10,18 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 
 /**
- * Represents a type of [AbstractInspectorButton] used for navigating back in the selection history of the
- * [SelectionManager][org.gecko.viewmodel.SelectionManager].
+ * Represents a type of [AbstractInspectorButton] used for navigating back in the selection history
+ * of the [SelectionManager][org.gecko.viewmodel.SelectionManager].
  */
 class InspectorSelectionBackwardButton(actionManager: ActionManager) : AbstractInspectorButton() {
     init {
         styleClass.add(ICON_STYLE_NAME)
-        val toolTip = "%s (%s)".format(
-            ResourceHandler.inspector_selection_backward,
-            Shortcuts.SELECTION_BACK.get().displayText
-        )
+        val toolTip =
+            "%s (%s)"
+                .format(
+                    ResourceHandler.inspector_selection_backward,
+                    Shortcuts.SELECTION_BACK.get().displayText
+                )
         tooltip = Tooltip(toolTip)
         onAction = EventHandler { event: ActionEvent? ->
             actionManager.run(actionManager.actionFactory.createSelectionHistoryBackAction())

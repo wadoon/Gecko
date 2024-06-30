@@ -1,6 +1,5 @@
 package org.gecko.viewmodel
 
-
 import com.google.gson.JsonNull
 import com.google.gson.JsonPrimitive
 import javafx.beans.binding.Bindings
@@ -19,10 +18,9 @@ import tornadofx.setValue
 
 /**
  * Represents an abstraction of an [Edge] model element. An [Edge] is described by a source- and a
- * destination-[State]. It is also associated with one of the start-[State]'s
- * [Contract]s, has a priority and a [Kind], which informs about how the associated
- * [Contract] is handled. Contains methods for managing the afferent data and updating the
- * target-[Edge].
+ * destination-[State]. It is also associated with one of the start-[State]'s [Contract]s, has a
+ * priority and a [Kind], which informs about how the associated [Contract] is handled. Contains
+ * methods for managing the afferent data and updating the target-[Edge].
  */
 class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
     val kindProperty: ObjectProperty<Kind> = SimpleObjectProperty(Kind.HIT)
@@ -39,33 +37,31 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
     var source: State by sourceProperty
     var destination: State by destinationProperty
 
-    override fun asJson() = super.asJson().apply {
-        addProperty("source", source.name)
-        addProperty("destination", destination.name)
-        add("contract",
-            contract?.name?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE)
-        addProperty("kind", kind.name)
-        addProperty("priority", priority)
-    }
+    override fun asJson() =
+        super.asJson().apply {
+            addProperty("source", source.name)
+            addProperty("destination", destination.name)
+            add("contract", contract?.name?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE)
+            addProperty("kind", kind.name)
+            addProperty("priority", priority)
+        }
 
-
-    /**
-     * The list of edge points that define the path of the edge.
-     */
+    /** The list of edge points that define the path of the edge. */
     val startOffsetProperty: ObjectProperty<Point2D> = SimpleObjectProperty(Point2D.ZERO)
-    val startPointProperty: ObservableValue<Point2D> = Bindings.createObjectBinding(
-        { source.center.add(startOffsetProperty.value) },
-        startOffsetProperty,
-        source.positionProperty
-    )
+    val startPointProperty: ObservableValue<Point2D> =
+        Bindings.createObjectBinding(
+            { source.center.add(startOffsetProperty.value) },
+            startOffsetProperty,
+            source.positionProperty
+        )
     val endOffsetProperty: ObjectProperty<Point2D> = SimpleObjectProperty(Point2D.ZERO)
-    val endPointProperty: ObservableValue<Point2D> = Bindings.createObjectBinding(
-        { destination.center.add(endOffsetProperty.value) },
-        endOffsetProperty,
-        destinationProperty,
-        destination.positionProperty
-    )
-
+    val endPointProperty: ObservableValue<Point2D> =
+        Bindings.createObjectBinding(
+            { destination.center.add(endOffsetProperty.value) },
+            endOffsetProperty,
+            destinationProperty,
+            destination.positionProperty
+        )
 
     val representation: String
         /**
@@ -94,7 +90,6 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
 
         endPointProperty
 
-
         sourceProperty.onChange { field, new ->
             field?.outgoingEdges!!.remove(this)
             removeBindings()
@@ -113,7 +108,8 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
         destinationProperty.set(destination)
         isLoopProperty.bind(
             Bindings.createBooleanBinding(
-                { this.source == this.destination }, sourceProperty,
+                { this.source == this.destination },
+                sourceProperty,
                 destinationProperty
             )
         )
@@ -128,8 +124,8 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
     fun setBindings() {}
 
     fun removeBindings() {
-        //startPointProperty.unbind()
-        //endPointProperty.unbind()
+        // startPointProperty.unbind()
+        // endPointProperty.unbind()
     }
 
     fun setStartOffsetProperty(startOffset: Point2D) {
@@ -146,7 +142,7 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newEdgeViewElement = EdgeViewElement(this)
         val contextMenuBuilder = EdgeViewElementContextMenuBuilder(actionManager, this, geckoView)
-        //setContextMenu(newEdgeViewElement.pane, contextMenuBuilder)
+        // setContextMenu(newEdgeViewElement.pane, contextMenuBuilder)
         return ConnectionElementScalerViewElementDecorator(newEdgeViewElement)
     }
 

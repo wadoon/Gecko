@@ -1,6 +1,5 @@
 package org.gecko.view.views.viewelement
 
-
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.Property
 import javafx.beans.value.ChangeListener
@@ -11,19 +10,17 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.util.Pair
+import kotlin.math.*
 import org.gecko.viewmodel.*
 import tornadofx.getValue
 import tornadofx.setValue
-import kotlin.math.*
 
 /**
- * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which encapsulates
- * an [Edge].
+ * Represents a type of [ConnectionViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [Edge].
  */
-
 class EdgeViewElement(Edge: Edge) :
-    ConnectionViewElement(listOf(Edge.startPoint, Edge.endPoint)),
-    ViewElement<Edge> {
+    ConnectionViewElement(listOf(Edge.startPoint, Edge.endPoint)), ViewElement<Edge> {
     override val target: Edge
     val contractProperty: Property<Contract> = objectProperty(Contract())
     val priorityProperty: IntegerProperty = intProperty()
@@ -39,30 +36,30 @@ class EdgeViewElement(Edge: Edge) :
         priorityProperty.bind(Edge.priorityProperty)
         kindProperty.bind(Edge.kindProperty)
         this.target = Edge
-        Edge.startPointProperty.onChange { _: Point2D?, n: Point2D? ->
-            pathSource[0] = n
-        }
+        Edge.startPointProperty.onChange { _: Point2D?, n: Point2D? -> pathSource[0] = n }
 
-        Edge.endPointProperty.onChange { _: Point2D?, n: Point2D? ->
-            pathSource[1] = n
-        }
-
+        Edge.endPointProperty.onChange { _: Point2D?, n: Point2D? -> pathSource[1] = n }
 
         label.text = Edge.representation
 
-        val updateLabelPosition =
-            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> calculateLabelPosition() }
+        val updateLabelPosition = ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? ->
+            calculateLabelPosition()
+        }
         label.heightProperty().addListener(updateLabelPosition)
         label.widthProperty().addListener(updateLabelPosition)
         Edge.startPointProperty.addListener(updateLabelPosition)
         Edge.endPointProperty.addListener(updateLabelPosition)
 
-        val updateLabel =
-            ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? -> label.text = Edge.representation }
+        val updateLabel = ChangeListener { _: ObservableValue<*>?, _: Any?, _: Any? ->
+            label.text = Edge.representation
+        }
 
         val contract = Edge.contract
         contract?.nameProperty?.addListener(updateLabel)
-        contractProperty.addListener { _: ObservableValue<out Contract>?, _: Contract?, newValue: Contract? ->
+        contractProperty.addListener {
+            _: ObservableValue<out Contract>?,
+            _: Contract?,
+            newValue: Contract? ->
             label.text = Edge.representation
             newValue?.nameProperty?.addListener(updateLabel)
         }
@@ -74,7 +71,9 @@ class EdgeViewElement(Edge: Edge) :
         isLoopProperty.bind(Edge.isLoopProperty.and(Edge.isCurrentlyModified.not()))
         orientationProperty.bind(Edge.orientationProperty)
 
-        isLoopProperty.addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, _: Boolean? -> calculateLabelPosition() }
+        isLoopProperty.addListener { _: ObservableValue<out Boolean?>?, _: Boolean?, _: Boolean? ->
+            calculateLabelPosition()
+        }
         constructVisualization()
         calculateLabelPosition()
     }
@@ -94,7 +93,9 @@ class EdgeViewElement(Edge: Edge) :
         val vec = last.subtract(first)
         val angle = atan2(vec.y, vec.x)
         val isVertical = abs(abs(angle) - Math.PI / 2) < Math.PI / 4
-        val isPart = (angle > 0 && angle < Math.PI / 2) || (angle < -(1.0 / 2.0) * Math.PI && angle > -Math.PI)
+        val isPart =
+            (angle > 0 && angle < Math.PI / 2) ||
+                (angle < -(1.0 / 2.0) * Math.PI && angle > -Math.PI)
 
         val p: Point2D
         val mp: Double
@@ -124,16 +125,16 @@ class EdgeViewElement(Edge: Edge) :
             val offsetX = maxX - minX
             return when (orientationProperty.get()) {
                 0 -> Pair(Point2D(minX, minY - offsetY), Point2D(maxX + offsetX, minY - offsetY))
-                1 -> Pair(
-                    Point2D(minX, maxY + offsetY + LABEL_OFFSET),
-                    Point2D(maxX + offsetX, maxY + offsetY + LABEL_OFFSET)
-                )
-
-                2 -> Pair(
-                    Point2D(minX - offsetX, maxY + offsetY + LABEL_OFFSET),
-                    Point2D(maxX, maxY + offsetY + LABEL_OFFSET)
-                )
-
+                1 ->
+                    Pair(
+                        Point2D(minX, maxY + offsetY + LABEL_OFFSET),
+                        Point2D(maxX + offsetX, maxY + offsetY + LABEL_OFFSET)
+                    )
+                2 ->
+                    Pair(
+                        Point2D(minX - offsetX, maxY + offsetY + LABEL_OFFSET),
+                        Point2D(maxX, maxY + offsetY + LABEL_OFFSET)
+                    )
                 3 -> Pair(Point2D(minX - offsetX, minY - offsetY), Point2D(maxX, minY - offsetY))
                 else -> Pair(Point2D.ZERO, Point2D.ZERO)
             }
@@ -158,10 +159,10 @@ class EdgeViewElement(Edge: Edge) :
 
     override fun setEdgePoint(index: Int, point: Point2D): Boolean {
         if (index == 0) {
-            //target.startPoint = point
+            // target.startPoint = point
             return true
         } else if (index == 1) {
-            //target.endPoint = point
+            // target.endPoint = point
             return true
         }
         return false

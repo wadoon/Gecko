@@ -12,7 +12,8 @@ abstract class AbstractInspectorButton : Button(), InspectorElement<Button> {
         setPrefSize(DEFAULT_SIZE.toDouble(), DEFAULT_SIZE.toDouble())
     }
 
-    override val control get() = this
+    override val control
+        get() = this
 
     companion object {
         const val ICON_STYLE_NAME = "inspector-button"

@@ -7,8 +7,8 @@ import org.gecko.viewmodel.BlockElement
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * A concrete representation of an [Action] that scales a  [BlockElement] by a
- * [delta value][Point2D] using an [ElementScalerBlock].
+ * A concrete representation of an [Action] that scales a [BlockElement] by a [delta value][Point2D]
+ * using an [ElementScalerBlock].
  */
 class ScaleBlockViewModelElementAction : Action {
     val editorViewModel: EditorViewModel
@@ -19,8 +19,12 @@ class ScaleBlockViewModelElementAction : Action {
     var isPreviousScale = false
 
     internal constructor(
-        editorViewModel: EditorViewModel, element: BlockElement, elementScalerBlock: ElementScalerBlock?,
-        position: Point2D?, size: Point2D?, isPreviousScale: Boolean
+        editorViewModel: EditorViewModel,
+        element: BlockElement,
+        elementScalerBlock: ElementScalerBlock?,
+        position: Point2D?,
+        size: Point2D?,
+        isPreviousScale: Boolean
     ) {
         this.editorViewModel = editorViewModel
         this.element = element
@@ -56,6 +60,12 @@ class ScaleBlockViewModelElementAction : Action {
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return actionFactory.createScaleBlockViewModelElementAction(element, elementScalerBlock, position, size, false)
+        return actionFactory.createScaleBlockViewModelElementAction(
+            element,
+            elementScalerBlock,
+            position,
+            size,
+            false
+        )
     }
 }

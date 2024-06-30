@@ -8,10 +8,7 @@ import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.State
 
-/**
- * Represents a type of [AbstractInspectorButton] used for removing a [Contract] from a
- * [State].
- */
+/** Represents a type of [AbstractInspectorButton] used for removing a [Contract] from a [State]. */
 class InspectorRemoveContractButton(
     actionManager: ActionManager,
     state: State?,
@@ -23,8 +20,7 @@ class InspectorRemoveContractButton(
         onAction = EventHandler { event: ActionEvent? ->
             parent.requestFocus()
             actionManager.run(
-                actionManager.actionFactory
-                    .createDeleteContractViewModelAction(state!!, Contract)
+                actionManager.actionFactory.createDeleteContractViewModelAction(state!!, Contract)
             )
         }
     }

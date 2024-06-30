@@ -6,15 +6,13 @@ import org.gecko.viewmodel.GModel
 import org.gecko.viewmodel.System
 
 /**
- * A concrete representation of an [Action] that creates a [System] in the
- * current-[System] through the [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the
- * [GModel]. Additionally, holds the [position][Point2D] and the current [EditorViewModel] for
- * setting the correct position for the created system.
+ * A concrete representation of an [Action] that creates a [System] in the current-[System] through
+ * the [ViewModelFactory][org.gecko.viewmodel.ViewModelFactory] of the [GModel]. Additionally, holds
+ * the [position][Point2D] and the current [EditorViewModel] for setting the correct position for
+ * the created system.
  */
-class CreateSystemViewModelElementAction internal constructor(
-    val gModel: GModel,
-    val position: Point2D
-) : Action() {
+class CreateSystemViewModelElementAction
+internal constructor(val gModel: GModel, val position: Point2D) : Action() {
     lateinit var createdSystem: System
 
     @Throws(GeckoException::class)

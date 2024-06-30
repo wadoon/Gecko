@@ -1,6 +1,5 @@
 package org.gecko.view.contextmenu
 
-
 import javafx.beans.binding.Bindings
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -15,16 +14,14 @@ import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * Represents a builder for a general purpose [ContextMenu] in the view, containing [MenuItem]s that run the
- * cut, copy, paste, select all and deselect all operations. Holds therefore a reference to the [ActionManager]
- * and to the built [ContextMenu].
+ * Represents a builder for a general purpose [ContextMenu] in the view, containing [MenuItem]s that
+ * run the cut, copy, paste, select all and deselect all operations. Holds therefore a reference to
+ * the [ActionManager] and to the built [ContextMenu].
  */
 open class ViewContextMenuBuilder {
     protected val actionManager: ActionManager
 
-
     protected var editorViewModel: EditorViewModel?
-
 
     var contextMenu: ContextMenu? = null
     val editorView: EditorView?
@@ -35,7 +32,11 @@ open class ViewContextMenuBuilder {
         this.editorView = geckoView.currentView
     }
 
-    constructor(actionManager: ActionManager, editorViewModel: EditorViewModel?, editorView: EditorView?) {
+    constructor(
+        actionManager: ActionManager,
+        editorViewModel: EditorViewModel?,
+        editorView: EditorView?
+    ) {
         this.actionManager = actionManager
         this.editorViewModel = editorViewModel
         this.editorView = editorView
@@ -47,12 +48,13 @@ open class ViewContextMenuBuilder {
         // Data transfer commands:
         val cutMenuItem = MenuItem(ResourceHandler.cut)
         cutMenuItem.onAction = EventHandler { e: ActionEvent? ->
-            //actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
+            // actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
             actionManager.run(actionManager.actionFactory.createDeleteAction())
         }
         cutMenuItem.accelerator = Shortcuts.CUT.get()
         if (editorViewModel != null) {
-            cutMenuItem.disableProperty()
+            cutMenuItem
+                .disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
                         { editorViewModel!!.selectionManager.currentSelection.isEmpty() },
@@ -64,11 +66,13 @@ open class ViewContextMenuBuilder {
         val copyMenuItem = MenuItem(ResourceHandler.copy)
         copyMenuItem.onAction = EventHandler { e: ActionEvent? ->
             TODO()
-            //    actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
+            //
+            // actionManager.run(actionManager.actionFactory.createCopyPositionableViewModelElementAction())
         }
         copyMenuItem.accelerator = Shortcuts.COPY.get()
         if (editorViewModel != null) {
-            copyMenuItem.disableProperty()
+            copyMenuItem
+                .disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
                         { editorViewModel!!.selectionManager.currentSelection.isEmpty() },
@@ -80,7 +84,7 @@ open class ViewContextMenuBuilder {
         val pasteMenuItem = MenuItem(ResourceHandler.paste)
         pasteMenuItem.onAction = EventHandler { e: ActionEvent? ->
             val center = editorView!!.viewElementPane.screenCenterWorldCoords()
-            //actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
+            // actionManager.run(actionManager.actionFactory.createPastePositionableViewModelElementAction(center))
             TODO()
         }
         pasteMenuItem.accelerator = Shortcuts.PASTE.get()
@@ -91,13 +95,16 @@ open class ViewContextMenuBuilder {
         val selectMenuItem = MenuItem(ResourceHandler.select_all)
         selectMenuItem.onAction = EventHandler { e: ActionEvent? ->
             actionManager.run(
-                actionManager.actionFactory
-                    .createSelectAction(editorViewModel!!.viewableElements, true)
+                actionManager.actionFactory.createSelectAction(
+                    editorViewModel!!.viewableElements,
+                    true
+                )
             )
         }
         selectMenuItem.accelerator = Shortcuts.SELECT_ALL.get()
         if (editorViewModel != null) {
-            selectMenuItem.disableProperty()
+            selectMenuItem
+                .disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
                         { editorViewModel!!.viewableElementsProperty.isEmpty() },
@@ -107,11 +114,13 @@ open class ViewContextMenuBuilder {
         }
 
         val deselectMenuItem = MenuItem(ResourceHandler.deselect_all)
-        deselectMenuItem.onAction =
-            EventHandler { e: ActionEvent? -> actionManager.run(actionManager.actionFactory.createDeselectAction()) }
+        deselectMenuItem.onAction = EventHandler { e: ActionEvent? ->
+            actionManager.run(actionManager.actionFactory.createDeselectAction())
+        }
         deselectMenuItem.accelerator = Shortcuts.DESELECT_ALL.get()
         if (editorViewModel != null) {
-            deselectMenuItem.disableProperty()
+            deselectMenuItem
+                .disableProperty()
                 .bind(
                     Bindings.createBooleanBinding(
                         { editorViewModel!!.selectionManager.currentSelection.isEmpty() },
@@ -120,8 +129,14 @@ open class ViewContextMenuBuilder {
                 )
         }
 
-        contextMenu.items
-            .addAll(cutMenuItem, copyMenuItem, pasteMenuItem, separatorMenuItem, selectMenuItem, deselectMenuItem)
+        contextMenu.items.addAll(
+            cutMenuItem,
+            copyMenuItem,
+            pasteMenuItem,
+            separatorMenuItem,
+            selectMenuItem,
+            deselectMenuItem
+        )
 
         this.contextMenu = contextMenu
         return contextMenu

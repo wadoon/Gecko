@@ -10,7 +10,8 @@ import org.gecko.viewmodel.Edge
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an
  * [InspectorKindComboBox].
  */
-class InspectorKindPicker(actionManager: ActionManager, viewModel: Edge) : LabeledInspectorElement(
-    InspectorLabel(ResourceHandler.Companion.kind),
-    InspectorKindComboBox(actionManager, viewModel)
-)
+class InspectorKindPicker(actionManager: ActionManager, viewModel: Edge) :
+    LabeledInspectorElement(
+        InspectorLabel(ResourceHandler.Companion.kind),
+        InspectorKindComboBox(actionManager, viewModel)
+    )

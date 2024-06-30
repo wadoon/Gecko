@@ -13,30 +13,30 @@ import javafx.scene.shape.*
 import javafx.scene.transform.Rotate
 import javafx.scene.transform.Scale
 import javafx.scene.transform.Translate
-import org.gecko.viewmodel.listProperty
 import kotlin.math.abs
+import org.gecko.viewmodel.listProperty
 
 /**
- * An abstract representation of a [Path] type view element, that is a connection in a Gecko project. Contains a
- * list of [path point][Point2D]s.
+ * An abstract representation of a [Path] type view element, that is a connection in a Gecko
+ * project. Contains a list of [path point][Point2D]s.
  */
-
 abstract class ConnectionViewElement(line: List<Point2D>) {
     val pathSource = listProperty<Point2D>()
     val line = Path()
     val arrowHead = createDefaultHead()
     val pane = Group(this.line, arrowHead)
 
-    //MoveTo startElement;
+    // MoveTo startElement;
     val isLoopProperty: BooleanProperty = SimpleBooleanProperty(false)
     protected val orientationProperty: IntegerProperty = SimpleIntegerProperty(0)
 
     val isSelected = false
 
     /**
-     * The first element of the pair is the x property of the point, and the second element is the y property of the
-     * point. This list represents the actual points that are drawn on the screen. pathSource is a subset of
-     * renderPathSource. In order to draw a loop, extra points are added to renderPathSource.
+     * The first element of the pair is the x property of the point, and the second element is the y
+     * property of the point. This list represents the actual points that are drawn on the screen.
+     * pathSource is a subset of renderPathSource. In order to draw a loop, extra points are added
+     * to renderPathSource.
      */
     protected val renderPathSource: MutableList<Point2D> = ArrayList()
 
@@ -47,20 +47,33 @@ abstract class ConnectionViewElement(line: List<Point2D>) {
         updatePathVisualization()
 
         val pathChangedListener =
-            ListChangeListener { change: ListChangeListener.Change<out Point2D>? -> updatePathVisualization() }
+            ListChangeListener { change: ListChangeListener.Change<out Point2D>? ->
+                updatePathVisualization()
+            }
 
         pathSource.addListener(pathChangedListener)
-        isLoopProperty.addListener { observable: ObservableValue<out Boolean?>?, oldValue: Boolean?, newValue: Boolean? -> updatePathVisualization() }
-        orientationProperty.addListener { observable: ObservableValue<out Number?>?, oldValue: Number?, newValue: Number? -> updatePathVisualization() }
+        isLoopProperty.addListener {
+            observable: ObservableValue<out Boolean?>?,
+            oldValue: Boolean?,
+            newValue: Boolean? ->
+            updatePathVisualization()
+        }
+        orientationProperty.addListener {
+            observable: ObservableValue<out Number?>?,
+            oldValue: Number?,
+            newValue: Number? ->
+            updatePathVisualization()
+        }
 
         this.line.strokeWidth = STROKE_WIDTH.toDouble()
         this.line.styleClass.setAll(STYLE_CLASS)
     }
 
     /**
-     * Update the visualization of the path. Path is drawn using the path source points. Path is automatically updated
-     * upon change of individual path source points. If this connection view element is a loop, the path will be drawn
-     * as a loop by adding extra points to render path source.
+     * Update the visualization of the path. Path is drawn using the path source points. Path is
+     * automatically updated upon change of individual path source points. If this connection view
+     * element is a loop, the path will be drawn as a loop by adding extra points to render path
+     * source.
      */
     protected fun updatePathVisualization() {
         line.elements.clear()
@@ -83,7 +96,8 @@ abstract class ConnectionViewElement(line: List<Point2D>) {
             // If source and destination are the same, draw a loop
             val arcTo = ArcTo()
 
-            // ArcTo(double radiusX, double radiusY, double xAxisRotation, double x, double y, boolean largeArcFlag, boolean sweepFlag) 
+            // ArcTo(double radiusX, double radiusY, double xAxisRotation, double x, double y,
+            // boolean largeArcFlag, boolean sweepFlag)
             arcTo.radiusX = abs(first.x - last.x)
             arcTo.radiusY = abs(first.y - last.y)
             arcTo.x = last.x
@@ -169,8 +183,7 @@ abstract class ConnectionViewElement(line: List<Point2D>) {
             angle *= -1.0
         }
 
-
-        //System.out.println("ANGLE: " + angle + "  " + direction);
+        // System.out.println("ANGLE: " + angle + "  " + direction);
         arrowHead.fill = Color.BLACK
         arrowHead.transforms.setAll(
             Translate(end.x, end.y),
@@ -179,12 +192,12 @@ abstract class ConnectionViewElement(line: List<Point2D>) {
         )
     }
 
-
     fun calculateArrowHeadPosition(start: Point2D, end: Point2D, offset: Double): Point2D {
         val vector = end.subtract(start).normalize()
         val orthogonalVector = Point2D(-vector.y, vector.x).normalize()
 
-        // Arrow head position is calculated by moving from the last point in the path (that is orthogonally shifted) by
+        // Arrow head position is calculated by moving from the last point in the path (that is
+        // orthogonally shifted) by
         // offset to the first point in the path
         val arrowHeadPosition = end.add(orthogonalVector.multiply(offset))
         return arrowHeadPosition.subtract(vector.multiply(ARROW_HEAD_LENGTH))
@@ -210,14 +223,8 @@ abstract class ConnectionViewElement(line: List<Point2D>) {
             toP2.controlX = x / 2.0
             toP2.controlY = 0.0
             val toStart = LineTo(0.0, 0.0)
-            arrowHead.elements.setAll(
-                begin,
-                toP1,
-                toP2,
-                toStart
-            )
+            arrowHead.elements.setAll(begin, toP1, toP2, toStart)
             return arrowHead
         }
     }
 }
-

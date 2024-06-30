@@ -6,8 +6,8 @@ import org.gecko.viewmodel.Edge
 import org.gecko.viewmodel.Kind
 
 /**
- * Represents a type of [InspectorComboBox] encapsulating a [Kind]. Holds a reference to an
- * [Edge] and the current [ActionManager].
+ * Represents a type of [InspectorComboBox] encapsulating a [Kind]. Holds a reference to an [Edge]
+ * and the current [ActionManager].
  */
 class InspectorKindComboBox(val actionManager: ActionManager, val viewModel: Edge) :
     InspectorComboBox<Kind>(actionManager, Kind.entries, viewModel.kindProperty) {

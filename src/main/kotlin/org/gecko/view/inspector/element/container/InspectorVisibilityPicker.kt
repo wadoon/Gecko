@@ -10,7 +10,8 @@ import org.gecko.viewmodel.Port
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an
  * [InspectorVisibilityComboBox].
  */
-class InspectorVisibilityPicker(actionManager: ActionManager, viewModel: Port) : LabeledInspectorElement(
-    InspectorLabel(ResourceHandler.Companion.visibility),
-    InspectorVisibilityComboBox(actionManager, viewModel)
-)
+class InspectorVisibilityPicker(actionManager: ActionManager, viewModel: Port) :
+    LabeledInspectorElement(
+        InspectorLabel(ResourceHandler.Companion.visibility),
+        InspectorVisibilityComboBox(actionManager, viewModel)
+    )

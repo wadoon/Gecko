@@ -2,15 +2,14 @@ package org.gecko.io
 
 import gecko.parser.SystemDefBaseVisitor
 import gecko.parser.SystemDefParser.*
+import java.util.function.Consumer
 import org.gecko.viewmodel.builtinTypes
 
-
-import java.util.function.Consumer
-
 /**
- * The AutomatonFileScout is responsible for scanning the parsed automaton file and extracting information about the
- * systems, automata, and contracts. It is used by the [AutomatonFileParser] to give access to information about a
- * sys file that would otherwise be hard to obtain while visiting single elements.
+ * The AutomatonFileScout is responsible for scanning the parsed automaton file and extracting
+ * information about the systems, automata, and contracts. It is used by the [AutomatonFileParser]
+ * to give access to information about a sys file that would otherwise be hard to obtain while
+ * visiting single elements.
  */
 class AutomatonFileScout(ctx: ModelContext) {
     val systems: MutableMap<String, SystemContext> = HashMap()
@@ -19,7 +18,6 @@ class AutomatonFileScout(ctx: ModelContext) {
 
     val foundChildren: MutableSet<SystemInfo> = HashSet()
     val rootChildrenIdents: MutableSet<String> = HashSet()
-
 
     val rootChildren: MutableSet<SystemContext> = HashSet()
     val parents = HashMap<SystemContext, MutableList<SystemContext>>()
@@ -44,20 +42,23 @@ class AutomatonFileScout(ctx: ModelContext) {
     inner class ScoutVisitor : SystemDefBaseVisitor<Unit>() {
         override fun visitModel(ctx: ModelContext) {
             ctx.system().forEach { system: SystemContext -> system.accept(this) }
-            ctx.system().forEach { systemContext: SystemContext -> this.registerParent(systemContext) }
+            ctx.system().forEach { systemContext: SystemContext ->
+                this.registerParent(systemContext)
+            }
             ctx.contract().forEach { contract: ContractContext -> contract.accept(this) }
             val defines = ctx.defines()
-            defines?.variable()?.forEach { variable: VariableContext ->
-                variable.accept(
-                    this
-                )
-            }
-            foundChildren.map(SystemInfo::type).toList().forEach(
-                Consumer { o: String -> rootChildrenIdents.remove(o) })
-            rootChildren.addAll(ctx.system()
-                
-                .filter { system: SystemContext -> rootChildrenIdents.contains(system.ident().Ident().text) }
-                .toList())
+            defines?.variable()?.forEach { variable: VariableContext -> variable.accept(this) }
+            foundChildren
+                .map(SystemInfo::type)
+                .toList()
+                .forEach(Consumer { o: String -> rootChildrenIdents.remove(o) })
+            rootChildren.addAll(
+                ctx.system()
+                    .filter { system: SystemContext ->
+                        rootChildrenIdents.contains(system.ident().Ident().text)
+                    }
+                    .toList()
+            )
         }
 
         override fun visitSystem(ctx: SystemContext) {
@@ -77,11 +78,14 @@ class AutomatonFileScout(ctx: ModelContext) {
 
         fun getChildSystems(ctx: SystemContext): List<SystemInfo> {
             val children: MutableList<SystemInfo> = ArrayList()
-            ctx.io().filter { io -> io.type.type == STATE }
+            ctx.io()
+                .filter { io -> io.type.type == STATE }
                 .forEach { io ->
-                    children.addAll(io.variable()
-                        .filter { !builtinTypes.contains(it.t.text) }
-                        .flatMap { it.n.map { n -> SystemInfo(n.text, it.t.text) } })
+                    children.addAll(
+                        io.variable()
+                            .filter { !builtinTypes.contains(it.t.text) }
+                            .flatMap { it.n.map { n -> SystemInfo(n.text, it.t.text) } }
+                    )
                 }
             return children
         }
@@ -95,5 +99,4 @@ class AutomatonFileScout(ctx: ModelContext) {
     }
 }
 
-@JvmRecord
-data class SystemInfo(val name: String, val type: String)
+@JvmRecord data class SystemInfo(val name: String, val type: String)

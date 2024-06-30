@@ -29,4 +29,3 @@ class MappedList<E, F>(observableList: ObservableList<out F>, private val transl
 
     override fun get(index: Int): E = translator(source[index])
 }
-

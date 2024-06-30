@@ -1,15 +1,15 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.GeckoException
 import org.gecko.viewmodel.GModel
-import org.gecko.viewmodel.SystemConnection
 import org.gecko.viewmodel.System
+import org.gecko.viewmodel.SystemConnection
 
 /**
  * A concrete representation of an [Action] that restores a deleted [SystemConnection] in a given
  * [SystemViewModel][org.gecko.viewmodel.System].
  */
-class RestoreSystemConnectionAction internal constructor(
+class RestoreSystemConnectionAction
+internal constructor(
     val gModel: GModel,
     val systemConnectionViewModel: SystemConnection,
     val system: System
@@ -23,6 +23,10 @@ class RestoreSystemConnectionAction internal constructor(
     }
 
     override fun getUndoAction(actionFactory: ActionFactory): Action {
-        return DeleteSystemConnectionViewModelElementAction(gModel, systemConnectionViewModel, system)
+        return DeleteSystemConnectionViewModelElementAction(
+            gModel,
+            systemConnectionViewModel,
+            system
+        )
     }
 }

@@ -11,15 +11,17 @@ import org.gecko.viewmodel.Visibility
  * Represents a type of [LabeledInspectorElement]. Contains an [InspectorLabel] and an
  * [InspectorAddVariableButton].
  */
-class InspectorVariableLabel(actionManager: ActionManager, viewModel: System, visibility: Visibility) :
+class InspectorVariableLabel(
+    actionManager: ActionManager,
+    viewModel: System,
+    visibility: Visibility
+) :
     LabeledInspectorElement(
-        InspectorLabel(
-            getLabel(visibility)
-        ),
+        InspectorLabel(getLabel(visibility)),
         InspectorAddVariableButton(actionManager, viewModel, visibility)
     ) {
     companion object {
-        //Cant be public because it is called in the super constructor
+        // Cant be public because it is called in the super constructor
         fun getLabel(visibility: Visibility): String {
             return when (visibility) {
                 Visibility.INPUT -> ResourceHandler.Companion.input

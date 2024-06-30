@@ -1,8 +1,8 @@
 package org.gecko.view
 
 /**
- * Provides methods for getting [String]s that are dependent on a given key and the Language currently used in the
- * view.
+ * Provides methods for getting [String]s that are dependent on a given key and the Language
+ * currently used in the view.
  */
 interface ResourceHandler {
     companion object {
@@ -71,13 +71,13 @@ interface ResourceHandler {
         const val system: String = "System"
 
         const val title: String = "Warning"
-        const val parse_header: String = "The model has been successfully parsed, but warnings have been emitted"
+        const val parse_header: String =
+            "The model has been successfully parsed, but warnings have been emitted"
         const val multiple_top_level_header: String =
             "Found multiple top level systems. Please choose a system as root of the project."
         const val corrupted_file: String = "Corrupted file. Could not load project from "
         const val could_not_read_file: String = "Could not read file: "
         const val could_not_write_file: String = "Could not write file."
-
 
         const val inspector_remove_contract: String = "Remove the contract from the state"
         const val inspector_remove_variable: String = "Remove the variable from the system"
@@ -86,7 +86,6 @@ interface ResourceHandler {
         const val inspector_selection_forward: String = "Show the next selection"
         const val switch_view: String = "Switch view"
         const val parent_system: String = "Go to parent system"
-
 
         const val cursor: String = "Cursor Tool"
         const val marquee: String = "Marquee Tool"

@@ -3,4 +3,3 @@
  * localization for Gecko's interface.
  */
 package org.gecko.view
-

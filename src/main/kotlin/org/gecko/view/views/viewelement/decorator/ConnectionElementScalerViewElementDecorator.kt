@@ -7,8 +7,8 @@ import org.gecko.view.views.viewelement.ViewElement
 import org.gecko.view.views.viewelement.ViewElementVisitor
 
 /**
- * Represents a type of [ElementScalerViewElementDecorator] following the decorator pattern for scaling purposes
- * of a connection.
+ * Represents a type of [ElementScalerViewElementDecorator] following the decorator pattern for
+ * scaling purposes of a connection.
  */
 class ConnectionElementScalerViewElementDecorator(decoratorTarget: ViewElement<*>) :
     ElementScalerViewElementDecorator(decoratorTarget) {
@@ -16,7 +16,9 @@ class ConnectionElementScalerViewElementDecorator(decoratorTarget: ViewElement<*
 
     init {
         // create new scaler block if edge points list change
-        edgePoints.addListener { change: ListChangeListener.Change<out Point2D> -> this.updateEdgePoints(change) }
+        edgePoints.addListener { change: ListChangeListener.Change<out Point2D> ->
+            this.updateEdgePoints(change)
+        }
     }
 
     override fun accept(visitor: ViewElementVisitor) {

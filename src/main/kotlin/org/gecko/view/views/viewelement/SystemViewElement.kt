@@ -18,18 +18,17 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
-import org.gecko.viewmodel.Port
-import org.gecko.viewmodel.SystemConnection
-import org.gecko.viewmodel.System
-import org.gecko.viewmodel.Visibility
 import kotlin.math.min
+import org.gecko.viewmodel.Port
+import org.gecko.viewmodel.System
+import org.gecko.viewmodel.SystemConnection
+import org.gecko.viewmodel.Visibility
 
 /**
- * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [System].
+ * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [System].
  */
-class SystemViewElement(System: System) : BlockViewElement(System),
-    ViewElement<System> {
+class SystemViewElement(System: System) : BlockViewElement(System), ViewElement<System> {
     override val target: System = System
     val nameProperty: StringProperty = SimpleStringProperty()
     val codeProperty: StringProperty = SimpleStringProperty()
@@ -39,9 +38,10 @@ class SystemViewElement(System: System) : BlockViewElement(System),
     val portViewElements: ListProperty<PortViewElement> =
         SimpleListProperty(FXCollections.observableArrayList<PortViewElement>())
 
-
     val positionListener =
-        ChangeListener { _: ObservableValue<out Point2D?>?, _: Point2D?, _: Point2D? -> reorderPorts() }
+        ChangeListener { _: ObservableValue<out Point2D?>?, _: Point2D?, _: Point2D? ->
+            reorderPorts()
+        }
 
     init {
         bindViewModel()
@@ -60,21 +60,26 @@ class SystemViewElement(System: System) : BlockViewElement(System),
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)
-        portViewElements.forEach { portViewElement: PortViewElement -> visitor.visit(portViewElement) }
+        portViewElements.forEach { portViewElement: PortViewElement ->
+            visitor.visit(portViewElement)
+        }
     }
 
     fun bindViewModel() {
         nameProperty.bind(target.nameProperty)
         codeProperty.bind(target.codeProperty)
-        prefWidthProperty().bind(
-            Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty)
-        )
-        prefHeightProperty().bind(
-            Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty)
-        )
+        prefWidthProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty))
+        prefHeightProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty))
         portsProperty.bind(target.portsProperty)
 
-        target.positionProperty.addListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? -> updatePortViewModels() }
+        target.positionProperty.addListener {
+            observable: ObservableValue<out Point2D?>?,
+            oldValue: Point2D?,
+            newValue: Point2D? ->
+            updatePortViewModels()
+        }
         updatePortViewModels()
     }
 
@@ -104,34 +109,44 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         for (portViewElement in portViewElements) {
             portViewElement.viewModel.setSystemPortSize(portViewElement.viewSize)
 
-            val portViewElementPositionInScene = portViewElement.localToScene(portViewElement.viewPosition)
+            val portViewElementPositionInScene =
+                portViewElement.localToScene(portViewElement.viewPosition)
 
             // translate the port position to the world coordinate system
-            val calculatedWorldPosition = sceneToLocal(portViewElementPositionInScene).add(
-                position
-            )
-                .subtract(portViewElement.viewPosition)
+            val calculatedWorldPosition =
+                sceneToLocal(portViewElementPositionInScene)
+                    .add(position)
+                    .subtract(portViewElement.viewPosition)
             portViewElement.viewModel.setSystemPortPosition(calculatedWorldPosition)
         }
     }
 
     fun addPort(Port: Port?) {
-        Port!!.visibilityProperty.addListener { observable: ObservableValue<out Visibility>, oldValue: Visibility?, newValue: Visibility? ->
+        Port!!.visibilityProperty.addListener {
+            observable: ObservableValue<out Visibility>,
+            oldValue: Visibility?,
+            newValue: Visibility? ->
             this.onVisibilityChanged(observable, oldValue, newValue)
         }
         val portViewElement = PortViewElement(Port)
-        portViewElement.layoutYProperty()
-            .addListener { observable: ObservableValue<out Number?>?, oldValue: Number?, newValue: Number? -> updatePortViewModels() }
+        portViewElement.layoutYProperty().addListener {
+            observable: ObservableValue<out Number?>?,
+            oldValue: Number?,
+            newValue: Number? ->
+            updatePortViewModels()
+        }
         portViewElements.add(portViewElement)
         if (Port.visibility == Visibility.INPUT) {
             inputPortsAligner.children.add(portViewElement)
         } else if (Port.visibility == Visibility.OUTPUT) {
             outputPortsAligner.children.add(portViewElement)
         }
-        Port.incomingConnections.addListener { change: ListChangeListener.Change<out SystemConnection> ->
+        Port.incomingConnections.addListener {
+            change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
-        Port.outgoingConnections.addListener { change: ListChangeListener.Change<out SystemConnection> ->
+        Port.outgoingConnections.addListener {
+            change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
@@ -150,17 +165,21 @@ class SystemViewElement(System: System) : BlockViewElement(System),
             inputPortsAligner.children.remove(portViewElement)
             outputPortsAligner.children.remove(portViewElement)
         }
-        Port.incomingConnections.removeListener { change: ListChangeListener.Change<out SystemConnection> ->
+        Port.incomingConnections.removeListener {
+            change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
-        Port.outgoingConnections.removeListener { change: ListChangeListener.Change<out SystemConnection> ->
+        Port.outgoingConnections.removeListener {
+            change: ListChangeListener.Change<out SystemConnection> ->
             this.onConnectionChanged(change)
         }
         reorderPorts()
     }
 
     fun onVisibilityChanged(
-        observable: ObservableValue<out Visibility?>, oldValue: Visibility?, newValue: Visibility?
+        observable: ObservableValue<out Visibility?>,
+        oldValue: Visibility?,
+        newValue: Visibility?
     ) {
         if (oldValue == newValue) {
             return
@@ -168,7 +187,9 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         val portViewModel =
             portsProperty.filter { pvm: Port? -> pvm!!.visibilityProperty === observable }.first()
         val portViewElement =
-            portViewElements.filter { pve: PortViewElement -> pve.viewModel == portViewModel }.first()
+            portViewElements
+                .filter { pve: PortViewElement -> pve.viewModel == portViewModel }
+                .first()
         if (newValue == Visibility.INPUT) {
             outputPortsAligner.children.remove(portViewElement)
             inputPortsAligner.children.add(portViewElement)
@@ -185,15 +206,18 @@ class SystemViewElement(System: System) : BlockViewElement(System),
     fun setupPortContainers(): List<HBox> {
         val result: MutableList<HBox> = ArrayList()
         for (aligner in java.util.List.of<VBox>(inputPortsAligner, outputPortsAligner)) {
-            //HBox container to ensure horizontal alignment
+            // HBox container to ensure horizontal alignment
             val container = HBox()
-            //Center names vertically and space them out
+            // Center names vertically and space them out
             VBox.setVgrow(aligner, Priority.ALWAYS)
             aligner.alignment = Pos.CENTER
             aligner.spacing = PORT_SPACING.toDouble()
             container.children.add(aligner)
-            //Width isn't set yet, so we need to listen to it
-            widthProperty().addListener { observable: ObservableValue<out Number>?, oldValue: Number?, newValue: Number ->
+            // Width isn't set yet, so we need to listen to it
+            widthProperty().addListener {
+                observable: ObservableValue<out Number>?,
+                oldValue: Number?,
+                newValue: Number ->
                 // x/3 to evenly divide into left, center, right
                 container.prefWidth = newValue.toDouble() / 3
             }
@@ -218,11 +242,12 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         get() {
             val nameLabel = Label()
             nameLabel.textProperty().bind(nameProperty)
-            //Center name vertically
+            // Center name vertically
             val nameContainer = VBox()
             nameContainer.children.add(nameLabel)
             nameContainer.alignment = Pos.CENTER
-            //Center name horizontally. Assumes that the port containers are of equal width and always present
+            // Center name horizontally. Assumes that the port containers are of equal width and
+            // always present
             val spacer = HBox()
             spacer.alignment = Pos.CENTER
             HBox.setHgrow(spacer, Priority.ALWAYS)
@@ -232,10 +257,10 @@ class SystemViewElement(System: System) : BlockViewElement(System),
 
     fun reorderPorts() {
         val cmp = { p1: PortViewElement, p2: PortViewElement -> this.compare(p1, p2) }
-        val inputs = inputPortsAligner.children.map { PortViewElement::class.java.cast(it) }
-            .sortedWith(cmp)
-        val outputs = outputPortsAligner.children.map { PortViewElement::class.java.cast(it) }
-            .sortedWith(cmp)
+        val inputs =
+            inputPortsAligner.children.map { PortViewElement::class.java.cast(it) }.sortedWith(cmp)
+        val outputs =
+            outputPortsAligner.children.map { PortViewElement::class.java.cast(it) }.sortedWith(cmp)
         inputPortsAligner.children.setAll(inputs)
         outputPortsAligner.children.setAll(outputs)
     }
@@ -250,9 +275,7 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         if (isVariableBlock(Port)) {
             return Port.center
         }
-        return Port.systemPositionProperty
-            .value
-            .add(Port.systemPortOffsetProperty.value)
+        return Port.systemPositionProperty.value.add(Port.systemPortOffsetProperty.value)
     }
 
     fun getOtherPortY(Port: Port): Double {
@@ -261,11 +284,12 @@ class SystemViewElement(System: System) : BlockViewElement(System),
             else Port.outgoingConnections
         var minY = Double.MAX_VALUE
         for (connection in connections) {
-            minY = if (connection.source == Port) {
-                min(minY, getSortPosition(connection.destination).y)
-            } else {
-                min(minY, getSortPosition(connection.source).y)
-            }
+            minY =
+                if (connection.source == Port) {
+                    min(minY, getSortPosition(connection.destination).y)
+                } else {
+                    min(minY, getSortPosition(connection.source).y)
+                }
         }
         return minY
     }
@@ -282,15 +306,11 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         while (change.next()) {
 
             if (change.wasAdded()) {
-                change.addedSubList
-                    .forEach {
-                        it.edgePoints.addListener(edgePointListener)
-                    }
+                change.addedSubList.forEach { it.edgePoints.addListener(edgePointListener) }
             } else if (change.wasRemoved()) {
-                change.removed
-                    .forEach { connection ->
-                        connection.edgePoints.removeListener(edgePointListener)
-                    }
+                change.removed.forEach { connection ->
+                    connection.edgePoints.removeListener(edgePointListener)
+                }
             }
         }
         reorderPorts()
@@ -300,18 +320,17 @@ class SystemViewElement(System: System) : BlockViewElement(System),
         reorderPorts()
         while (change.next()) {
             if (change.wasAdded()) {
-                //change.getAddedSubList().forEach(point -> point.addListener(positionListener));
+                // change.getAddedSubList().forEach(point -> point.addListener(positionListener));
             } else if (change.wasRemoved()) {
-                //change.getRemoved().forEach(point -> point.removeListener(positionListener));
+                // change.getRemoved().forEach(point -> point.removeListener(positionListener));
             }
         }
     }
 
     fun addPortPositionListeners() {
         for (portViewModel in portsProperty) {
-            val connections: MutableList<SystemConnection> = ArrayList(
-                portViewModel!!.incomingConnections
-            )
+            val connections: MutableList<SystemConnection> =
+                ArrayList(portViewModel!!.incomingConnections)
             connections.addAll(portViewModel.outgoingConnections)
             for (connection in connections) {
                 connection.edgePoints.addListener(edgePointListener)

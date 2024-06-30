@@ -7,22 +7,22 @@ import org.gecko.actions.*
 import org.gecko.exceptions.ModelException
 
 /**
- * Represents a factory for the view model elements of a Gecko project. Provides methods for the creation of each
- * element. The create[Element]ViewModelIn methods are used to create a new view model element and also new model
- * element. The create[Element]ViewModelFrom methods are used to create a new view model element from an existing model
- * element.
+ * Represents a factory for the view model elements of a Gecko project. Provides methods for the
+ * creation of each element. The create[Element]ViewModelIn methods are used to create a new view
+ * model element and also new model element. The create[Element]ViewModelFrom methods are used to
+ * create a new view model element from an existing model element.
  */
 class ViewModelFactory(
     val actionManager: ActionManager,
     val gModel: GModel,
 ) {
-    /**
-     * The id of the next view model element to be created.
-     */
+    /** The id of the next view model element to be created. */
     var viewModelElementId = 0
 
     fun createEditorViewModel(
-        System: System, parentSystem: System?, isAutomatonEditor: Boolean
+        System: System,
+        parentSystem: System?,
+        isAutomatonEditor: Boolean
     ): EditorViewModel {
         return EditorViewModel(actionManager, System, parentSystem, isAutomatonEditor)
     }
@@ -31,8 +31,7 @@ class ViewModelFactory(
      * If no start state is set in the parent system, the new state will be set as the start state.
      */
     @Throws(ModelException::class)
-    fun createState(parentSystem: System): State =
-        createState(parentSystem.automaton)
+    fun createState(parentSystem: System): State = createState(parentSystem.automaton)
 
     fun createState(parentSystem: Automaton): State {
         val result = parentSystem.createState()
@@ -41,57 +40,59 @@ class ViewModelFactory(
     }
 
     /**
-     * New ContractViewModels are created for the contracts of the state. If the state is the start state of a system,
-     * the system's start state is set to the new state.
+     * New ContractViewModels are created for the contracts of the state. If the state is the start
+     * state of a system, the system's start state is set to the new state.
      */
-//    fun createStateViewModelFrom(): StateViewModel {
-//        val result = StateViewModel()
-//        for (contract in state.contracts) {
-//            val contractViewModel = createContractViewModelFrom(contract)
-//            result.addContract(contractViewModel)
-//        }
-//        geckoViewModel.addViewModelElement(result)
-//        updateStartState(state)
-//        return result
-//    }
+    //    fun createStateViewModelFrom(): StateViewModel {
+    //        val result = StateViewModel()
+    //        for (contract in state.contracts) {
+    //            val contractViewModel = createContractViewModelFrom(contract)
+    //            result.addContract(contractViewModel)
+    //        }
+    //        geckoViewModel.addViewModelElement(result)
+    //        updateStartState(state)
+    //        return result
+    //    }
 
     @Throws(ModelException::class)
-    fun createEdgeViewModelIn(parentSystem: System, source: State, destination: State)
-            : Edge {
+    fun createEdgeViewModelIn(parentSystem: System, source: State, destination: State): Edge {
         val result = Edge(source, destination)
         parentSystem.automaton.edges.add(result)
         gModel.addViewModelElement(result)
         return result
     }
 
-    /**
-     * Expects the source and destination of the edge to be in the view model.
-     */
-//    @Throws(MissingViewModelElementException::class)
-//    fun createEdgeViewModelFrom(edge: Edge): EdgeViewModel {
-//        val source = geckoViewModel.getViewModelElement(edge.source!!) as StateViewModel
-//        val destination = geckoViewModel.getViewModelElement(edge.destination!!) as StateViewModel
-//        if (source == null || destination == null) {
-//            throw MissingViewModelElementException("Missing source or destination for edge.")
-//        }
-//        val result = EdgeViewModel(newViewModelElementId, edge, source, destination)
-//        if (edge.contract != null) {
-//            //This should never be null because the Edge Model Element has a contract that should be coming
-//            //from its source
-//            val contract = source.contractsProperty
-//                
-//                .filter { contractViewModel: ContractViewModel -> contractViewModel.target == edge.contract }
-//                .findFirstOrNull()
-//                .orElse(null)
-//            result.contract = contract
-//        }
-//        geckoViewModel.addViewModelElement(result)
-//        return result
-//    }
+    /** Expects the source and destination of the edge to be in the view model. */
+    //    @Throws(MissingViewModelElementException::class)
+    //    fun createEdgeViewModelFrom(edge: Edge): EdgeViewModel {
+    //        val source = geckoViewModel.getViewModelElement(edge.source!!) as StateViewModel
+    //        val destination = geckoViewModel.getViewModelElement(edge.destination!!) as
+    // StateViewModel
+    //        if (source == null || destination == null) {
+    //            throw MissingViewModelElementException("Missing source or destination for edge.")
+    //        }
+    //        val result = EdgeViewModel(newViewModelElementId, edge, source, destination)
+    //        if (edge.contract != null) {
+    //            //This should never be null because the Edge Model Element has a contract that
+    // should be coming
+    //            //from its source
+    //            val contract = source.contractsProperty
+    //
+    //                .filter { contractViewModel: ContractViewModel -> contractViewModel.target ==
+    // edge.contract }
+    //                .findFirstOrNull()
+    //                .orElse(null)
+    //            result.contract = contract
+    //        }
+    //        geckoViewModel.addViewModelElement(result)
+    //        return result
+    //    }
 
     @Throws(ModelException::class)
     fun createSystemConnectionViewModelIn(
-        parentSystem: System, source: Port, destination: Port
+        parentSystem: System,
+        source: Port,
+        destination: Port
     ): SystemConnection {
         val result = SystemConnection()
         result.source = source
@@ -102,40 +103,43 @@ class ViewModelFactory(
         return result
     }
 
-    /**
-     * Expects the source and destination of the system connection to be in the view model.
-     */
-//    @Throws(MissingViewModelElementException::class)
-//    fun createSystemConnectionViewModelFrom(
-//        system: System?, systemConnection: SystemConnection
-//    ): SystemConnectionViewModel {
-//        val source = geckoViewModel.getViewModelElement(systemConnection.source!!) as PortViewModel
-//        val destination =
-//            geckoViewModel.getViewModelElement(systemConnection.destination!!) as PortViewModel
-//        if (source == null || destination == null) {
-//            throw MissingViewModelElementException("Missing source or destination for system connection.")
-//        }
-//        val result =
-//            SystemConnectionViewModel(newViewModelElementId, systemConnection, source, destination)
-//        geckoViewModel.addViewModelElement(result)
-//        setSystemConnectionEdgePoints(
-//            geckoViewModel.getViewModelElement(system!!) as SystemViewModel, source, destination,
-//            result
-//        )
-//        // Since target is already up-to-date and we're building from target, we don't need to call updateTarget
-//        return result
-//    }
+    /** Expects the source and destination of the system connection to be in the view model. */
+    //    @Throws(MissingViewModelElementException::class)
+    //    fun createSystemConnectionViewModelFrom(
+    //        system: System?, systemConnection: SystemConnection
+    //    ): SystemConnectionViewModel {
+    //        val source = geckoViewModel.getViewModelElement(systemConnection.source!!) as
+    // PortViewModel
+    //        val destination =
+    //            geckoViewModel.getViewModelElement(systemConnection.destination!!) as
+    // PortViewModel
+    //        if (source == null || destination == null) {
+    //            throw MissingViewModelElementException("Missing source or destination for system
+    // connection.")
+    //        }
+    //        val result =
+    //            SystemConnectionViewModel(newViewModelElementId, systemConnection, source,
+    // destination)
+    //        geckoViewModel.addViewModelElement(result)
+    //        setSystemConnectionEdgePoints(
+    //            geckoViewModel.getViewModelElement(system!!) as SystemViewModel, source,
+    // destination,
+    //            result
+    //        )
+    //        // Since target is already up-to-date and we're building from target, we don't need to
+    // call updateTarget
+    //        return result
+    //    }
 
-    /**
-     * Expects the source and destination of the system connection to be in the view model.
-     */
-//    @Throws(MissingViewModelElementException::class)
-//    fun createSystemConnectionViewModelFrom(systemConnection: SystemConnection): SystemConnectionViewModel {
-//        return createSystemConnectionViewModelFrom(
-//            geckoViewModel.currentEditor!!.currentSystem.target,
-//            systemConnection
-//        )
-//    }
+    /** Expects the source and destination of the system connection to be in the view model. */
+    //    @Throws(MissingViewModelElementException::class)
+    //    fun createSystemConnectionViewModelFrom(systemConnection: SystemConnection):
+    // SystemConnectionViewModel {
+    //        return createSystemConnectionViewModelFrom(
+    //            geckoViewModel.currentEditor!!.currentSystem.target,
+    //            systemConnection
+    //        )
+    //    }
 
     fun createSystem(parentSystem: System): System {
         val result = System()
@@ -144,40 +148,39 @@ class ViewModelFactory(
         return result
     }
 
-    /**
-     * Missing PortViewModels are created for the variables of the system.
-     */
-//    fun createSystemViewModelFrom(system: System): SystemViewModel {
-//        val result = SystemViewModel()
-//        for (variable in system.variables) {
-//            var portViewModel = geckoViewModel.getViewModelElement(variable!!) as PortViewModel
-//            if (portViewModel == null) {
-//                portViewModel = createPortViewModelFrom(variable)
-//            }
-//            result.addPort(portViewModel)
-//        }
-//        geckoViewModel.addViewModelElement(result)
-//        return result
-//    }
+    /** Missing PortViewModels are created for the variables of the system. */
+    //    fun createSystemViewModelFrom(system: System): SystemViewModel {
+    //        val result = SystemViewModel()
+    //        for (variable in system.variables) {
+    //            var portViewModel = geckoViewModel.getViewModelElement(variable!!) as
+    // PortViewModel
+    //            if (portViewModel == null) {
+    //                portViewModel = createPortViewModelFrom(variable)
+    //            }
+    //            result.addPort(portViewModel)
+    //        }
+    //        geckoViewModel.addViewModelElement(result)
+    //        return result
+    //    }
 
-//    fun createSystemViewModelForChildren(system: System) {
-//        system.children.forEach { child ->
-//            if (geckoViewModel.getViewModelElement(child) != null) {
-//                return@forEach
-//            }
-//            val childViewModel = createSystemViewModelFrom(child)
-//            geckoViewModel.addViewModelElement(childViewModel)
-//            createSystemViewModelForChildren(child)
-//        }
-//
-//        system.automaton!!.states.forEach { state ->
-//            if (geckoViewModel.getViewModelElement(state!!) != null) {
-//                return@forEach
-//            }
-//            val stateViewModel = createStateViewModelFrom(state)
-//            geckoViewModel.addViewModelElement(stateViewModel)
-//        }
-//    }
+    //    fun createSystemViewModelForChildren(system: System) {
+    //        system.children.forEach { child ->
+    //            if (geckoViewModel.getViewModelElement(child) != null) {
+    //                return@forEach
+    //            }
+    //            val childViewModel = createSystemViewModelFrom(child)
+    //            geckoViewModel.addViewModelElement(childViewModel)
+    //            createSystemViewModelForChildren(child)
+    //        }
+    //
+    //        system.automaton!!.states.forEach { state ->
+    //            if (geckoViewModel.getViewModelElement(state!!) != null) {
+    //                return@forEach
+    //            }
+    //            val stateViewModel = createStateViewModelFrom(state)
+    //            geckoViewModel.addViewModelElement(stateViewModel)
+    //        }
+    //    }
 
     fun createRegion(parentSystem: System) = createRegion(parentSystem.automaton)
 
@@ -241,7 +244,8 @@ class ViewModelFactory(
         isPort: Boolean
     ): Point2D {
         val sign = if (isPort) 1 else -1
-        return position.add(size.multiply(0.5))
+        return position
+            .add(size.multiply(0.5))
             .subtract((if (visibility == Visibility.INPUT) 1 else -1) * sign * size.x / 2, 0.0)
     }
 
@@ -250,7 +254,9 @@ class ViewModelFactory(
     }
 
     fun setSystemConnectionEdgePoints(
-        parentSystem: System, source: Port, destination: Port,
+        parentSystem: System,
+        source: Port,
+        destination: Port,
         result: SystemConnection
     ) {
         val sourceIsPort = isPort(parentSystem, source)
@@ -259,28 +265,39 @@ class ViewModelFactory(
 
         // position the line at the tip of the port
         if (sourceIsPort) {
-            sourcePosition = SimpleObjectProperty(
-                calculateEndPortPosition(
-                    source.systemPortPositionProperty.value,
-                    source.systemPortSizeProperty.value, source.visibility, true
-                )
-            )
-
-            source.systemPortPositionProperty
-                .addListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? ->
-                    sourcePosition.setValue(
-                        calculateEndPortPosition(
-                            source.systemPortPositionProperty.value,
-                            source.systemPortSizeProperty.value, source.visibility, true
-                        )
+            sourcePosition =
+                SimpleObjectProperty(
+                    calculateEndPortPosition(
+                        source.systemPortPositionProperty.value,
+                        source.systemPortSizeProperty.value,
+                        source.visibility,
+                        true
                     )
-                }
-        } else {
-            sourcePosition = SimpleObjectProperty(
-                calculateEndPortPosition(source.position, source.size, source.visibility, false)
-            )
+                )
 
-            source.positionProperty.addListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? ->
+            source.systemPortPositionProperty.addListener {
+                observable: ObservableValue<out Point2D?>?,
+                oldValue: Point2D?,
+                newValue: Point2D? ->
+                sourcePosition.setValue(
+                    calculateEndPortPosition(
+                        source.systemPortPositionProperty.value,
+                        source.systemPortSizeProperty.value,
+                        source.visibility,
+                        true
+                    )
+                )
+            }
+        } else {
+            sourcePosition =
+                SimpleObjectProperty(
+                    calculateEndPortPosition(source.position, source.size, source.visibility, false)
+                )
+
+            source.positionProperty.addListener {
+                observable: ObservableValue<out Point2D?>?,
+                oldValue: Point2D?,
+                newValue: Point2D? ->
                 sourcePosition.setValue(
                     calculateEndPortPosition(source.position, source.size, source.visibility, false)
                 )
@@ -290,34 +307,50 @@ class ViewModelFactory(
         val destinationPosition: Property<Point2D>
 
         if (destIsPort) {
-            destinationPosition = SimpleObjectProperty(
-                calculateEndPortPosition(
-                    destination.systemPortPositionProperty.value,
-                    destination.systemPortSizeProperty.value, destination.visibility, true
+            destinationPosition =
+                SimpleObjectProperty(
+                    calculateEndPortPosition(
+                        destination.systemPortPositionProperty.value,
+                        destination.systemPortSizeProperty.value,
+                        destination.visibility,
+                        true
+                    )
                 )
-            )
 
-            destination.systemPortPositionProperty.addListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? ->
+            destination.systemPortPositionProperty.addListener {
+                observable: ObservableValue<out Point2D?>?,
+                oldValue: Point2D?,
+                newValue: Point2D? ->
                 destinationPosition.setValue(
                     calculateEndPortPosition(
                         destination.systemPortPositionProperty.value,
-                        destination.systemPortSizeProperty.value, destination.visibility, true
+                        destination.systemPortSizeProperty.value,
+                        destination.visibility,
+                        true
                     )
                 )
             }
         } else {
-            destinationPosition = SimpleObjectProperty(
-                calculateEndPortPosition(
-                    destination.position, destination.size, destination.visibility,
-                    false
+            destinationPosition =
+                SimpleObjectProperty(
+                    calculateEndPortPosition(
+                        destination.position,
+                        destination.size,
+                        destination.visibility,
+                        false
+                    )
                 )
-            )
 
-            destination.positionProperty.addListener { observable: ObservableValue<out Point2D?>?, oldValue: Point2D?, newValue: Point2D? ->
+            destination.positionProperty.addListener {
+                observable: ObservableValue<out Point2D?>?,
+                oldValue: Point2D?,
+                newValue: Point2D? ->
                 destinationPosition.setValue(
                     calculateEndPortPosition(
-                        destination.position, destination.size,
-                        destination.visibility, false
+                        destination.position,
+                        destination.size,
+                        destination.visibility,
+                        false
                     )
                 )
             }

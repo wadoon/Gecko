@@ -17,16 +17,16 @@ class InspectorOpenSystemButton(actionManager: ActionManager, System: System?) :
     init {
         styleClass.add(STYLE)
         text = ResourceHandler.inspector_open_system
-        val toolTip = "%s (%s)".format(
-            ResourceHandler.inspector_open_system,
-            Shortcuts.OPEN_CHILD_SYSTEM_EDITOR.get().displayText
-        )
+        val toolTip =
+            "%s (%s)"
+                .format(
+                    ResourceHandler.inspector_open_system,
+                    Shortcuts.OPEN_CHILD_SYSTEM_EDITOR.get().displayText
+                )
         tooltip = Tooltip(toolTip)
         prefWidth = WIDTH.toDouble()
         onAction = EventHandler { event: ActionEvent? ->
-            actionManager.run(
-                actionManager.actionFactory.createViewSwitchAction(System, false)
-            )
+            actionManager.run(actionManager.actionFactory.createViewSwitchAction(System, false))
         }
     }
 

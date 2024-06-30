@@ -10,12 +10,13 @@ import org.gecko.view.views.EditorView
 import org.gecko.viewmodel.EditorViewModel
 
 /**
- * An abstract representation of a handler for shortcut events, implementing the [EventHandler] interface, which
- * encapsulates a [KeyEvent]. Holds a reference to the current [ActionManager], the [ActionFactory]
- * and the [EditorView], as well as a map of [KeyCodeCombination]-keys and [Runnable]-values, which
- * allow for actions to be run by using keyboard shortcuts.
+ * An abstract representation of a handler for shortcut events, implementing the [EventHandler]
+ * interface, which encapsulates a [KeyEvent]. Holds a reference to the current [ActionManager], the
+ * [ActionFactory] and the [EditorView], as well as a map of [KeyCodeCombination]-keys and
+ * [Runnable]-values, which allow for actions to be run by using keyboard shortcuts.
  */
-abstract class ShortcutHandler protected constructor(
+abstract class ShortcutHandler
+protected constructor(
     protected var actionManager: ActionManager,
     protected var editorView: EditorView
 ) : EventHandler<KeyEvent> {
@@ -41,12 +42,17 @@ abstract class ShortcutHandler protected constructor(
     }
 
     fun getShortcutAction(event: KeyEvent) =
-        shortcuts.keys.find { shortcut: KeyCodeCombination? -> shortcut!!.match(event) }?.let { shortcuts[it] }
+        shortcuts.keys
+            .find { shortcut: KeyCodeCombination? -> shortcut!!.match(event) }
+            ?.let { shortcuts[it] }
 
     fun addSelectStandardToolShortcuts() {
-        val standardTools = listOf(ToolType.CURSOR, ToolType.MARQUEE_TOOL, ToolType.PAN, ToolType.ZOOM_TOOL)
+        val standardTools =
+            listOf(ToolType.CURSOR, ToolType.MARQUEE_TOOL, ToolType.PAN, ToolType.ZOOM_TOOL)
         standardTools.forEach { tool ->
-            shortcuts[tool.keyCodeCombination] = { actionManager.run(actionFactory.createSelectToolAction(tool)) }
+            shortcuts[tool.keyCodeCombination] = {
+                actionManager.run(actionFactory.createSelectToolAction(tool))
+            }
         }
     }
 
@@ -55,7 +61,9 @@ abstract class ShortcutHandler protected constructor(
             actionManager.run(actionFactory.createZoomCenterAction(EditorViewModel.defaultZoomStep))
         }
         shortcuts[Shortcuts.ZOOM_OUT.get()] = {
-            actionManager.run(actionFactory.createZoomCenterAction(1 / EditorViewModel.defaultZoomStep))
+            actionManager.run(
+                actionFactory.createZoomCenterAction(1 / EditorViewModel.defaultZoomStep)
+            )
         }
     }
 

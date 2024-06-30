@@ -1,10 +1,8 @@
 package org.gecko.actions
 
-import org.gecko.exceptions.GeckoException
-
 /**
- * A concrete representation of an [Action], which encapsulates a list of other concrete actions, which are
- * iteratively run or undone.
+ * A concrete representation of an [Action], which encapsulates a list of other concrete actions,
+ * which are iteratively run or undone.
  */
 open class ActionGroup(val actions: List<Action>) : Action() {
     override fun run(): Boolean {

@@ -15,12 +15,11 @@ import org.gecko.viewmodel.Port
 import org.gecko.viewmodel.Visibility
 
 /**
- * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which encapsulates an
- * [Port].
+ * Represents a type of [BlockViewElement] implementing the [ViewElement] interface, which
+ * encapsulates an [Port].
  */
-
-class VariableBlockViewElement(override val target: Port) : BlockViewElement(target),
-    ViewElement<Port> {
+class VariableBlockViewElement(override val target: Port) :
+    BlockViewElement(target), ViewElement<Port> {
     val nameProperty: StringProperty = SimpleStringProperty()
     val typeProperty: StringProperty = SimpleStringProperty()
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()
@@ -46,12 +45,10 @@ class VariableBlockViewElement(override val target: Port) : BlockViewElement(tar
         nameProperty.bind(target.nameProperty)
         typeProperty.bind(target.typeProperty)
         visibilityProperty.bind(target.visibilityProperty)
-        prefWidthProperty().bind(
-            Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty)
-        )
-        prefHeightProperty().bind(
-            Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty)
-        )
+        prefWidthProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.x }, target.sizeProperty))
+        prefHeightProperty()
+            .bind(Bindings.createDoubleBinding({ target.size.y }, target.sizeProperty))
     }
 
     fun constructVisualization() {
@@ -59,12 +56,10 @@ class VariableBlockViewElement(override val target: Port) : BlockViewElement(tar
         val rectangle = Rectangle()
         rectangle.widthProperty().bind(widthProperty())
         rectangle.heightProperty().bind(heightProperty())
-        rectangle.fillProperty()
+        rectangle
+            .fillProperty()
             .bind(
-                Bindings.createObjectBinding(
-                    { visibilityProperty.value.color },
-                    visibilityProperty
-                )
+                Bindings.createObjectBinding({ visibilityProperty.value.color }, visibilityProperty)
             )
         rectangle.arcWidth = BACKGROUND_ROUNDING.toDouble()
         rectangle.arcHeight = BACKGROUND_ROUNDING.toDouble()

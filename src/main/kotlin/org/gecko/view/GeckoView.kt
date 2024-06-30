@@ -14,6 +14,7 @@ import javafx.scene.control.TabPane
 import javafx.scene.control.TabPane.TabClosingPolicy
 import javafx.scene.input.KeyCombination
 import javafx.scene.input.Mnemonic
+import kotlin.error
 import org.gecko.actions.Action
 import org.gecko.application.GeckoManager
 import org.gecko.lint.IssuesView
@@ -24,12 +25,11 @@ import org.gecko.view.views.ViewFactory
 import org.gecko.viewmodel.*
 import org.gecko.viewmodel.booleanProperty
 import tornadofx.*
-import kotlin.error
 
 /**
- * Represents the View component of a Gecko project. Holds a [ViewFactory], a current [EditorView] and a
- * reference to the [GModel]. Contains methods for managing the [EditorView] shown in the graphic
- * editor.
+ * Represents the View component of a Gecko project. Holds a [ViewFactory], a current [EditorView]
+ * and a reference to the [GModel]. Contains methods for managing the [EditorView] shown in the
+ * graphic editor.
  */
 class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
     val viewFactory: ViewFactory = ViewFactory(viewModel.actionManager, this)
@@ -39,23 +39,24 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
     var hasBeenFocused = false
     val mnemonicsProperty = listProperty<Mnemonic>(FXCollections.observableArrayList())
 
-
     val outlineView = OutlineView(viewModel)
     val versionView = VersionManagerPane(viewModel)
     val modelIssuesView = ModelIssuesView(viewModel)
     val importIssuesView = IssuesView()
     var inspectorItem by singleAssign<DrawerItem>()
 
-    val drawerRight = drawer(Side.RIGHT, floatingContent = false) {
-        inspectorItem = item("Inspector") { }
-        item(outlineView, true, false)
-        item(versionView, false, false)
-    }
+    val drawerRight =
+        drawer(Side.RIGHT, floatingContent = false) {
+            inspectorItem = item("Inspector") {}
+            item(outlineView, true, false)
+            item(versionView, false, false)
+        }
 
-    val drawerBottom = drawer(Side.BOTTOM, floatingContent = false) {
-        item(modelIssuesView, false, false)
-        item(importIssuesView, false, false)
-    }
+    val drawerBottom =
+        drawer(Side.BOTTOM, floatingContent = false) {
+            item(modelIssuesView, false, false)
+            item(importIssuesView, false, false)
+        }
 
     val centerPane: TabPane = TabPane()
 
@@ -70,15 +71,16 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
         right = drawerRight
         bottom = drawerBottom
 
-        //importIssuesView.problems.add(Problem("Test ERROR", 10.0))
+        // importIssuesView.problems.add(Problem("Test ERROR", 10.0))
     }
 
     init {
-        val geckoCss = GeckoView::class.java.getResource(STYLE_SHEET_LIGHT)?.toString()
-            ?: error("Could not find $STYLE_SHEET_LIGHT in resources")
+        val geckoCss =
+            GeckoView::class.java.getResource(STYLE_SHEET_LIGHT)?.toString()
+                ?: error("Could not find $STYLE_SHEET_LIGHT in resources")
         root.stylesheets.add(geckoCss)
 
-        //CSSFX.start(mainPane)
+        // CSSFX.start(mainPane)
 
         // Listener for current editor
         viewModel.currentEditorProperty.onChange { _, newValue ->
@@ -90,10 +92,9 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
 
         centerPane.isPickOnBounds = false
         centerPane.isFocusTraversable = false
-        centerPane.selectionModel.selectedItemProperty()
-            .addListener { _, oldValue, newValue ->
-                this.onUpdateCurrentEditorToViewModel(newValue)
-            }
+        centerPane.selectionModel.selectedItemProperty().addListener { _, oldValue, newValue ->
+            this.onUpdateCurrentEditorToViewModel(newValue)
+        }
 
         // Initial view
         val x = viewModel.currentEditor.editor(viewFactory.actionManager, viewFactory.geckoView)
@@ -104,13 +105,14 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
         centerPane.isPickOnBounds = false
         refreshView()
 
-        centerPane.focusedProperty()
-            .addListener { observable: ObservableValue<out Boolean>?, _: Boolean?, newValue: Boolean ->
-                if (newValue) {
-                    currentViewProperty.value!!.focus()
-                }
+        centerPane.focusedProperty().addListener {
+            observable: ObservableValue<out Boolean>?,
+            _: Boolean?,
+            newValue: Boolean ->
+            if (newValue) {
+                currentViewProperty.value!!.focus()
             }
-
+        }
 
         val sceneFocusListener = { _: ObservableValue<out Node?>, _: Node?, _: Node? ->
             if (currentViewProperty.value!!.currentViewElements.isNotEmpty() && !hasBeenFocused) {
@@ -119,13 +121,11 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
             hasBeenFocused = true
         }
 
-        centerPane.sceneProperty()
-            .onChange { oldValue, newValue ->
-                oldValue?.focusOwnerProperty()?.removeListener(sceneFocusListener)
-                newValue?.focusOwnerProperty()?.addListener(sceneFocusListener)
-            }
+        centerPane.sceneProperty().onChange { oldValue, newValue ->
+            oldValue?.focusOwnerProperty()?.removeListener(sceneFocusListener)
+            newValue?.focusOwnerProperty()?.addListener(sceneFocusListener)
+        }
     }
-
 
     fun onOpenedEditorChanged() {
         val views =
@@ -138,7 +138,6 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
             handleUserTabChange(constructTab(newEditorView, it))
             Platform.runLater { focusCenter(it) }
         }*/
-
 
         val editorViewModelsToRemove = openedViews.toMutableList()
         editorViewModelsToRemove.removeAll(views)
@@ -179,9 +178,11 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
         }
         currentViewProperty.value = getView(tab)
         val next = currentViewProperty.value!!.viewModel.currentSystem
-        val switchAction: Action = viewModel.actionManager
-            .actionFactory
-            .createViewSwitchAction(next, currentViewProperty.value!!.viewModel.isAutomatonEditor)
+        val switchAction: Action =
+            viewModel.actionManager.actionFactory.createViewSwitchAction(
+                next,
+                currentViewProperty.value!!.viewModel.isAutomatonEditor
+            )
         viewModel.actionManager.run(switchAction)
     }
 
@@ -201,9 +202,8 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
         if (getView(newValue)!!.viewModel == viewModel.currentEditor) {
             return
         }
-        val switchAction: Action = viewModel.actionManager
-            .actionFactory
-            .createViewSwitchAction(
+        val switchAction: Action =
+            viewModel.actionManager.actionFactory.createViewSwitchAction(
                 getView(newValue)!!.viewModel.currentSystem,
                 getView(newValue)!!.viewModel.isAutomatonEditor
             )
@@ -218,10 +218,11 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
             return
         }
 
-        val center = editorViewModel.viewableElements
-            .map { it.center }
-            .reduce { a, b -> a + b }
-            .multiply(1.0 / editorViewModel.viewableElements.size)
+        val center =
+            editorViewModel.viewableElements
+                .map { it.center }
+                .reduce { a, b -> a + b }
+                .multiply(1.0 / editorViewModel.viewableElements.size)
 
         editorViewModel.pivot = center
     }
@@ -236,16 +237,14 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
 
     fun toggleAppearance() {
         isDarkMode = !isDarkMode
-        //mainPane.getStylesheets().clear();
+        // mainPane.getStylesheets().clear();
         /*mainPane.getStylesheets()
-            .add(Objects.requireNonNull(GeckoView.class.getResource(darkMode ? STYLE_SHEET_DARK : STYLE_SHEET_LIGHT))
-                .toString());*/
+        .add(Objects.requireNonNull(GeckoView.class.getResource(darkMode ? STYLE_SHEET_DARK : STYLE_SHEET_LIGHT))
+            .toString());*/
     }
-
 
     fun getView(tab: Tab?) =
         openedViews.firstOrNull { editorView: EditorView? -> editorView!!.currentView === tab }
-
 
     fun addMnemonic(node: Node?, kc: KeyCombination?): Mnemonic {
         val mn = Mnemonic(node, kc)
@@ -258,4 +257,3 @@ class GeckoView(val manager: GeckoManager, var viewModel: GModel) : View() {
         const val STYLE_SHEET_DARK = "/styles/gecko-dark.css"
     }
 }
-

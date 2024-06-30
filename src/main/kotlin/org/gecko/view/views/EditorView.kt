@@ -25,10 +25,14 @@ import org.gecko.viewmodel.onChange
 import org.gecko.viewmodel.onListChange
 
 /**
- * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed [ViewElement]s and
- * other items specific to their visualisation.
+ * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed
+ * [ViewElement]s and other items specific to their visualisation.
  */
-class EditorView(val actionManager: ActionManager, val viewModel: EditorViewModel, val geckoView: GeckoView) {
+class EditorView(
+    val actionManager: ActionManager,
+    val viewModel: EditorViewModel,
+    val geckoView: GeckoView
+) {
     val currentView: Tab
     val currentViewPane: StackPane
 
@@ -43,7 +47,8 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
 
     var shortcutHandler: ShortcutHandler? = null
         /**
-         * Set the shortcut handler for the editor view. This will be used to handle keyboard shortcuts.
+         * Set the shortcut handler for the editor view. This will be used to handle keyboard
+         * shortcuts.
          *
          * @param shortcutHandler the shortcut handler
          */
@@ -52,11 +57,9 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
             currentViewPane.addEventHandler(KeyEvent.ANY, shortcutHandler)
             toolBar.addEventHandler(KeyEvent.ANY, shortcutHandler)
             if (currentInspector.get() != null) {
-                currentInspector.get()!!
-                    .addEventHandler(KeyEvent.ANY, shortcutHandler)
+                currentInspector.get()!!.addEventHandler(KeyEvent.ANY, shortcutHandler)
             }
         }
-
 
     var contextMenu: ContextMenu?
 
@@ -73,10 +76,17 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         this.currentView = Tab("", currentViewPane)
 
         val tabName: StringProperty = SimpleStringProperty("Error_Name")
-        tabName.bind(Bindings.createStringBinding({
-            val name = viewModel.currentSystem.name
-            name + (if (viewModel.isAutomatonEditor) " (${ResourceHandler.automaton})" else " (${ResourceHandler.system})")
-        }, viewModel.currentSystem.nameProperty))
+        tabName.bind(
+            Bindings.createStringBinding(
+                {
+                    val name = viewModel.currentSystem.name
+                    name +
+                        (if (viewModel.isAutomatonEditor) " (${ResourceHandler.automaton})"
+                        else " (${ResourceHandler.system})")
+                },
+                viewModel.currentSystem.nameProperty
+            )
+        )
 
         val tabLabel = Label()
         tabLabel.textProperty().bind(tabName)
@@ -120,28 +130,28 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
         }
 
         // Set current tool
-        viewModel.currentToolProperty.addListener { observable: ObservableValue<out Tool>, oldValue: Tool?, newValue: Tool? ->
+        viewModel.currentToolProperty.addListener {
+            observable: ObservableValue<out Tool>,
+            oldValue: Tool?,
+            newValue: Tool? ->
             this.onToolChanged(newValue)
         }
 
-        val contextMenuBuilder =
-            ViewContextMenuBuilder(viewModel.actionManager, viewModel, this)
+        val contextMenuBuilder = ViewContextMenuBuilder(viewModel.actionManager, viewModel, this)
         this.contextMenu = contextMenuBuilder.build()
-        currentViewPane.onContextMenuRequested = EventHandler<ContextMenuEvent> { event: ContextMenuEvent ->
-            changeContextMenu(contextMenuBuilder.contextMenu)
-            contextMenu!!.show(currentViewPane, event.screenX, event.screenY)
-            event.consume()
-        }
+        currentViewPane.onContextMenuRequested =
+            EventHandler<ContextMenuEvent> { event: ContextMenuEvent ->
+                changeContextMenu(contextMenuBuilder.contextMenu)
+                contextMenu!!.show(currentViewPane, event.screenX, event.screenY)
+                event.consume()
+            }
 
         initializeViewElements()
         acceptTool(viewModel.currentTool)
         focus()
     }
 
-
-    /**
-     * Focus the center pane of the editor view.
-     */
+    /** Focus the center pane of the editor view. */
     fun focus() {
         currentViewPane.requestFocus()
     }
@@ -163,8 +173,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
      */
     fun drawInspector(): Node? {
         if (!viewModel.isAutomatonEditor) {
-            currentInspector.get()!!
-                .addEventHandler(KeyEvent.ANY, shortcutHandler)
+            currentInspector.get()!!.addEventHandler(KeyEvent.ANY, shortcutHandler)
             return currentInspector.get()
         } else {
             val vbox = VBox()
@@ -195,9 +204,8 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
 
     fun onUpdateViewElements() {
         viewElementPane.elements.setAll(
-            viewModel.viewableElements.map {
-                findViewElement(it) ?: addElement(it)
-            })
+            viewModel.viewableElements.map { findViewElement(it) ?: addElement(it) }
+        )
         postUpdate()
     }
 
@@ -211,9 +219,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
 
     fun initializeViewElements() {
         viewModel.viewableElementsProperty.forEach { element: PositionableElement? ->
-            this.addElement(
-                element
-            )
+            this.addElement(element)
         }
         postUpdate()
     }
@@ -226,8 +232,7 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
             viewElement
         }
 
-    fun findViewElement(element: PositionableElement) =
-        viewElementPane.findViewElement(element)
+    fun findViewElement(element: PositionableElement) = viewElementPane.findViewElement(element)
 
     fun onToolChanged(newValue: Tool?) {
         acceptTool(newValue)
@@ -236,15 +241,13 @@ class EditorView(val actionManager: ActionManager, val viewModel: EditorViewMode
     fun acceptTool(tool: Tool?) {
         tool!!.visitView(viewElementPane)
         viewElementPane.elements.forEach { element -> element.accept(tool) }
-
     }
 
     fun focusedElementChanged(newValue: PositionableElement?) {
         val newInspector = inspectorFactory.createInspector(newValue)
         currentInspector.set(if ((newInspector != null)) newInspector else emptyInspector)
         if (shortcutHandler != null) {
-            currentInspector.get()!!
-                .addEventHandler(KeyEvent.ANY, shortcutHandler)
+            currentInspector.get()!!.addEventHandler(KeyEvent.ANY, shortcutHandler)
         }
     }
 

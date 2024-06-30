@@ -6,7 +6,6 @@ import tornadofx.UIComponent
 import tornadofx.treeview
 
 /**
- *
  * @author Alexander Weigl
  * @version 1 (20.06.24)
  */
@@ -25,13 +24,8 @@ class SystemItem(val sys: System) : TreeItem<String>("") {
 
     private fun populate() {
         value = "System: ${sys.name}"
-        val ports = sys.ports
-            .sorted(Comparator.comparing { it.name })
-            .map { PortItem(it) }
-            .toList()
-        val systems = sys.subSystems
-            .sorted(Comparator.comparing { it.name })
-            .map { SystemItem(it) }
+        val ports = sys.ports.sorted(Comparator.comparing { it.name }).map { PortItem(it) }.toList()
+        val systems = sys.subSystems.sorted(Comparator.comparing { it.name }).map { SystemItem(it) }
         val a = AutomataItem(sys.automaton)
         children.setAll(listOf(a) + ports + systems)
     }
@@ -48,18 +42,15 @@ class AutomataItem(val auto: Automaton) : TreeItem<String>("") {
     private fun populate() {
         value = "Automaton: ${auto.name}"
 
-        val states = auto.states
-            .sorted(Comparator.comparing { it.name })
-            .map {
+        val states =
+            auto.states.sorted(Comparator.comparing { it.name }).map {
                 val a = TreeItem("State: " + it.name)
-                a.children.setAll(
-                    it.contracts.map { c -> TreeItem("C: " + c.name) }
-                )
+                a.children.setAll(it.contracts.map { c -> TreeItem("C: " + c.name) })
                 a
             }
 
-        val regions = auto.regions.sorted(Comparator.comparing { it.name })
-            .map { TreeItem("R: " + it.name) }
+        val regions =
+            auto.regions.sorted(Comparator.comparing { it.name }).map { TreeItem("R: " + it.name) }
         children.setAll(states + regions)
     }
 }

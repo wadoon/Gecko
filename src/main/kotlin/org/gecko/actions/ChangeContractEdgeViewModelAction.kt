@@ -5,13 +5,10 @@ import org.gecko.viewmodel.Contract
 import org.gecko.viewmodel.Edge
 
 /**
- * A concrete representation of an [Action] that changes the contract of an [Edge], which it holds
- * a reference to. Additionally, holds the old and new [Contract]s of the edge for undo/redo purposes.
+ * A concrete representation of an [Action] that changes the contract of an [Edge], which it holds a
+ * reference to. Additionally, holds the old and new [Contract]s of the edge for undo/redo purposes.
  */
-class ChangeContractEdgeViewModelAction(
-    val Edge: Edge,
-    val newContract: Contract?
-) : Action() {
+class ChangeContractEdgeViewModelAction(val Edge: Edge, val newContract: Contract?) : Action() {
     var oldContract: Contract? = null
 
     @Throws(GeckoException::class)

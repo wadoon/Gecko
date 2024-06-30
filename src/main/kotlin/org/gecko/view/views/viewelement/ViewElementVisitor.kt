@@ -6,8 +6,8 @@ import org.gecko.view.views.viewelement.decorator.ElementScalerViewElementDecora
 import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 
 /**
- * Represents a visitor pattern for performing operations on [ViewElement]s. Concrete visitors must implement this
- * interface to define specific behavior for each [ViewElement] and their decorators.
+ * Represents a visitor pattern for performing operations on [ViewElement]s. Concrete visitors must
+ * implement this interface to define specific behavior for each [ViewElement] and their decorators.
  */
 interface ViewElementVisitor {
     fun visit(stateViewElement: StateViewElement)
@@ -28,7 +28,9 @@ interface ViewElementVisitor {
 
     fun visit(selectableViewElementDecorator: SelectableViewElementDecorator)
 
-    fun visit(connectionElementScalerViewElementDecorator: ConnectionElementScalerViewElementDecorator)
+    fun visit(
+        connectionElementScalerViewElementDecorator: ConnectionElementScalerViewElementDecorator
+    )
 
     fun visit(blockElementScalerViewElementDecorator: BlockElementScalerViewElementDecorator)
 }

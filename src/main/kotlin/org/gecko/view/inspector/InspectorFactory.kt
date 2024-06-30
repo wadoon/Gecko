@@ -5,10 +5,9 @@ import org.gecko.actions.ActionManager
 import org.gecko.view.inspector.builder.*
 import org.gecko.viewmodel.*
 
-
 /**
- * Represents a factory for inspectors. Provides a method for the creation of an [Inspector] built by each of the
- * [InspectorBuilder]s.
+ * Represents a factory for inspectors. Provides a method for the creation of an [Inspector] built
+ * by each of the [InspectorBuilder]s.
  */
 class InspectorFactory(val actionManager: ActionManager, val editorViewModel: EditorViewModel) {
     /**

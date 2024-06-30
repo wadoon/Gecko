@@ -5,9 +5,11 @@ import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.PositionableElement
 
 /**
- * A concrete representation of an [Action] that selects and focuses on a {link PositionableViewModelElement}.
+ * A concrete representation of an [Action] that selects and focuses on a {link
+ * PositionableViewModelElement}.
  */
-class FocusPositionableViewModelElementAction internal constructor(
+class FocusPositionableViewModelElementAction
+internal constructor(
     val editorViewModel: EditorViewModel,
     positionableElement: PositionableElement
 ) : Action() {
