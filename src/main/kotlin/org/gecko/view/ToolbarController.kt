@@ -1,4 +1,4 @@
-package org.gecko.view.menubar
+package org.gecko.view
 
 import javafx.beans.binding.Bindings
 import javafx.event.ActionEvent
@@ -16,7 +16,6 @@ import org.gecko.actions.ActionManager
 import org.gecko.application.GeckoManager
 import org.gecko.io.FileTypes
 import org.gecko.tools.ToolType
-import org.gecko.view.GeckoView
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
 import org.gecko.viewmodel.GModel

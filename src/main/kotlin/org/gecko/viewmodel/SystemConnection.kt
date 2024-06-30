@@ -1,6 +1,6 @@
 package org.gecko.viewmodel
 
-import javafx.beans.property.*
+import javafx.beans.property.ObjectProperty
 import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
 import org.gecko.view.GeckoView
@@ -17,13 +17,21 @@ import tornadofx.setValue
  * and updating the target-[SystemConnection].
  */
 data class SystemConnection(
-    val sourceProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
-    val destinationProperty: SimpleObjectProperty<Port?> = SimpleObjectProperty<Port?>(),
+    val sourceProperty: ObjectProperty<Port?> = nullableObjectProperty<Port>(),
+    val destinationProperty: ObjectProperty<Port?> = nullableObjectProperty<Port>(),
 ) : PositionableElement(), ConnectionViewModel {
     override val edgePoints = listProperty<Point2D>()
 
     override val children: Sequence<Element>
         get() = sequenceOf()
+
+    override fun updateIssues() {
+        issues.clear()
+        if (source == null)
+            issues.report("", 1.0)
+        if (destination == null)
+            issues.report("", 1.0)
+    }
 
     var source: Port? by sourceProperty
     var destination: Port? by destinationProperty
@@ -88,7 +96,7 @@ fun isConnectingAllowed(
     }
     if (
         destination.hasIncomingConnection &&
-            !(systemConnection != null && systemConnection.destination == destination)
+        !(systemConnection != null && systemConnection.destination == destination)
     ) {
         return false
     }

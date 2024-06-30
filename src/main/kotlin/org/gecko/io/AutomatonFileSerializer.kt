@@ -1,17 +1,17 @@
 package org.gecko.io
 
+import org.gecko.exceptions.ModelException
+import org.gecko.viewmodel.*
 import java.io.PrintWriter
 import java.io.Writer
 import java.util.*
-import org.gecko.exceptions.ModelException
-import org.gecko.viewmodel.*
 
 /**
  * The AutomatonFileSerializer is used to export a project to a sys file. When exporting, it
  * transforms features unique to Gecko, such as regions, kinds and priorities, to be compatible with
  * the sys file format.
  */
-class AutomatonFileSerializer(val model: GModel) : FileSerializer {
+internal class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     lateinit var out: PrintWriter
 
     override fun writeToStream(w: Writer) {
@@ -123,6 +123,7 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
                 contract.preCondition.value = contract.preCondition.not().value
                 contract.postCondition.value = Condition("true").value
             }
+
             Kind.FAIL -> contract.postCondition.value = contract.postCondition.not().value
             Kind.HIT -> {}
         }
@@ -230,7 +231,7 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
 
     private fun serializeSystemReference(parent: System?, v: Port): String {
         return if (parent!!.ports.contains(v)) {
-            AutomatonFileVisitor.SELF_REFERENCE_TOKEN
+            SELF_REFERENCE_TOKEN
         } else {
             parent.getChildSystemWithVariable(v)!!.name
         }
@@ -251,11 +252,11 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
         var output = ""
         output +=
             INDENT +
-                when (variable.visibility) {
-                    Visibility.INPUT -> SERIALIZED_INPUT
-                    Visibility.OUTPUT -> SERIALIZED_OUTPUT
-                    Visibility.STATE -> SERIALIZED_STATE_VISIBILITY
-                }
+                    when (variable.visibility) {
+                        Visibility.INPUT -> SERIALIZED_INPUT
+                        Visibility.OUTPUT -> SERIALIZED_OUTPUT
+                        Visibility.STATE -> SERIALIZED_STATE_VISIBILITY
+                    }
         output += VARIABLE_ATTRIBUTES.format(variable.name, variable.type)
         if (variable.value != null) {
             output += " := " + variable.value
@@ -264,7 +265,7 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     }
 
     private fun serializeCode(code: String) =
-        out.write(INDENT + AutomatonFileVisitor.CODE_BEGIN + code + AutomatonFileVisitor.CODE_END)
+        out.write(INDENT + CODE_BEGIN + code + CODE_END)
 
     private fun getContractName(edge: Edge): String {
         val name = edge.contract?.name
@@ -275,19 +276,17 @@ class AutomatonFileSerializer(val model: GModel) : FileSerializer {
     }
 
     private fun makeNameUnique(baseName: String): String = baseName
-
-    companion object {
-        const val INDENT = "    "
-        const val SERIALIZED_CONTRACT_NAME = "contract %s"
-        const val AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT = "$SERIALIZED_CONTRACT_NAME {"
-        const val SERIALIZED_CONTRACT = "$SERIALIZED_CONTRACT_NAME := %s ==> %s"
-        const val SERIALIZED_TRANSITION = "%s -> %s :: %s"
-        const val SERIALIZED_SYSTEM = "reactor %s {"
-        const val SERIALIZED_CONNECTION = "%s.%s -> %s.%s"
-        const val SERIALIZED_STATE = "state %s: %s"
-        const val VARIABLE_ATTRIBUTES = " %s: %s"
-        const val SERIALIZED_INPUT = "input"
-        const val SERIALIZED_OUTPUT = "output"
-        const val SERIALIZED_STATE_VISIBILITY = "state"
-    }
 }
+
+private const val INDENT = "    "
+private const val SERIALIZED_CONTRACT_NAME = "contract %s"
+private const val AUTOMATON_SERIALIZATION_AS_SYSTEM_CONTRACT = "$SERIALIZED_CONTRACT_NAME {"
+private const val SERIALIZED_CONTRACT = "$SERIALIZED_CONTRACT_NAME := %s ==> %s"
+private const val SERIALIZED_TRANSITION = "%s -> %s :: %s"
+private const val SERIALIZED_SYSTEM = "reactor %s {"
+private const val SERIALIZED_CONNECTION = "%s.%s -> %s.%s"
+private const val SERIALIZED_STATE = "state %s: %s"
+private const val VARIABLE_ATTRIBUTES = " %s: %s"
+private const val SERIALIZED_INPUT = "input"
+private const val SERIALIZED_OUTPUT = "output"
+private const val SERIALIZED_STATE_VISIBILITY = "state"

@@ -43,6 +43,16 @@ data class Port(
         name = AutoNaming.name("port_${visibility}_")
     }
 
+    override val children: Sequence<Element>
+        get() = sequenceOf()
+
+    override fun updateIssues() {
+        issues.clear()
+        if (type !in builtinTypes) {
+            issues.report("Not a built-in types used", 0.5)
+        }
+    }
+
     fun setSystemPortPosition(position: Point2D) {
         systemPortPositionProperty.value = position
     }
@@ -67,8 +77,6 @@ data class Port(
         outgoingConnections.remove(connection)
     }
 
-    override val children: Sequence<Element>
-        get() = sequenceOf()
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newVariableBlockViewElement = VariableBlockViewElement(this)

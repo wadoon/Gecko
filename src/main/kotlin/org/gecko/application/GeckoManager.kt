@@ -2,8 +2,6 @@ package org.gecko.application
 
 import atlantafx.base.theme.PrimerDark
 import atlantafx.base.theme.PrimerLight
-import java.io.File
-import java.io.IOException
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -16,6 +14,7 @@ import javafx.stage.Stage
 import javafx.stage.WindowEvent
 import org.gecko.exceptions.GeckoException
 import org.gecko.io.*
+import org.gecko.lint.Problem
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.GModel
@@ -23,6 +22,8 @@ import org.gecko.viewmodel.objectProperty
 import tornadofx.getValue
 import tornadofx.onChange
 import tornadofx.setValue
+import java.io.File
+import java.io.IOException
 
 /**
  * Represents a manager for the active [Gecko]. Additionally, holds a reference to the [Stage] of
@@ -96,10 +97,9 @@ class GeckoManager : Application() {
      */
     fun loadGeckoProject() {
         getOpenFileChooser(FileTypes.JSON)?.let { fileToLoad ->
-            val projectFileParser = ProjectFileParser()
             val gvm: GModel =
                 try {
-                    projectFileParser.parse(fileToLoad)
+                    IOFacade.readModelJson(fileToLoad)
                 } catch (e: IOException) {
                     val alert = Alert(Alert.AlertType.ERROR)
                     alert.contentText = "${ResourceHandler.corrupted_file}${fileToLoad.path}."
@@ -117,14 +117,14 @@ class GeckoManager : Application() {
      * @param file The file to import the automaton from.
      */
     fun importAutomatonFile(file: File) {
-        val automatonFileParser = AutomatonFileParser()
         try {
-            gecko = automatonFileParser.parse(file)
-            this.latestFile = null
+            val (g, w) = IOFacade.parse(file)
+            gecko = g
+            geckoView.importIssuesView.problems.setAll(
+                w.map { Problem(it, 1.0) }
+            )
         } catch (e: IOException) {
-            val message: String =
-                ResourceHandler.could_not_read_file +
-                    String.format("%s.%s%s", file.path, System.lineSeparator(), e.message)
+            val message = "${ResourceHandler.COULD_NOT_READ_FILE}\n${file.path}\n${e.message}"
             val alert = Alert(Alert.AlertType.ERROR)
             alert.contentText = message
             alert.showAndWait()

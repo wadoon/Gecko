@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleListProperty
 import javafx.collections.FXCollections
 import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
-import org.gecko.exceptions.ModelException
+import org.gecko.lint.Problem
 import org.gecko.view.GeckoView
 import org.gecko.view.views.EditorView
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
@@ -49,17 +49,30 @@ data class Automaton(
     override val children: Sequence<Element>
         get() = states.asSequence() + edges.asSequence() + regions.asSequence()
 
+    override fun updateIssues() {
+        val i = arrayListOf<Problem>()
+
+        if (states.isEmpty())
+            i.report("An automaton should have at least one state. ")
+
+        if (states.none { it.isStartState })
+            i.report("No start state in automaton")
+
+        val reached = edges.mapNotNull { it.destination }.toMutableList()
+        val notReached = states.toMutableList()
+        notReached.removeAll { it.isStartState }
+        notReached.removeAll(reached)
+
+        if (notReached.isNotEmpty())
+            i.report("The following states have no incoming edges", 0.0)
+
+        checkName(name, i)
+        issues.setAll(i)
+    }
+
     init {
         size = DEFAULT_SYSTEM_SIZE
     }
-
-    override fun validate() {
-        if (startState != null && !states.contains(startState)) {
-            throw ModelException("State cannot be set as start-state.")
-        }
-    }
-
-
 
     /*fun addPort(port: PortViewModel) {
         portsProperty.add(port)

@@ -7,6 +7,7 @@ import javafx.beans.property.*
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Point2D
 import org.gecko.actions.ActionManager
+import org.gecko.lint.Problem
 import org.gecko.view.GeckoView
 import org.gecko.view.contextmenu.EdgeViewElementContextMenuBuilder
 import org.gecko.view.inspector.builder.EdgeInspectorBuilder
@@ -138,6 +139,17 @@ class Edge(src: State, dst: State) : PositionableElement(), Inspectable {
 
     override val children: Sequence<Element>
         get() = sequenceOf()
+
+    override fun updateIssues() {
+        val i = arrayListOf<Problem>()
+        if (contract == null)
+            i.report("Contract not set", 1.0)
+
+        if (priority < 0)
+            i.report("Priority to low", 1.0)
+
+        issues.setAll(i)
+    }
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newEdgeViewElement = EdgeViewElement(this)

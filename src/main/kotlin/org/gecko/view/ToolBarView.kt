@@ -1,23 +1,22 @@
-package org.gecko.view.toolbar
+package org.gecko.view
 
 import javafx.beans.value.ObservableValue
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.control.*
-import javafx.scene.layout.FlowPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import org.gecko.actions.Action
 import org.gecko.actions.ActionManager
 import org.gecko.tools.Tool
-import org.gecko.view.ResourceHandler
 import org.gecko.view.views.EditorView
 import org.gecko.view.views.shortcuts.Shortcuts
 import org.gecko.viewmodel.EditorViewModel
+import org.gecko.viewmodel.onChange
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignR
 import org.kordamp.ikonli.materialdesign2.MaterialDesignU
+import tornadofx.onChange
 
 /**
  * Represents a builder for the [ToolBar] displayed in the view, containing a [ToggleGroup] with
@@ -25,22 +24,15 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignU
  * running the undo and redo operations. Holds a reference to the built [ToolBar] and the current
  * [EditorView].
  */
-class ToolBarBuilder(
-    actionManager: ActionManager,
-    val editorView: EditorView,
-    editorViewModel: EditorViewModel
-) {
-    val toolBar = FlowPane() // ToolBar()
+class ToolBarView(actionManager: ActionManager, val editorView: EditorView, editorViewModel: EditorViewModel) {
+    val root = ToolBar()
 
     init {
-        toolBar.orientation = Orientation.VERTICAL
+        root.orientation = Orientation.VERTICAL
 
         val toggleGroup = ToggleGroup()
 
-        toggleGroup.selectedToggleProperty().addListener {
-            observable: ObservableValue<out Toggle?>?,
-            oldToggle: Toggle?,
-            newToggle: Toggle? ->
+        toggleGroup.selectedToggleProperty().onChange { oldToggle, newToggle ->
             if (newToggle == null) {
                 toggleGroup.selectToggle(oldToggle)
             }
@@ -51,16 +43,16 @@ class ToolBarBuilder(
 
             // add separator
             if (i < editorViewModel.tools.size - 1) {
-                toolBar.children.add(Separator())
+                root.items.add(Separator())
             }
         }
 
         // Undo and Redo buttons
-        toolBar.children.add(Separator())
+        root.items.add(Separator())
         val spacer = VBox()
         VBox.setVgrow(spacer, Priority.ALWAYS)
 
-        toolBar.children.add(spacer)
+        root.items.add(spacer)
 
         val undoButton =
             Button(ResourceHandler.Companion.undo, FontIcon.of(MaterialDesignU.UNDO, 24))
@@ -79,7 +71,7 @@ class ToolBarBuilder(
         redoButton.onAction = EventHandler { event: ActionEvent? -> actionManager.redo() }
         redoButton.contentDisplay = ContentDisplay.GRAPHIC_ONLY
         undoButton.contentDisplay = ContentDisplay.GRAPHIC_ONLY
-        // toolBar.children.addAll(undoButton, redoButton)
+        // toolBar.items.addAll(undoButton, redoButton)
     }
 
     fun addTools(actionManager: ActionManager, toggleGroup: ToggleGroup, toolList: List<Tool>) {
@@ -90,36 +82,25 @@ class ToolBarBuilder(
 
             // Would like to bind the selectedproperty of the button here but cannot because of a
             // javafx bug
-            editorView.viewModel.currentToolProperty.addListener {
-                observable: ObservableValue<out Tool>?,
-                oldValue: Tool?,
-                newValue: Tool ->
+            editorView.viewModel.currentToolProperty.addListener { observable: ObservableValue<out Tool>?,
+                                                                   oldValue: Tool?,
+                                                                   newValue: Tool ->
                 toolButton.isSelected = newValue === tool
             }
             toolButton.isSelected = editorView.viewModel.currentToolType == toolType
 
-            toolButton.selectedProperty().addListener {
-                observable: ObservableValue<out Boolean>?,
-                oldValue: Boolean?,
-                newValue: Boolean ->
+            toolButton.selectedProperty().onChange { newValue: Boolean ->
                 if (newValue) {
-                    val action: Action =
-                        actionManager.actionFactory.createSelectToolAction(toolType)
-                    actionManager.run(action)
+                    actionManager.run(actionManager.actionFactory.createSelectToolAction(toolType))
                 }
             }
 
             // toolButton.getStyleClass().add(toolType.getIcon());
-            val tooltip =
-                Tooltip("%s (%s)".format(toolType.label, toolType.keyCodeCombination?.displayText))
+            val tooltip = Tooltip("%s (%s)".format(toolType.label, toolType.keyCodeCombination?.displayText))
             toolButton.tooltip = tooltip
-            toolBar.children.add(toolButton)
+            root.items.add(toolButton)
             toggleGroup.toggles.add(toolButton)
         }
-    }
-
-    fun build(): javafx.scene.Node {
-        return toolBar
     }
 
     companion object {

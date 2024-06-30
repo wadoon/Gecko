@@ -1,8 +1,9 @@
 package org.gecko.viewmodel
 
-import javafx.beans.property.*
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.ListProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
@@ -25,12 +26,9 @@ import tornadofx.setValue
  */
 data class State(
     val isStartStateProperty: BooleanProperty = SimpleBooleanProperty(false),
-    val contractsProperty: ListProperty<Contract> =
-        SimpleListProperty(FXCollections.observableArrayList()),
-    val incomingEdgesProperty: ListProperty<Edge> =
-        SimpleListProperty(FXCollections.observableArrayList()),
-    val outgoingEdgesProperty: ListProperty<Edge> =
-        SimpleListProperty(FXCollections.observableArrayList()),
+    val contractsProperty: ListProperty<Contract> = listProperty(),
+    val incomingEdgesProperty: ListProperty<Edge> = listProperty(),
+    val outgoingEdgesProperty: ListProperty<Edge> = listProperty(),
 ) : BlockElement(), Inspectable {
     var isStartState by isStartStateProperty
     var contracts by contractsProperty
@@ -59,6 +57,11 @@ data class State(
     override val children: Sequence<Element>
         get() = contracts.asSequence()
 
+    override fun updateIssues() {
+        issues.clear()
+        checkName(name, issues)
+    }
+
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newStateViewElement = StateViewElement(this)
 
@@ -76,10 +79,9 @@ data class State(
         outgoingEdgesProperty.addListener { _: ListChangeListener.Change<out Edge?>? ->
             updateEdgeOffset()
         }
-        positionProperty.addListener {
-            _: ObservableValue<out Point2D?>?,
-            oldValue: Point2D?,
-            newValue: Point2D? ->
+        positionProperty.addListener { _: ObservableValue<out Point2D?>?,
+                                       oldValue: Point2D?,
+                                       newValue: Point2D? ->
             updateEdgeOffset()
         }
     }
@@ -102,7 +104,7 @@ data class State(
         for (orientation in 0 until ORIENTATIONS) {
             val count =
                 intersectionOrientationEdges[orientation]!!.size +
-                    intersectionOrientationEdges[(orientation + 1) % ORIENTATIONS]!!.size
+                        intersectionOrientationEdges[(orientation + 1) % ORIENTATIONS]!!.size
             if (count < min) {
                 min = count
                 loopOrientation = orientation

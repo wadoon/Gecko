@@ -1,9 +1,6 @@
 package org.gecko.viewmodel
 
-import java.lang.System
-import java.util.*
 import javafx.beans.property.Property
-import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ObservableList
 import javafx.geometry.BoundingBox
 import javafx.scene.paint.Color
@@ -18,6 +15,8 @@ import org.gecko.view.views.viewelement.decorator.SelectableViewElementDecorator
 import org.gecko.view.views.viewelement.decorator.ViewElementDecorator
 import tornadofx.getValue
 import tornadofx.setValue
+import java.lang.System
+import java.util.*
 
 /**
  * Represents an abstraction of a [Region] model element. A [Region] is described by a [Color], a
@@ -25,10 +24,10 @@ import tornadofx.setValue
  * and updating the target-[Region].
  */
 data class Region(val contract: Contract) : BlockElement(), Inspectable {
-    val colorProperty: Property<Color> = SimpleObjectProperty<Color>(Color.WHITE)
+    val colorProperty: Property<Color> = objectProperty<Color>(Color.WHITE)
     var color: Color by colorProperty
 
-    val invariantProperty = SimpleObjectProperty(Condition(""))
+    val invariantProperty = objectProperty(Condition(""))
     var invariant: Condition by invariantProperty
 
     val statesProperty = listProperty<State>()
@@ -51,6 +50,13 @@ data class Region(val contract: Contract) : BlockElement(), Inspectable {
 
     override val children: Sequence<Element>
         get() = sequenceOf()
+
+    override fun updateIssues() {
+        issues.clear()
+        if (size.x < 0 || size.y < 0) {
+            issues.report("Region's area is negative")
+        }
+    }
 
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newRegionViewElement = RegionViewElement(this)

@@ -76,7 +76,7 @@ interface ResourceHandler {
         const val multiple_top_level_header: String =
             "Found multiple top level systems. Please choose a system as root of the project."
         const val corrupted_file: String = "Corrupted file. Could not load project from "
-        const val could_not_read_file: String = "Could not read file: "
+        const val COULD_NOT_READ_FILE: String = "Could not read file: "
         const val could_not_write_file: String = "Could not write file."
 
         const val inspector_remove_contract: String = "Remove the contract from the state"

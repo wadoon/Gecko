@@ -42,6 +42,10 @@ data class System(
     override val children: Sequence<Element>
         get() = TODO("Not yet implemented")
 
+    override fun updateIssues() {
+        issues.clear()
+    }
+
     override fun view(actionManager: ActionManager, geckoView: GeckoView): ViewElementDecorator {
         val newSystemViewElement = SystemViewElement(this)
         val contextMenuBuilder: ViewContextMenuBuilder =
@@ -112,4 +116,11 @@ data class System(
 
     override fun inspector(actionManager: ActionManager): AbstractInspectorBuilder<*> =
         SystemInspectorBuilder(actionManager, this)
+
+    fun updateSystemParents() {
+        for (child in subSystems) {
+            child.parent = this
+            child.updateSystemParents()
+        }
+    }
 }

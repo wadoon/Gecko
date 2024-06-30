@@ -16,8 +16,8 @@ import tornadofx.times
  * project. A [BlockElement] has a name. Contains methods for moving and scaling the element.
  */
 abstract class BlockElement : PositionableElement(), Renamable {
-    override val nameProperty: StringProperty = SimpleStringProperty("")
-    override var name: String by nameProperty
+    final override val nameProperty = stringProperty("")
+    final override var name: String by nameProperty
 
     override fun asJson() = super.asJson().apply { addProperty("name", name) }
 

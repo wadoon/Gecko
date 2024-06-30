@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 class ProjectFileSerializerTest {
-    val projectFileParser = ProjectFileParser()
     val projectFileSerializerForOneLevel: ProjectFileSerializer
     val projectFileSerializerForTree: ProjectFileSerializer
     val oneLevelGModel = GModel()
@@ -87,8 +86,7 @@ class ProjectFileSerializerTest {
         val projectFileSerializerForEmpty = ProjectFileSerializer(emptyGModel)
         projectFileSerializerForEmpty.writeToFile(fileForEmpty)
 
-        val parsedEmptyGeckoViewModel = projectFileParser.parse(fileForEmpty)
-
+        val parsedEmptyGeckoViewModel = IOFacade.readModelJson(fileForEmpty)
         val serializer = ProjectFileSerializer(parsedEmptyGeckoViewModel)
         val serializedParsedEmpty = File("build/tmp/serializedParsedEmptyGecko.json")
         serializer.writeToFile(serializedParsedEmpty)
@@ -97,15 +95,13 @@ class ProjectFileSerializerTest {
     }
 
 
-
-
     @Test
     fun parseOneLevel() {
         val fileForOneLevel = File("build/tmp/oneLevelGecko.json")
         projectFileSerializerForOneLevel.writeToFile(fileForOneLevel)
 
         val serializedParsedOneLevel = File("build/tmp/serializedParsedOneLevelGecko.json")
-        val parsedOneLevelGeckoViewModel = projectFileParser.parse(fileForOneLevel)
+        val parsedOneLevelGeckoViewModel = IOFacade.readModelJson(fileForOneLevel)
         Assertions.assertNotNull(parsedOneLevelGeckoViewModel)
         val serializer = ProjectFileSerializer(parsedOneLevelGeckoViewModel)
         serializer.writeToFile(serializedParsedOneLevel)
@@ -117,7 +113,7 @@ class ProjectFileSerializerTest {
         val serializedParsedTree = File("build/tmp/serializedParsedTreeGecko.json")
 
         projectFileSerializerForTree.writeToFile(fileForTree)
-        val parsedTreeGeckoViewModel = projectFileParser.parse(fileForTree)
+        val parsedTreeGeckoViewModel = IOFacade.readModelJson(fileForTree)
         val serializer = ProjectFileSerializer(parsedTreeGeckoViewModel)
         serializer.writeToFile(serializedParsedTree)
     }
@@ -126,20 +122,20 @@ class ProjectFileSerializerTest {
     @Test
     fun parseFileThatContainsANonexistentStartState() {
         val fileForNonexistentStartState = File("build/tmp/nonexistentStartState.json")
-        projectFileParser.parse(fileForNonexistentStartState)
+        IOFacade.readModelJson(fileForNonexistentStartState)
     }
 
     @Disabled
     @Test
     fun parseFileWithValidStartStates() {
         val fileForNonexistentStartState = File("build/tmp/existentStartState.json")
-        projectFileParser.parse(fileForNonexistentStartState)
+        IOFacade.readModelJson(fileForNonexistentStartState)
     }
 
     @Disabled
     @Test
     fun parseProjectFileWithNullRoot() {
         val fileForNullRoot = File("build/tmp/nullRoot.json")
-        projectFileParser.parse(fileForNullRoot)
+        IOFacade.readModelJson(fileForNullRoot)
     }
 }

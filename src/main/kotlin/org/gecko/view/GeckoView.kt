@@ -19,7 +19,6 @@ import org.gecko.actions.Action
 import org.gecko.application.GeckoManager
 import org.gecko.lint.IssuesView
 import org.gecko.lint.ModelIssuesView
-import org.gecko.view.menubar.ToolbarController
 import org.gecko.view.views.EditorView
 import org.gecko.view.views.ViewFactory
 import org.gecko.viewmodel.*

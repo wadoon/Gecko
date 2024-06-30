@@ -11,9 +11,13 @@ import tornadofx.getValue
  * a target-[Element], the data of which it can update.
  */
 abstract class Element : Mappable {
+    abstract val children: Sequence<Element>
+
     val issuesProperty = listProperty<Problem>()
     val issues: ObservableList<Problem> by issuesProperty
-    abstract val children: Sequence<Element>
+
+    abstract fun updateIssues()
+
     fun allIssues(): Sequence<Problem> = issues.asSequence() + children.flatMap { it.allIssues() }
 }
 

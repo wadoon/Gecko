@@ -2,14 +2,14 @@ package org.gecko.view.views.viewelement
 
 import javafx.beans.property.Property
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.property.StringProperty
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import org.gecko.viewmodel.SystemConnection
 import org.gecko.viewmodel.Visibility
+import org.gecko.viewmodel.stringProperty
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -22,8 +22,12 @@ class SystemConnectionViewElement(override val target: SystemConnection) :
     val visibilityProperty: Property<Visibility> = SimpleObjectProperty()
     var visibility by visibilityProperty
 
-    val typeProperty: StringProperty = SimpleStringProperty()
+    val typeProperty = stringProperty("")
     var type by typeProperty
+
+    override val edgePoints: ObservableList<Point2D> = FXCollections.observableArrayList()
+    override var position: Point2D = Point2D(0.0, 0.0)
+
 
     init {
         constructVisualization()
@@ -33,16 +37,10 @@ class SystemConnectionViewElement(override val target: SystemConnection) :
         return line
     }
 
-    override val edgePoints: ObservableList<Point2D>
-        get() = edgePoints
-
     override fun setEdgePoint(index: Int, point: Point2D): Boolean {
-        setEdgePoint(index, point)
+        edgePoints[index] = point
         return true
     }
-
-    override val position: Point2D
-        get() = position
 
     override fun accept(visitor: ViewElementVisitor) {
         visitor.visit(this)

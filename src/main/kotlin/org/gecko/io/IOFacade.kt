@@ -1,14 +1,158 @@
 package org.gecko.io
 
+import com.google.gson.JsonParser
 import gecko.parser.SystemDefBaseVisitor
+import gecko.parser.SystemDefLexer
+import gecko.parser.SystemDefParser
 import gecko.parser.SystemDefParser.*
-import java.util.*
 import javafx.event.EventHandler
 import javafx.geometry.Insets
-import javafx.scene.control.*
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.scene.control.ComboBox
+import javafx.scene.control.DialogEvent
 import javafx.scene.layout.VBox
+import org.antlr.v4.runtime.*
+import org.gecko.util.graphlayouting.Graphlayouter
 import org.gecko.view.ResourceHandler
 import org.gecko.viewmodel.*
+import java.io.File
+import java.io.InputStreamReader
+import java.util.*
+
+/**
+ *
+ * @author Alexander Weigl
+ * @version 1 (30.06.24)
+ */
+object IOFacade {
+    /** Provides methods for the conversion of data from a JSON file into Gecko-specific data. */
+    fun readModelJson(file: File): GModel {
+        val wrapper = file.inputStream().use { JsonParser.parseReader(InputStreamReader(it)) }.asJsonObject
+        val model = GModel()
+        model.initFromMap(wrapper.get("model").asJsonObject)
+        model.root.updateSystemParents()
+        return model
+    }
+
+    /**
+     * The AutomatonFileParser is used to import a project from a sys file. It is responsible for
+     * parsing a sys file and creating a [GModel] from it. It uses the [AutomatonFileVisitor] the file
+     * into a [GModel]. And then uses the [ViewModelElementCreator] to create the view model from the
+     * model.
+     */
+    fun parse(file: File): Pair<GModel, MutableSet<String>> {
+        val stream = CharStreams.fromPath(file.toPath())
+        val parser = SystemDefParser(CommonTokenStream(SystemDefLexer(stream)))
+        val listener = SyntaxErrorListener()
+        parser.removeErrorListeners()
+        parser.addErrorListener(listener)
+
+        val visitor = AutomatonFileVisitor()
+        val gvm = visitor.visitModel(parser.model()).let { visitor.model }
+
+        Graphlayouter(gvm).layout()
+        return gvm to visitor.warnings
+    }
+}
+
+data class ParseException(val errorMessage: String) : RuntimeException(errorMessage)
+
+class SyntaxErrorListener : BaseErrorListener() {
+    override fun syntaxError(
+        recognizer: Recognizer<*, *>?, offendingSymbol: Any, line: Int,
+        charPositionInLine: Int, msg: String, e: RecognitionException
+    ) = throw ParseException("$msg at line $line:$charPositionInLine")
+}
+
+
+/**
+ * The AutomatonFileScout is responsible for scanning the parsed automaton file and extracting
+ * information about the systems, automata, and contracts. It is used by the [AutomatonFileParser]
+ * to give access to information about a sys file that would otherwise be hard to obtain while
+ * visiting single elements.
+ */
+private class AutomatonFileScout(ctx: ModelContext) {
+    val systems: MutableMap<String, SystemContext> = HashMap()
+    val automata: MutableMap<String, AutomataContext> = HashMap()
+    val contracts: MutableMap<String, PrepostContext> = HashMap()
+
+    val foundChildren: MutableSet<SystemInfo> = HashSet()
+    val rootChildrenIdents: MutableSet<String> = HashSet()
+
+    val rootChildren: MutableSet<SystemContext> = HashSet()
+    val parents = HashMap<SystemContext, MutableList<SystemContext>>()
+
+    val scoutVisitor: ScoutVisitor
+
+    init {
+        this.scoutVisitor = ScoutVisitor()
+        ctx.accept(scoutVisitor)
+    }
+
+    fun getSystem(name: String) = systems[name]
+
+    fun getAutomaton(name: String) = automata[name]
+
+    fun getContract(name: String) = contracts[name]
+
+    fun getParents(ctx: SystemContext) = parents[ctx] ?: listOf()
+
+    fun getChildSystemInfos(ctx: SystemContext) = scoutVisitor.getChildSystems(ctx)
+
+    inner class ScoutVisitor : SystemDefBaseVisitor<Unit>() {
+        override fun visitModel(ctx: ModelContext) {
+            ctx.system().forEach { system: SystemContext -> system.accept(this) }
+            ctx.system().forEach { systemContext: SystemContext ->
+                this.registerParent(systemContext)
+            }
+            ctx.contract().forEach { contract: ContractContext -> contract.accept(this) }
+            val defines = ctx.defines()
+            defines?.variable()?.forEach { variable: VariableContext -> variable.accept(this) }
+            foundChildren.map(SystemInfo::type).forEach { rootChildrenIdents.remove(it) }
+            rootChildren.addAll(
+                ctx.system().filter { rootChildrenIdents.contains(it.ident().Ident().text) }
+            )
+        }
+
+        override fun visitSystem(ctx: SystemContext) {
+            val sysName = ctx.ident().Ident().text
+            systems[sysName] = ctx
+            rootChildrenIdents.add(sysName)
+            foundChildren.addAll(getChildSystems(ctx))
+            parents[ctx] = ArrayList()
+        }
+
+        override fun visitContract(ctx: ContractContext) {
+            automata[ctx.automata().ident().Ident().text] = ctx.automata()
+            for (prepost in ctx.automata().prepost()) {
+                contracts[prepost.ident().text] = prepost
+            }
+        }
+
+        fun getChildSystems(ctx: SystemContext): List<SystemInfo> {
+            val children: MutableList<SystemInfo> = ArrayList()
+            ctx.io()
+                .filter { io -> io.type.type == STATE }
+                .forEach { io ->
+                    children.addAll(
+                        io.variable()
+                            .filter { !builtinTypes.contains(it.t.text) }
+                            .flatMap { it.n.map { n -> SystemInfo(n.text, it.t.text) } }
+                    )
+                }
+            return children
+        }
+
+        fun registerParent(systemContext: SystemContext) {
+            for ((_, type) in getChildSystems(systemContext)) {
+                val childCtx = systems[type] ?: continue
+                parents[childCtx]!!.add(systemContext)
+            }
+        }
+    }
+}
+
 
 /**
  * Used for building a [GModel] from a sys file. This class is a visitor for the ANTLR4 generated
@@ -70,8 +214,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         for (io in ctx.io()) io.accept(this)
 
         scout.getChildSystemInfos(ctx).forEach {
-            val ctx =
-                scout.getSystem(it.type) ?: error(String.format("System %s not found", it.type))
+            val ctx = scout.getSystem(it.type) ?: error(String.format("System %s not found", it.type))
             instanceName = it.name
             ctx.accept(this)
         }
@@ -81,7 +224,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
         if (ctx.use_contracts().isNotEmpty()) {
             require(
                 ctx.use_contracts().size == 1 &&
-                    ctx.use_contracts().first().use_contract().size == 1
+                        ctx.use_contracts().first().use_contract().size == 1
             ) {
                 "Multiple automata in one system are not supported"
             }
@@ -196,7 +339,7 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
             for (ident in variable.n) {
                 if (
                     currentSystem.getVariableByName(ident.Ident().text) != null ||
-                        scout.getSystem(ident.text) != null
+                    scout.getSystem(ident.text) != null
                 ) {
                     continue
                 }
@@ -328,12 +471,13 @@ class AutomatonFileVisitor : SystemDefBaseVisitor<Unit>() {
 
         return comboBox.value
     }
-
-    companion object {
-        const val USER_SYSTEM_CHOICE_VBOX_SPACING = 10
-        const val USER_SYSTEM_CHOICE_VBOX_PADDING = 20
-        const val SELF_REFERENCE_TOKEN: String = "self"
-        const val CODE_BEGIN: String = "{="
-        const val CODE_END: String = "=}"
-    }
 }
+
+const val USER_SYSTEM_CHOICE_VBOX_SPACING = 10
+const val USER_SYSTEM_CHOICE_VBOX_PADDING = 20
+const val SELF_REFERENCE_TOKEN: String = "self"
+const val CODE_BEGIN: String = "{="
+const val CODE_END: String = "=}"
+
+@JvmRecord
+data class SystemInfo(val name: String, val type: String)

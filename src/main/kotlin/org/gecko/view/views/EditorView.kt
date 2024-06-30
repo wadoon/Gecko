@@ -1,28 +1,34 @@
 package org.gecko.view.views
 
 import javafx.beans.binding.Bindings
-import javafx.beans.property.*
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.beans.value.ObservableValue
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.*
-import javafx.scene.input.*
-import javafx.scene.layout.*
-import org.gecko.actions.*
-import org.gecko.tools.*
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.Label
+import javafx.scene.control.Tab
+import javafx.scene.input.ContextMenuEvent
+import javafx.scene.input.KeyEvent
+import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Priority
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import org.gecko.actions.ActionManager
+import org.gecko.tools.Tool
 import org.gecko.view.GeckoView
 import org.gecko.view.ResourceHandler
+import org.gecko.view.ToolBarView
 import org.gecko.view.contextmenu.ViewContextMenuBuilder
 import org.gecko.view.inspector.Inspector
 import org.gecko.view.inspector.InspectorFactory
-import org.gecko.view.toolbar.ToolBarBuilder
 import org.gecko.view.views.shortcuts.ShortcutHandler
 import org.gecko.view.views.viewelement.ViewElement
-import org.gecko.viewmodel.EditorViewModel
-import org.gecko.viewmodel.PositionableElement
-import org.gecko.viewmodel.onChange
-import org.gecko.viewmodel.onListChange
+import org.gecko.viewmodel.*
 
 /**
  * Represents a displayable view in the Gecko Graphic Editor, holding a collection of displayed
@@ -34,23 +40,21 @@ class EditorView(
     val geckoView: GeckoView
 ) {
     val currentView: Tab
-    val currentViewPane: StackPane
+    val currentViewPane: StackPane = StackPane()
 
-    val toolBar = ToolBarBuilder(actionManager, this, viewModel).build()
-    val inspectorFactory: InspectorFactory
-    val emptyInspector: Inspector
+    val toolBar = ToolBarView(actionManager, this, viewModel).root
+    val inspectorFactory: InspectorFactory = InspectorFactory(actionManager, viewModel)
+    val emptyInspector: Inspector = Inspector(ArrayList(), actionManager)
     val searchWindow: Node?
 
     val viewElementPane: ViewElementPane
 
-    var currentInspector: ObjectProperty<Inspector?>
+    var currentInspector: ObjectProperty<Inspector?> = nullableObjectProperty()
 
     var shortcutHandler: ShortcutHandler? = null
         /**
          * Set the shortcut handler for the editor view. This will be used to handle keyboard
          * shortcuts.
-         *
-         * @param shortcutHandler the shortcut handler
          */
         set(value) {
             field = value
@@ -64,12 +68,6 @@ class EditorView(
     var contextMenu: ContextMenu?
 
     init {
-        this.inspectorFactory = InspectorFactory(actionManager, viewModel)
-
-        this.currentViewPane = StackPane()
-        this.currentInspector = SimpleObjectProperty(null)
-
-        this.emptyInspector = Inspector(ArrayList(), actionManager)
         this.currentInspector = SimpleObjectProperty(emptyInspector)
         this.viewElementPane = ViewElementPane(viewModel)
 
@@ -81,8 +79,8 @@ class EditorView(
                 {
                     val name = viewModel.currentSystem.name
                     name +
-                        (if (viewModel.isAutomatonEditor) " (${ResourceHandler.automaton})"
-                        else " (${ResourceHandler.system})")
+                            (if (viewModel.isAutomatonEditor) " (${ResourceHandler.automaton})"
+                            else " (${ResourceHandler.system})")
                 },
                 viewModel.currentSystem.nameProperty
             )
@@ -130,10 +128,9 @@ class EditorView(
         }
 
         // Set current tool
-        viewModel.currentToolProperty.addListener {
-            observable: ObservableValue<out Tool>,
-            oldValue: Tool?,
-            newValue: Tool? ->
+        viewModel.currentToolProperty.addListener { observable: ObservableValue<out Tool>,
+                                                    oldValue: Tool?,
+                                                    newValue: Tool? ->
             this.onToolChanged(newValue)
         }
 

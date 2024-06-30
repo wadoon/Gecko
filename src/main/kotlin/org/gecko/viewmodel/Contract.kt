@@ -1,6 +1,9 @@
 package org.gecko.viewmodel
 
-import javafx.beans.property.*
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
+import org.gecko.lint.Problem
 import tornadofx.getValue
 import tornadofx.setValue
 
@@ -21,6 +24,23 @@ data class Contract(
 
     override val children: Sequence<Element>
         get() = sequenceOf()
+
+    override fun updateIssues() {
+        val i = arrayListOf<Problem>()
+
+        if (name.isEmpty())
+            i.report("Pre condition", 1.0)
+
+        if (preCondition.value.isEmpty())
+            i.report("Pre condition", 1.0)
+
+        if (postCondition.value.isEmpty())
+            i.report("Post condition", 1.0)
+
+        checkName(name, i)
+
+        issues.setAll(i)
+    }
 
     override fun asJson() = withJsonObject {
         addProperty("name", name)
